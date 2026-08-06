@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts de Lectura · Generador basat en la ciència de la lectura</title>
+<meta name="description" content="Generador de prompts basats en la ciència de la lectura per a treballar la comprensió lectora amb IA. Valencià normatiu AVL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F1;
+    --card:#FFFFFF;
+    --ink:#1E2126;
+    --muted:#6D6F76;
+    --line:#DEDCD4;
+    --blue:#2743C7;      /* blau de bolígraf */
+    --blue-dark:#1D33A0;
+    --marker:#FFE45C;    /* marcador fluorescent */
+    --marker-soft:#FFF3B8;
+    --red:#C6392C;       /* bolígraf roig del docent */
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{transition:none!important;animation:none!important}
+  }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--blue)}
+  ::selection{background:var(--marker)}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* ---------- Header ---------- */
+  header{
+    border-bottom:2px solid var(--ink);
+    padding:26px 0 20px;
+  }
+  .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .back{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+    text-decoration:none;color:var(--muted);
+  }
+  .back:hover{color:var(--blue)}
+  .langs{display:flex;gap:6px}
+  .lang-btn{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+    background:none;border:1px solid var(--line);border-radius:999px;
+    padding:5px 12px;cursor:pointer;color:var(--muted);
+  }
+  .lang-btn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .lang-btn:focus-visible,.tab:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--blue);outline-offset:2px;
+  }
+  h1{
+    font-family:'Fraunces',Georgia,serif;font-weight:700;
+    font-size:clamp(30px,5vw,46px);line-height:1.05;margin-top:14px;
+    letter-spacing:-.01em;
+  }
+  h1 .hl{
+    background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);
+    padding:0 .06em;
+  }
+  .subtitle{color:var(--muted);margin-top:8px;max-width:640px}
+
+  /* ---------- Protocol strip ---------- */
+  .protocol{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;
+    color:var(--ink);
+    border:1px dashed var(--ink);border-radius:var(--radius);
+    padding:10px 14px;margin:18px 0 0;background:var(--card);
+  }
+  .protocol b{color:var(--blue)}
+  .protocol .sep{color:var(--line)}
+
+  /* ---------- Layout ---------- */
+  .layout{display:grid;grid-template-columns:270px 1fr;gap:28px;padding:28px 0 60px}
+  @media (max-width:840px){.layout{grid-template-columns:1fr;gap:16px}}
+
+  /* ---------- Index (tabs) ---------- */
+  nav[aria-label]{position:sticky;top:16px;align-self:start}
+  .index-title{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;
+    color:var(--muted);margin-bottom:10px;
+  }
+  .tabs{list-style:none;display:flex;flex-direction:column;gap:4px}
+  .tab{
+    width:100%;text-align:left;background:none;border:none;cursor:pointer;
+    display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:baseline;
+    padding:9px 10px;border-radius:8px;border-left:3px solid transparent;
+    font-family:'IBM Plex Sans',sans-serif;
+  }
+  .tab:hover{background:#EFEDE6}
+  .tab .num{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);
+  }
+  .tab .t-cat{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;
+    letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;
+  }
+  .tab .t-name{font-size:13.5px;font-weight:600;line-height:1.3;color:var(--ink)}
+  .tab[aria-selected="true"]{
+    background:var(--card);border-left-color:var(--blue);
+    box-shadow:0 1px 0 var(--line), 0 0 0 1px var(--line);
+  }
+  .tab[aria-selected="true"] .num{color:var(--blue);font-weight:500}
+  .tab.is-new .t-name::after{
+    content:"NOU";font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+    background:var(--marker);border-radius:4px;padding:2px 5px;margin-left:7px;vertical-align:middle;
+  }
+  html[data-lang="es"] .tab.is-new .t-name::after{content:"NUEVO"}
+  @media (max-width:840px){
+    nav[aria-label]{position:static;overflow-x:auto;padding-bottom:4px}
+    .tabs{flex-direction:row;min-width:max-content;gap:6px}
+    .tab{grid-template-columns:auto;border-left:none;border:1px solid var(--line);background:var(--card);padding:8px 12px}
+    .tab .num{display:none}
+    .tab .t-cat{display:none}
+    .tab[aria-selected="true"]{border-color:var(--blue);box-shadow:inset 0 -3px 0 var(--blue)}
+  }
+
+  /* ---------- Panel ---------- */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .panel-head{padding:24px 26px 20px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;
+    color:var(--blue);text-transform:uppercase;
+  }
+  h2{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-size:clamp(21px,3vw,27px);line-height:1.15;margin:8px 0 10px;
+  }
+  .objective{color:var(--muted);max-width:600px}
+
+  .panel-body{padding:22px 26px 26px}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 16px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.wide{grid-column:1/-1}
+  label{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    color:var(--muted);text-transform:uppercase;
+  }
+  input,textarea{
+    font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:8px;
+    padding:9px 11px;width:100%;
+  }
+  textarea{resize:vertical;min-height:96px;line-height:1.5}
+  input:focus,textarea:focus{border-color:var(--blue);background:#fff}
+  .privacy{
+    display:flex;gap:7px;align-items:flex-start;
+    font-size:12px;color:var(--red);margin-top:2px;line-height:1.45;
+  }
+  .privacy::before{content:"✎";flex:none;font-size:13px}
+
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;
+    border-radius:999px;padding:10px 18px;cursor:pointer;border:1px solid var(--ink);
+    background:none;color:var(--ink);
+  }
+  .btn:hover{background:#EFEDE6}
+  .btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn-primary:hover{background:var(--blue-dark);border-color:var(--blue-dark)}
+  .btn-primary.copied{background:var(--ink);border-color:var(--ink)}
+
+  /* ---------- Output ---------- */
+  .out-label{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    color:var(--muted);text-transform:uppercase;margin:24px 0 8px;
+  }
+  .output{
+    font-family:'IBM Plex Mono',monospace;font-size:12.8px;line-height:1.75;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;white-space:pre-wrap;word-wrap:break-word;
+  }
+  .output mark{
+    background:linear-gradient(100deg, var(--marker) 0%, var(--marker-soft) 100%);
+    color:var(--ink);padding:1px 4px;border-radius:3px;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  }
+  .tip{
+    display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;
+    margin-top:16px;padding:13px 16px;border-radius:var(--radius);
+    background:var(--marker-soft);border:1px solid #EAD87A;font-size:13.5px;line-height:1.5;
+  }
+  .tip .tip-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    background:var(--ink);color:#fff;border-radius:4px;padding:3px 7px;margin-top:1px;
+  }
+
+  footer{
+    border-top:1px solid var(--line);padding:20px 0 34px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--muted);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top-row">
+      <a class="back" href="https://sanforbelialenguas.lovable.app/" data-i18n="back">◂ TORNAR A LA BRÚIXOLA</a>
+      <div class="langs" role="group" aria-label="Llengua">
+        <button class="lang-btn" data-lang-btn="va" aria-pressed="true">VALENCIÀ</button>
+        <button class="lang-btn" data-lang-btn="es" aria-pressed="false">CASTELLANO</button>
+      </div>
+    </div>
+    <h1 data-i18n-html="title">Prompts de <span class="hl">Lectura</span></h1>
+    <p class="subtitle" data-i18n="subtitle">Huit generadors de prompts basats en la ciència de la lectura per a crear material de comprensió lectora amb IA. Valencià normatiu segons l'AVL.</p>
+    <div class="protocol">
+      <b data-i18n="protoTag">PROTOCOL D'AULA</b>
+      <span data-i18n="proto1">1 · Primer sense IA</span><span class="sep">—</span>
+      <span data-i18n="proto2">2 · Després amb IA</span><span class="sep">—</span>
+      <span data-i18n="proto3">3 · Contrast i reflexió</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav aria-label="Índex de prompts">
+    <p class="index-title" data-i18n="index">ÍNDEX</p>
+    <ul class="tabs" role="tablist" id="tabs"></ul>
+  </nav>
+
+  <main>
+    <section class="panel" id="panel" role="tabpanel">
+      <div class="panel-head">
+        <p class="eyebrow" id="p-cat"></p>
+        <h2 id="p-title"></h2>
+        <p class="objective" id="p-obj"></p>
+      </div>
+      <div class="panel-body">
+        <div class="fields" id="p-fields"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-copy"></button>
+          <button class="btn" id="btn-reset"></button>
+        </div>
+        <p class="out-label" id="out-label"></p>
+        <div class="output" id="p-output" aria-live="polite"></div>
+        <div class="tip">
+          <span class="tip-tag" data-i18n="tipTag">CONSELL</span>
+          <span id="p-tip"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <span data-i18n="foot1">PROMPTS DE LECTURA · LA BRÚIXOLA IA</span>
+    <span data-i18n="foot2">CIÈNCIA DE LA LECTURA × IA GENERATIVA</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- UI strings ---------------- */
+var UI = {
+  va:{
+    back:"◂ TORNAR A LA BRÚIXOLA",
+    title:'Prompts de <span class="hl">Lectura</span>',
+    subtitle:"Huit generadors de prompts basats en la ciència de la lectura per a crear material de comprensió lectora amb IA. Valencià normatiu segons l'AVL.",
+    protoTag:"PROTOCOL D'AULA", proto1:"1 · Primer sense IA", proto2:"2 · Després amb IA", proto3:"3 · Contrast i reflexió",
+    index:"ÍNDEX",
+    copy:"COPIAR PROMPT", copied:"✓ COPIAT!", reset:"RESTABLIR VALORS",
+    outLabel:"PROMPT GENERAT",
+    tipTag:"CONSELL",
+    privacy:"No enganxes mai textos amb noms, dades o produccions identificables de l'alumnat.",
+    foot1:"PROMPTS DE LECTURA · LA BRÚIXOLA IA",
+    foot2:"CIÈNCIA DE LA LECTURA × IA GENERATIVA",
+    phText:"[text]", phTopic:"[tema]"
+  },
+  es:{
+    back:"◂ VOLVER A LA BRÚJULA",
+    title:'Prompts de <span class="hl">Lectura</span>',
+    subtitle:"Ocho generadores de prompts basados en la ciencia de la lectura para crear material de comprensión lectora con IA.",
+    protoTag:"PROTOCOLO DE AULA", proto1:"1 · Primero sin IA", proto2:"2 · Después con IA", proto3:"3 · Contraste y reflexión",
+    index:"ÍNDICE",
+    copy:"COPIAR PROMPT", copied:"✓ ¡COPIADO!", reset:"RESTABLECER VALORES",
+    outLabel:"PROMPT GENERADO",
+    tipTag:"CONSEJO",
+    privacy:"No pegues nunca textos con nombres, datos o producciones identificables del alumnado.",
+    foot1:"PROMPTS DE LECTURA · LA BRÚJULA IA",
+    foot2:"CIENCIA DE LA LECTURA × IA GENERATIVA",
+    phText:"[texto]", phTopic:"[tema]"
+  }
+};
+
+/* ---------------- Prompt definitions ----------------
+   template(v, L) returns an array of parts:
+   strings (static) and {k:"fieldKey"} (highlighted values).      */
+var PROMPTS = [
+{
+  id:"p1", num:"1",
+  cat:{va:"Descodificació i fluïdesa", es:"Descodificación y fluidez"},
+  title:{va:"Grafema-fonema → memòria de treball", es:"Grafema-fonema → memoria de trabajo"},
+  obj:{va:"Automatitzar la conversió grafema-fonema per a alliberar la memòria de treball cap a la comprensió.",
+       es:"Automatizar la conversión grafema-fonema para liberar la memoria de trabajo hacia la comprensión."},
+  fields:[
+    {key:"n", type:"number", def:{va:"100",es:"100"}, label:{va:"Nombre de paraules del text", es:"Número de palabras del texto"}},
+    {key:"lvl", type:"text", def:{va:"2n de Primària",es:"2.º de Primaria"}, label:{va:"Curs / nivell", es:"Curso / nivel"}},
+    {key:"g", type:"number", def:{va:"10",es:"10"}, label:{va:"Nombre de paraules amb el grafema", es:"Número de palabras con el grafema"}},
+    {key:"gr", type:"text", def:{va:"l·l",es:"ll"}, label:{va:"Grafema o dígraf a treballar", es:"Grafema o dígrafo a trabajar"}},
+    {key:"max", type:"number", def:{va:"8",es:"8"}, label:{va:"Màxim de paraules per frase", es:"Máximo de palabras por frase"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Actua com un mestre expert en alfabetització inicial i ciència de la lectura. Crea un text narratiu de ",{k:"n"}," paraules per a alumnat de ",{k:"lvl"},".\n\nRequisits tècnics:\n- El 80% del vocabulari ha de pertànyer a les 500 paraules més freqüents en valencià.\n- Inclou exactament ",{k:"g"}," paraules que continguen el grafema o dígraf \"",{k:"gr"},"\" per a practicar la descodificació específica.\n- Les frases han de ser curtes, de menys de ",{k:"max"}," paraules.\n- El text ha de tindre una estructura clara d'inici, nuc i desenllaç.\n- Utilitza valencià normatiu segons l'AVL."];
+    return [
+"Actúa como un maestro experto en alfabetización inicial y ciencia de la lectura. Crea un texto narrativo de ",{k:"n"}," palabras para alumnado de ",{k:"lvl"},".\n\nRequisitos técnicos:\n- El 80% del vocabulario debe pertenecer a las 500 palabras más frecuentes en español.\n- Incluye exactamente ",{k:"g"}," palabras que contengan el grafema o dígrafo \"",{k:"gr"},"\" para practicar la descodificación específica.\n- Las frases deben ser cortas, de menos de ",{k:"max"}," palabras.\n- El texto debe tener una estructura clara de inicio, nudo y desenlace.\n- Utiliza español normativo."];
+  },
+  tip:{va:"Demana variants del mateix text canviant només el grafema treballat, per a fer sèries de pràctica acumulativa.",
+       es:"Pide variantes del mismo texto cambiando solo el grafema trabajado, para crear series de práctica acumulativa."}
+},
+{
+  id:"p2", num:"2",
+  cat:{va:"Comprensió referencial (cohesió)", es:"Comprensión referencial (cohesión)"},
+  title:{va:"Pronoms, sinònims i el·lipsis", es:"Pronombres, sinónimos y elipsis"},
+  obj:{va:"Evitar que l'alumnat perda el fil quan no identifica a qui es refereixen els pronoms o les el·lipsis.",
+       es:"Evitar que el alumnado pierda el hilo cuando no identifica a quién se refieren los pronombres o las elipsis."},
+  fields:[
+    {key:"lvl", type:"text", def:{va:"4t de Primària",es:"4.º de Primaria"}, label:{va:"Nivell de l'alumnat", es:"Nivel del alumnado"}},
+    {key:"txt", type:"textarea", def:{va:"",es:""}, ph:"text", label:{va:"Text a analitzar", es:"Texto a analizar"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Analitza el text que t'adjunte a continuació. Identifica tots els vincles cohesius (pronoms, sinònims i el·lipsis) que puguen resultar difícils per a un lector de ",{k:"lvl"},".\n\nTasca:\n1. Genera una taula amb dues columnes: \"Referent en el text\" i \"Referit\" (a qui o a què es refereix).\n2. Crea un exercici de \"Qui és qui?\" on l'alumnat haja de dibuixar fletxes de cohesió des del pronom fins al seu substantiu original.\n3. Genera una versió del text on els referents ambigus hagen estat substituïts per noms propis per a alumnat amb NESE.\n\nUtilitza valencià normatiu segons l'AVL.\n\nTEXT:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+    return [
+"Analiza el texto que te adjunto a continuación. Identifica todos los vínculos cohesivos (pronombres, sinónimos y elipsis) que puedan resultar difíciles para un lector de ",{k:"lvl"},".\n\nTarea:\n1. Genera una tabla con dos columnas: \"Referente en el texto\" y \"Referido\" (a quién o a qué se refiere).\n2. Crea un ejercicio de \"¿Quién es quién?\" donde el alumnado deba dibujar flechas de cohesión desde el pronombre hasta su sustantivo original.\n3. Genera una versión del texto donde los referentes ambiguos hayan sido sustituidos por nombres propios para alumnado con NEAE.\n\nUtiliza español normativo.\n\nTEXTO:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+  },
+  tip:{va:"Si el text té pocs referents ambigus, demana a la IA que en reescriga una versió amb més pronoms i el·lipsis per a augmentar la dificultat.",
+       es:"Si el texto tiene pocos referentes ambiguos, pide a la IA que reescriba una versión con más pronombres y elipsis para aumentar la dificultad."}
+},
+{
+  id:"p3", num:"3",
+  cat:{va:"Comprensió inferencial", es:"Comprensión inferencial"},
+  title:{va:"Causa-efecte amb la frase «i ací estic»", es:"Causa-efecto con la frase «y aquí estoy»"},
+  obj:{va:"L'alumnat connecta pistes textuals per a deduir la causa o la conseqüència d'una situació.",
+       es:"El alumnado conecta pistas textuales para deducir la causa o la consecuencia de una situación."},
+  fields:[
+    {key:"n", type:"number", def:{va:"5",es:"5"}, label:{va:"Nombre de micro-textos", es:"Número de microtextos"}},
+    {key:"lvl", type:"text", def:{va:"6é de Primària",es:"6.º de Primaria"}, label:{va:"Nivell de l'alumnat", es:"Nivel del alumnado"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Actua com a dissenyador de materials didàctics especialitzat en inferència lectora. Crea ",{k:"n"}," micro-textos basats en la lògica de causa-efecte per a alumnat de ",{k:"lvl"},".\n\nLògica de l'activitat: ofereix pistes contextuals sobre una situació quotidiana i finalitza amb la frase \"i ací estic\", de manera que l'alumne haja de deduir què ha ocorregut o quina serà la conseqüència.\n\nExemple orientatiu: \"He entrat a classe amb els ulls rojos i la veu ronca, i ací estic\" (inferència possible: he agafat un refredat).\n\nRestriccions:\n- Utilitza situacions pròximes a l'alumnat (pati, família, xarxes, amistats, estudi).\n- Per a cada text, ofereix 3 opcions de resposta: una literal (incorrecta), una distractora i la inferencial (correcta), i marca la solució en un full per al docent.\n- Utilitza valencià normatiu segons l'AVL."];
+    return [
+"Actúa como diseñador de materiales didácticos especializado en inferencia lectora. Crea ",{k:"n"}," microtextos basados en la lógica de causa-efecto para alumnado de ",{k:"lvl"},".\n\nLógica de la actividad: ofrece pistas contextuales sobre una situación cotidiana y termina con la frase \"y aquí estoy\", de manera que el alumno deba deducir qué ha ocurrido o cuál será la consecuencia.\n\nEjemplo orientativo: \"He entrado en clase con los ojos rojos y la voz ronca, y aquí estoy\" (inferencia posible: he cogido un resfriado).\n\nRestricciones:\n- Utiliza situaciones próximas al alumnado (patio, familia, redes, amistades, estudio).\n- Para cada texto, ofrece 3 opciones de respuesta: una literal (incorrecta), una distractora y la inferencial (correcta), y marca la solución en una hoja para el docente.\n- Utiliza español normativo."];
+  },
+  tip:{va:"Demana que augmente la distància inferencial: que les pistes estiguen més separades de la conclusió.",
+       es:"Pide que aumente la distancia inferencial: que las pistas estén más separadas de la conclusión."}
+},
+{
+  id:"p4", num:"4",
+  cat:{va:"Adaptació multinivell (bastida)", es:"Adaptación multinivel (andamiaje)"},
+  title:{va:"Mateix contingut, 4 nivells", es:"Mismo contenido, 4 niveles"},
+  obj:{va:"Treballar el mateix contingut amb tota la classe ajustant la càrrega cognitiva segons el nivell.",
+       es:"Trabajar el mismo contenido con toda la clase ajustando la carga cognitiva según el nivel."},
+  fields:[
+    {key:"topic", type:"text", def:{va:"",es:""}, ph:"topic", label:{va:"Tema del text", es:"Tema del texto"}},
+    {key:"txt", type:"textarea", def:{va:"",es:""}, ph:"text", label:{va:"Text original (opcional)", es:"Texto original (opcional)"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Pren el següent text sobre \"",{k:"topic"},"\" i genera simultàniament estes 4 versions mantenint la fidelitat de la informació:\n\n- LF (Lectura Fàcil): frases molt curtes, vocabulari bàsic i suport visual suggerit per a alumnat NESE.\n- P1 (Primària bàsic): frases simples, connectors bàsics i sense metàfores.\n- P2 (Primària avançat): frases compostes, vocabulari mitjà i algunes inferències directes.\n- S (Secundària): text original o enriquit amb inferències complexes i sentit figurat.\n\nPresenta cada versió amb un encapçalament clar. Utilitza valencià normatiu segons l'AVL.\n\nTEXT DE REFERÈNCIA:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+    return [
+"Toma el siguiente texto sobre \"",{k:"topic"},"\" y genera simultáneamente estas 4 versiones manteniendo la fidelidad de la información:\n\n- LF (Lectura Fácil): frases muy cortas, vocabulario básico y apoyo visual sugerido para alumnado NEAE.\n- P1 (Primaria básico): frases simples, conectores básicos y sin metáforas.\n- P2 (Primaria avanzado): frases compuestas, vocabulario medio y algunas inferencias directas.\n- S (Secundaria): texto original o enriquecido con inferencias complejas y sentido figurado.\n\nPresenta cada versión con un encabezamiento claro. Utiliza español normativo.\n\nTEXTO DE REFERENCIA:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+  },
+  tip:{va:"Demana una cinquena versió amb suports visuals descrits (pictogrames o imatges suggerides) per a alumnat NESE.",
+       es:"Pide una quinta versión con apoyos visuales descritos (pictogramas o imágenes sugeridas) para alumnado NEAE."}
+},
+{
+  id:"p5", num:"5",
+  cat:{va:"Pre-lectura (coneixement previ)", es:"Prelectura (conocimiento previo)"},
+  title:{va:"Activar abans de llegir", es:"Activar antes de leer"},
+  obj:{va:"Connectar el text amb el món de l'alumnat i activar el vocabulari clau abans de la lectura.",
+       es:"Conectar el texto con el mundo del alumnado y activar el vocabulario clave antes de la lectura."},
+  fields:[
+    {key:"topic", type:"text", def:{va:"",es:""}, ph:"topic", label:{va:"Tema del text", es:"Tema del texto"}},
+    {key:"txt", type:"textarea", def:{va:"",es:""}, ph:"text", label:{va:"Text", es:"Texto"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Per al text que t'adjunte sobre \"",{k:"topic"},"\", actua com a mediador docent i genera:\n\n1. Un text introductori de 3 frases que connecte el tema amb un fenomen del dia a dia de l'alumnat per a motivar-lo.\n2. Una llista del Top 5 de paraules clau que necessita conéixer per a entendre el text, amb una definició senzilla i un exemple en context (no de diccionari).\n3. Tres preguntes de predicció: \"A partir del títol i les imatges, què creus que ens explicarà el text?\".\n\nUtilitza valencià normatiu segons l'AVL.\n\nTEXT:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+    return [
+"Para el texto que te adjunto sobre \"",{k:"topic"},"\", actúa como mediador docente y genera:\n\n1. Un texto introductorio de 3 frases que conecte el tema con un fenómeno del día a día del alumnado para motivarlo.\n2. Una lista del Top 5 de palabras clave que necesita conocer para entender el texto, con una definición sencilla y un ejemplo en contexto (no de diccionario).\n3. Tres preguntas de predicción: \"A partir del título y las imágenes, ¿qué crees que nos explicará el texto?\".\n\nUtiliza español normativo.\n\nTEXTO:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+  },
+  tip:{va:"Demana que les preguntes de predicció connecten amb una polèmica o curiositat real per a generar expectativa.",
+       es:"Pide que las preguntas de predicción conecten con una polémica o curiosidad real para generar expectación."}
+},
+{
+  id:"p6", num:"6",
+  cat:{va:"Metacognició · Parades de pensament", es:"Metacognición · Paradas de pensamiento"},
+  title:{va:"Supervisar la pròpia comprensió", es:"Supervisar la propia comprensión"},
+  obj:{va:"L'alumne aprén a supervisar i regular la seua pròpia comprensió mentre llig.",
+       es:"El alumno aprende a supervisar y regular su propia comprensión mientras lee."},
+  fields:[
+    {key:"txt", type:"textarea", def:{va:"",es:""}, ph:"text", label:{va:"Text llarg a fragmentar", es:"Texto largo a fragmentar"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Fragmenta el següent text llarg en blocs de 2 o 3 paràgrafs. Al final de cada bloc, insereix una \"Parada de Pensament\" que obligue l'alumne a fer-se una d'estes quatre preguntes (alterna-les):\n\n- Supervisió: hi ha alguna cosa que no haja entés en este tros?\n- Objectiu: per a què estic llegint això?\n- Verificació: com puc resumir o parafrasejar el que acabe de llegir?\n- Ajust: si m'he perdut, quina estratègia faré servir per a continuar?\n\nMantín el text original íntegre i marca clarament cada \"Parada de Pensament\" amb un format destacat. Valencià normatiu segons l'AVL.\n\nTEXT:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+    return [
+"Fragmenta el siguiente texto largo en bloques de 2 o 3 párrafos. Al final de cada bloque, inserta una \"Parada de Pensamiento\" que obligue al alumno a hacerse una de estas cuatro preguntas (altérnalas):\n\n- Supervisión: ¿hay algo que no haya entendido en este fragmento?\n- Objetivo: ¿para qué estoy leyendo esto?\n- Verificación: ¿cómo puedo resumir o parafrasear lo que acabo de leer?\n- Ajuste: si me he perdido, ¿qué estrategia usaré para continuar?\n\nMantén el texto original íntegro y marca claramente cada \"Parada de Pensamiento\" con un formato destacado. Utiliza español normativo.\n\nTEXTO:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+  },
+  tip:{va:"Demana que les parades incloguen una autoavaluació ràpida de l'1 al 5 sobre la comprensió del bloc.",
+       es:"Pide que las paradas incluyan una autoevaluación rápida del 1 al 5 sobre la comprensión del bloque."}
+},
+{
+  id:"p7", num:"7", isNew:true,
+  cat:{va:"Lectura crítica (avaluar i reflexionar)", es:"Lectura crítica (evaluar y reflexionar)"},
+  title:{va:"Caçadors d'errors de la IA", es:"Cazadores de errores de la IA"},
+  obj:{va:"L'alumnat avalua críticament un resum generat per IA, detecta els errors i els justifica citant el text original.",
+       es:"El alumnado evalúa críticamente un resumen generado por IA, detecta los errores y los justifica citando el texto original."},
+  fields:[
+    {key:"txt", type:"textarea", def:{va:"",es:""}, ph:"text", label:{va:"Text original", es:"Texto original"}},
+    {key:"lvl", type:"text", def:{va:"2n d'ESO",es:"2.º de ESO"}, label:{va:"Nivell de l'alumnat", es:"Nivel del alumnado"}},
+    {key:"n", type:"number", def:{va:"3",es:"3"}, label:{va:"Nombre d'errors", es:"Número de errores"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Actua com a dissenyador de materials de lectura crítica. A partir del text que t'adjunte, genera un resum d'unes 120 paraules que continga exactament ",{k:"n"}," errors deliberats per a alumnat de ",{k:"lvl"},":\n\n- Una inferència falsa (una conclusió que el text no permet traure).\n- Una dada alterada (un nom, una xifra o un fet canviat).\n- Una afirmació no justificada pel text (una opinió presentada com a fet).\n\nDesprés del resum, genera per al docent una taula de solucions amb tres columnes: \"Error\", \"Per què és un error\" i \"Fragment del text original que ho demostra\".\n\nFinalment, redacta la consigna per a l'alumnat: \"Este resum l'ha escrit una IA i conté ",{k:"n"}," errors. Troba'ls i justifica cada un amb una cita del text original.\"\n\nUtilitza valencià normatiu segons l'AVL.\n\nTEXT:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+    return [
+"Actúa como diseñador de materiales de lectura crítica. A partir del texto que te adjunto, genera un resumen de unas 120 palabras que contenga exactamente ",{k:"n"}," errores deliberados para alumnado de ",{k:"lvl"},":\n\n- Una inferencia falsa (una conclusión que el texto no permite extraer).\n- Un dato alterado (un nombre, una cifra o un hecho cambiado).\n- Una afirmación no justificada por el texto (una opinión presentada como hecho).\n\nDespués del resumen, genera para el docente una tabla de soluciones con tres columnas: \"Error\", \"Por qué es un error\" y \"Fragmento del texto original que lo demuestra\".\n\nFinalmente, redacta la consigna para el alumnado: \"Este resumen lo ha escrito una IA y contiene ",{k:"n"}," errores. Encuéntralos y justifica cada uno con una cita del texto original.\"\n\nUtiliza español normativo.\n\nTEXTO:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+  },
+  tip:{va:"Si l'alumnat els troba massa ràpid, demana errors més subtils: matisos de grau, generalitzacions abusives o causes confoses amb correlacions.",
+       es:"Si el alumnado los encuentra demasiado rápido, pide errores más sutiles: matices de grado, generalizaciones abusivas o causas confundidas con correlaciones."}
+},
+{
+  id:"p8", num:"8", isNew:true,
+  cat:{va:"Avaluació (estil PISA)", es:"Evaluación (estilo PISA)"},
+  title:{va:"Ítems per processos lectors", es:"Ítems por procesos lectores"},
+  obj:{va:"Generar ítems d'avaluació classificats per procés lector, amb distractors plausibles i rúbrica de correcció.",
+       es:"Generar ítems de evaluación clasificados por proceso lector, con distractores plausibles y rúbrica de corrección."},
+  fields:[
+    {key:"txt", type:"textarea", def:{va:"",es:""}, ph:"text", label:{va:"Text", es:"Texto"}},
+    {key:"lvl", type:"text", def:{va:"2n d'ESO",es:"2.º de ESO"}, label:{va:"Nivell de l'alumnat", es:"Nivel del alumnado"}},
+    {key:"n", type:"number", def:{va:"6",es:"6"}, label:{va:"Nombre d'ítems", es:"Número de ítems"}}
+  ],
+  template:function(v,L){
+    if(L==="va") return [
+"Actua com a expert en avaluació de la competència lectora (marc PISA). A partir del text adjunt, genera ",{k:"n"}," ítems per a alumnat de ",{k:"lvl"},", repartits en tres processos i etiquetats: LOCALITZAR INFORMACIÓ, COMPRENDRE (inferencial) i AVALUAR I REFLEXIONAR (crítica).\n\nPer a cada ítem d'opció múltiple: 4 opcions, una correcta i tres distractors plausibles; justifica breument per què cada distractor pot resultar temptador.\n\nInclou almenys un ítem de resposta oberta amb una rúbrica de correcció de 3 nivells (resposta completa, parcial, incorrecta) amb exemples.\n\nUtilitza valencià normatiu segons l'AVL.\n\nTEXT:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+    return [
+"Actúa como experto en evaluación de la competencia lectora (marco PISA). A partir del texto adjunto, genera ",{k:"n"}," ítems para alumnado de ",{k:"lvl"},", repartidos en tres procesos y etiquetados: LOCALIZAR INFORMACIÓN, COMPRENDER (inferencial) y EVALUAR Y REFLEXIONAR (crítica).\n\nPara cada ítem de opción múltiple: 4 opciones, una correcta y tres distractores plausibles; justifica brevemente por qué cada distractor puede resultar tentador.\n\nIncluye al menos un ítem de respuesta abierta con una rúbrica de corrección de 3 niveles (respuesta completa, parcial, incorrecta) con ejemplos.\n\nUtiliza español normativo.\n\nTEXTO:\n\"\"\"\n",{k:"txt"},"\n\"\"\""];
+  },
+  tip:{va:"Per a fer un pre/post amb el grup, demana dues versions paral·leles dels mateixos ítems amb textos diferents de dificultat equivalent.",
+       es:"Para hacer un pre/post con el grupo, pide dos versiones paralelas de los mismos ítems con textos diferentes de dificultad equivalente."}
+}
+];
+
+/* ---------------- State ---------------- */
+var lang = "va";
+var current = 0;
+var values = {};   // values[promptId][fieldKey]
+
+PROMPTS.forEach(function(p){
+  values[p.id] = {};
+  p.fields.forEach(function(f){ values[p.id][f.key] = f.def[lang]; });
+});
+
+/* ---------------- Helpers ---------------- */
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function fieldValue(p, f){
+  var v = values[p.id][f.key];
+  if(v !== "" && v != null) return String(v);
+  if(f.ph === "topic") return UI[lang].phTopic;
+  return UI[lang].phText;
+}
+function buildParts(p){
+  return p.template(values[p.id], lang);
+}
+function promptPlain(p){
+  var out = "";
+  buildParts(p).forEach(function(part){
+    if(typeof part === "string"){ out += part; }
+    else {
+      var f = p.fields.find(function(x){return x.key===part.k;});
+      out += fieldValue(p, f);
+    }
+  });
+  return out;
+}
+function promptHTML(p){
+  var out = "";
+  buildParts(p).forEach(function(part){
+    if(typeof part === "string"){ out += esc(part); }
+    else {
+      var f = p.fields.find(function(x){return x.key===part.k;});
+      out += "<mark>"+esc(fieldValue(p,f))+"</mark>";
+    }
+  });
+  return out;
+}
+
+/* ---------------- Render ---------------- */
+var tabsEl = document.getElementById("tabs");
+var elCat = document.getElementById("p-cat");
+var elTitle = document.getElementById("p-title");
+var elObj = document.getElementById("p-obj");
+var elFields = document.getElementById("p-fields");
+var elOut = document.getElementById("p-output");
+var elTip = document.getElementById("p-tip");
+var btnCopy = document.getElementById("btn-copy");
+var btnReset = document.getElementById("btn-reset");
+var outLabel = document.getElementById("out-label");
+
+function renderTabs(){
+  tabsEl.innerHTML = "";
+  PROMPTS.forEach(function(p, i){
+    var li = document.createElement("li");
+    var b = document.createElement("button");
+    b.className = "tab" + (p.isNew ? " is-new" : "");
+    b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", i===current ? "true":"false");
+    b.innerHTML = '<span class="num">'+p.num+'</span><span><span class="t-cat">'+esc(p.cat[lang])+'</span><span class="t-name">'+esc(p.title[lang])+'</span></span>';
+    b.addEventListener("click", function(){ current = i; renderPanel(); renderTabs(); });
+    li.appendChild(b);
+    tabsEl.appendChild(li);
+  });
+}
+
+function renderFields(p){
+  elFields.innerHTML = "";
+  p.fields.forEach(function(f){
+    var wrap = document.createElement("div");
+    wrap.className = "field" + (f.type==="textarea" ? " wide":"");
+    var lab = document.createElement("label");
+    lab.textContent = f.label[lang];
+    lab.htmlFor = p.id + "-" + f.key;
+    wrap.appendChild(lab);
+    var input;
+    if(f.type==="textarea"){
+      input = document.createElement("textarea");
+      input.rows = 4;
+    } else {
+      input = document.createElement("input");
+      input.type = f.type;
+      if(f.type==="number"){ input.min = "1"; }
+    }
+    input.id = p.id + "-" + f.key;
+    input.value = values[p.id][f.key];
+    input.addEventListener("input", function(){
+      values[p.id][f.key] = input.value;
+      renderOutput(p);
+    });
+    wrap.appendChild(input);
+    if(f.type==="textarea"){
+      var priv = document.createElement("p");
+      priv.className = "privacy";
+      priv.textContent = UI[lang].privacy;
+      wrap.appendChild(priv);
+    }
+    elFields.appendChild(wrap);
+  });
+}
+
+function renderOutput(p){
+  elOut.innerHTML = promptHTML(p);
+}
+
+function renderPanel(){
+  var p = PROMPTS[current];
+  elCat.textContent = "Prompt " + p.num + " · " + p.cat[lang];
+  elTitle.textContent = p.title[lang];
+  elObj.textContent = p.obj[lang];
+  elTip.textContent = p.tip[lang];
+  btnCopy.textContent = UI[lang].copy;
+  btnCopy.classList.remove("copied");
+  btnReset.textContent = UI[lang].reset;
+  outLabel.textContent = UI[lang].outLabel;
+  renderFields(p);
+  renderOutput(p);
+}
+
+function renderStatic(){
+  document.documentElement.setAttribute("data-lang", lang);
+  document.documentElement.lang = (lang==="va" ? "ca" : "es");
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    var key = el.getAttribute("data-i18n");
+    if(UI[lang][key]) el.textContent = UI[lang][key];
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(function(el){
+    var key = el.getAttribute("data-i18n-html");
+    if(UI[lang][key]) el.innerHTML = UI[lang][key];
+  });
+  document.querySelectorAll("[data-lang-btn]").forEach(function(b){
+    b.setAttribute("aria-pressed", b.getAttribute("data-lang-btn")===lang ? "true":"false");
+  });
+}
+
+/* ---------------- Actions ---------------- */
+btnReset.addEventListener("click", function(){
+  var p = PROMPTS[current];
+  p.fields.forEach(function(f){ values[p.id][f.key] = f.def[lang]; });
+  renderPanel();
+});
+
+function fallbackCopy(text){
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+}
+btnCopy.addEventListener("click", function(){
+  var text = promptPlain(PROMPTS[current]);
+  function done(){
+    btnCopy.textContent = UI[lang].copied;
+    btnCopy.classList.add("copied");
+    setTimeout(function(){
+      btnCopy.textContent = UI[lang].copy;
+      btnCopy.classList.remove("copied");
+    }, 1800);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text); done(); });
+  } else {
+    fallbackCopy(text); done();
+  }
+});
+
+document.querySelectorAll("[data-lang-btn]").forEach(function(b){
+  b.addEventListener("click", function(){
+    var newLang = b.getAttribute("data-lang-btn");
+    if(newLang === lang) return;
+    // Swap defaults that the user hasn't modified
+    PROMPTS.forEach(function(p){
+      p.fields.forEach(function(f){
+        if(values[p.id][f.key] === f.def[lang]) values[p.id][f.key] = f.def[newLang];
+      });
+    });
+    lang = newLang;
+    renderStatic();
+    renderTabs();
+    renderPanel();
+  });
+});
+
+/* ---------------- Init ---------------- */
+renderStatic();
+renderTabs();
+renderPanel();
+})();
+</script>
+</body>
+</html>
