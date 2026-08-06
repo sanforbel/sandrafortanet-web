@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sandra Fortanet · Llengua, lectura i IA</title>
+<meta name="google-site-verification" content="8DcN0D8RiYFJ0MN5rs36sfMT0A6EB3zMgVYoaM-Kw28" />
+<meta name="description" content="Sandra Fortanet: ferramentes, prompts i formacions sobre llengua, comprensió lectora i intel·ligència artificial per a l'aula. Valencià normatiu AVL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     COM MANTINDRE ESTA PÀGINA
+     · Per a afegir una ferramenta nova: copia un bloc <article class="card">
+       sencer, canvia'n el text i l'enllaç, i ja està.
+     · Els enllaços marcats amb href="#" estan PENDENTS: substitueix-los
+       per l'URL real (Google Sites, Netlify, Lovable...).
+     · Per a canviar el nom o la presentació: busca "EDITA'M".
+     ============================================================ -->
+
+<style>
+  :root{
+    --paper:#F6F5F1;
+    --card:#FFFFFF;
+    --ink:#1E2126;
+    --muted:#6D6F76;
+    --line:#DEDCD4;
+    --blue:#2743C7;
+    --blue-dark:#1D33A0;
+    --marker:#FFE45C;
+    --marker-soft:#FFF3B8;
+    --red:#C6392C;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{transition:none!important}
+  }
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--marker)}
+  a{color:var(--blue)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+
+  /* ---------- Nav ---------- */
+  .nav{
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    padding:18px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;
+  }
+  .brand{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;
+    text-decoration:none;color:var(--ink);
+  }
+  .nav-links{display:flex;gap:4px;flex-wrap:wrap}
+  .nav-links a{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+    text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:999px;
+  }
+  .nav-links a:hover{background:#EFEDE6;color:var(--ink)}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:64px 0 54px;border-bottom:2px solid var(--ink)}
+  .hero h1{
+    font-family:'Fraunces',Georgia,serif;font-weight:700;letter-spacing:-.01em;
+    font-size:clamp(34px,6vw,58px);line-height:1.04;max-width:820px;
+  }
+  .hero h1 .hl{
+    background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);
+    padding:0 .06em;
+  }
+  .hero .hero-grid{display:grid;grid-template-columns:1fr 300px;gap:36px;align-items:center}
+  @media (max-width:760px){.hero .hero-grid{grid-template-columns:1fr}.hero-art{display:none}}
+  .hero p{color:var(--muted);max-width:640px;margin-top:16px;font-size:17px}
+  .hero-art{justify-self:end}
+  .hero .roles{
+    display:flex;gap:8px;flex-wrap:wrap;margin-top:22px;
+  }
+  .role{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+    border:1px solid var(--ink);border-radius:999px;padding:6px 13px;color:var(--ink);
+  }
+
+  /* ---------- Sections ---------- */
+  section{padding:46px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+  .sec-num{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--blue);letter-spacing:.1em;
+  }
+  h2{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-size:clamp(22px,3.4vw,30px);letter-spacing:-.01em;
+  }
+  .sec-desc{color:var(--muted);max-width:620px;margin:-8px 0 22px;font-size:14.5px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding-bottom:26px}
+
+  /* ---------- Sobre mi ---------- */
+  .about{max-width:700px;padding-bottom:30px}
+  .about p{margin-bottom:15px;color:var(--ink)}
+  .about p:last-child{margin-bottom:0}
+  .about .hl{
+    background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);
+    padding:0 .06em;
+  }
+  .far{
+    background:var(--marker-soft);border:1px solid #EAD87A;border-radius:var(--radius);
+    padding:24px 24px 22px;margin:26px 0 30px;max-width:700px;
+  }
+  .far .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .far h3{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:21px;line-height:1.2;
+    margin:7px 0 12px;
+  }
+  .far p{font-size:14.5px;margin-bottom:13px}
+  .far p:last-child{margin-bottom:0}
+  .about-grid{display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start;max-width:920px;padding-bottom:6px}
+  @media (max-width:700px){.about-grid{grid-template-columns:1fr}}
+  .photo{width:210px;height:250px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--card)}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo-fallback{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:var(--marker-soft);
+    font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:84px;color:var(--ink);
+  }
+  .far h3 a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--ink)}
+  .far h3 a:hover{color:var(--blue);border-color:var(--blue)}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 14px}
+  .stat b{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:30px;display:block;line-height:1}
+  .stat b sup{font-size:16px;color:var(--blue)}
+  .stat span{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;display:block;margin-top:7px;line-height:1.5}
+  .ponent-grid{display:grid;grid-template-columns:1fr 320px;gap:26px;align-items:start;padding-bottom:8px}
+  @media (max-width:800px){.ponent-grid{grid-template-columns:1fr}}
+  .ponent-grid .txt p{margin-bottom:13px;max-width:640px}
+  .photo-wide{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+  .photo-wide img{width:100%;display:block}
+  .creds{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 26px}
+  .cred{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;color:var(--ink);
+  }
+
+  /* ---------- Contacte ---------- */
+  .contact{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:34px 28px;text-align:center;margin-bottom:26px;
+  }
+  .contact p{color:var(--muted);max-width:560px;margin:0 auto 20px}
+  .contact .mail{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.05em;
+    display:inline-block;background:var(--blue);color:#fff;text-decoration:none;
+    border-radius:999px;padding:13px 24px;
+  }
+  .contact .mail:hover{background:var(--blue-dark)}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 20px 18px;display:flex;flex-direction:column;gap:9px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .card:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .card .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .card h3{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:19.5px;line-height:1.2;
+  }
+  .card h3 .new{
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+    background:var(--marker);border-radius:4px;padding:2px 6px;margin-left:7px;vertical-align:middle;
+  }
+  .card p{font-size:13.5px;color:var(--muted);flex:1}
+  .card .go{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+    text-decoration:none;color:var(--blue);margin-top:4px;
+  }
+  .card .go:hover{color:var(--blue-dark);text-decoration:underline}
+  .card .go.pending{color:var(--muted);cursor:default;text-decoration:none}
+
+  .featured{
+    background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);
+    padding:28px 26px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+    margin-bottom:26px;
+  }
+  @media (max-width:680px){.featured{grid-template-columns:1fr}}
+  .featured .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    color:var(--blue);text-transform:uppercase;
+  }
+  .featured h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:22px;margin:6px 0 6px}
+  .featured p{font-size:14px;color:var(--muted);max-width:560px}
+  .featured > a{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;
+    background:var(--ink);color:#F6F5F1;text-decoration:none;
+    border-radius:999px;padding:12px 20px;white-space:nowrap;justify-self:start;
+  }
+  .featured > a:hover{background:#000}
+
+  .quoteband{
+    border-bottom:1px solid var(--line);padding:26px 0;
+  }
+  .quoteband blockquote{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;font-style:italic;
+    font-size:clamp(17px,2.6vw,21px);line-height:1.45;color:var(--ink);
+    max-width:820px;margin:0;
+  }
+  .quoteband .hl{
+    background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);
+    padding:0 .06em;font-style:normal;
+  }
+  .filosofia{
+    text-align:center;padding:52px 0 46px;border-top:2px solid var(--ink);margin-top:26px;
+  }
+  .filosofia .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .filosofia p{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-size:clamp(19px,3vw,26px);line-height:1.4;color:var(--ink);
+    max-width:760px;margin:14px auto 0;
+  }
+  .filosofia .hl{
+    background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);
+    padding:0 .06em;
+  }
+
+  /* ---------- Consultoria banner ---------- */
+  .consult{
+    background:var(--ink);color:#F6F5F1;border-radius:var(--radius);
+    padding:28px 26px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+    margin-bottom:26px;
+  }
+  @media (max-width:680px){.consult{grid-template-columns:1fr}}
+  .consult .tag{color:var(--marker)}
+  .consult h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:22px;margin:6px 0 6px}
+  .consult p{font-size:14px;color:#C9CBCF;max-width:560px}
+  .consult a{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;
+    background:var(--marker);color:var(--ink);text-decoration:none;
+    border-radius:999px;padding:12px 20px;white-space:nowrap;justify-self:start;
+  }
+  .consult a:hover{background:#FFDD33}
+
+  footer{
+    border-top:1px solid var(--line);margin-top:30px;padding:22px 0 40px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--muted);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav" aria-label="Principal">
+    <!-- EDITA'M: el teu nom o marca curta -->
+    <a class="brand" href="#">SANDRA FORTANET</a>
+    <div class="nav-links">
+      <a href="#sobre-mi">SOBRE MI</a>
+      <a href="#trajectoria">TRAJECTÒRIA</a>
+      <a href="#ferramentes">LABORATORI D'IA</a>
+      <a href="#prompts">PROMPTS</a>
+      <a href="#debat">DEBAT</a>
+      <a href="#formacio">FORMACIONS</a>
+      <a href="#recerca">RECERCA</a>
+      <a href="#consultoria">CONSULTORIA</a>
+      <a href="#contacte">CONTACTE</a>
+    </div>
+  </nav>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <h1>Hola, soc <span class="hl">Sandra</span></h1>
+        <p>Soc professora d'Educació Secundària Obligatòria, especialitzada en l'ensenyament de la llengua i la literatura, tant en valencià com en castellà. Entenc l'educació com una oportunitat per a despertar la curiositat, desenvolupar el pensament crític i ajudar cada alumne a descobrir la seua pròpia veu.</p>
+        <div class="roles">
+          <span class="role">PROFESSORA D'ESO</span>
+          <span class="role">FORMADORA EN IA</span>
+          <span class="role">VALENCIÀ NORMATIU AVL</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <svg width="300" height="270" viewBox="0 0 300 270" xmlns="http://www.w3.org/2000/svg" role="img">
+          <title>Full d'aula amb línies de text subratllades amb marcador i un bolígraf blau</title>
+          <rect x="26" y="18" width="216" height="234" rx="10" fill="#FFFFFF" stroke="#DEDCD4"/>
+          <rect x="50" y="46" width="120" height="12" rx="6" fill="#1E2126" opacity="0.85"/>
+          <rect x="50" y="78" width="168" height="9" rx="4.5" fill="#C9C7BE"/>
+          <rect x="50" y="98" width="150" height="9" rx="4.5" fill="#C9C7BE"/>
+          <rect x="46" y="116" width="130" height="15" rx="4" fill="#FFE45C"/>
+          <rect x="50" y="119" width="122" height="9" rx="4.5" fill="#8A8880"/>
+          <rect x="50" y="140" width="168" height="9" rx="4.5" fill="#C9C7BE"/>
+          <rect x="50" y="160" width="96" height="9" rx="4.5" fill="#C9C7BE"/>
+          <rect x="46" y="178" width="158" height="15" rx="4" fill="#FFE45C"/>
+          <rect x="50" y="181" width="150" height="9" rx="4.5" fill="#8A8880"/>
+          <rect x="50" y="202" width="140" height="9" rx="4.5" fill="#C9C7BE"/>
+          <circle cx="196" cy="164" r="22" fill="none" stroke="#C6392C" stroke-width="3" transform="rotate(-8 196 164)"/>
+          <g transform="rotate(32 236 148)">
+            <rect x="228" y="70" width="16" height="130" rx="7" fill="#2743C7"/>
+            <rect x="228" y="188" width="16" height="16" fill="#1D33A0"/>
+            <path d="M228 204 L244 204 L236 226 Z" fill="#1D33A0"/>
+            <circle cx="236" cy="222" r="2.6" fill="#1E2126"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="quoteband">
+  <div class="wrap">
+    <blockquote>«La intel·ligència artificial no substitueix el docent; <span class="hl">amplifica</span> la seua capacitat per a inspirar, crear i transformar l'aprenentatge.»</blockquote>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section id="sobre-mi">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Sobre mi</h2></div>
+    <div class="about-grid">
+      <div class="photo">
+        <!-- FOTO: posa un fitxer anomenat sandra.jpg en la mateixa carpeta i apareixerà ací automàticament -->
+        <img src="sandra.jpg" alt="Sandra Fortanet, professora i formadora" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback" style="display:none">S</div>
+      </div>
+    <div class="about">
+      <p>Al llarg de la meua trajectòria professional he combinat la meua passió per les llengües amb un ferm compromís amb la innovació educativa. Dissenye situacions d'aprenentatge creatives, projectes interdisciplinaris i experiències que situen l'alumnat en el centre del procés educatiu, fent-lo protagonista del seu aprenentatge.</p>
+      <p>M'apassiona especialment la didàctica de l'oratòria i el debat acadèmic, ja que estic convençuda que aprendre a expressar-se, argumentar i escoltar és essencial per a formar ciutadans crítics, reflexius i compromesos amb la societat.</p>
+      <p>A més, soc formadora de professorat en l'àmbit de la intel·ligència artificial aplicada a l'educació. Investigue i compartisc maneres d'integrar la tecnologia de manera ètica, creativa i significativa per a enriquir els processos d'ensenyament i aprenentatge.</p>
+      <p>Aquest espai naix amb la voluntat de compartir recursos, idees i experiències que inspiren altres docents i que demostren que és possible construir una educació innovadora, humana i transformadora. Perquè educar no és només transmetre coneixements: és <span class="hl">acompanyar, inspirar i ajudar a créixer</span>.</p>
+    </div>
+    </div>
+    <div class="far">
+      <span class="tag">El meu far en IAg</span>
+      <h3><a href="https://eboixader.es/" target="_blank" rel="noopener">Ernesto Boixader</a></h3>
+      <p>Si hui la intel·ligència artificial forma part de la meua identitat professional, és en gran mesura gràcies a Ernesto Boixader. D'ell he aprés pràcticament tot el que sé sobre IA aplicada a l'educació: no només les eines i les seues possibilitats, sinó també la necessitat d'utilitzar-les amb criteri, sentit pedagògic i una mirada profundament humana.</p>
+      <p>Més enllà dels coneixements, Ernesto ha confiat en mi des del primer moment. Ha sabut veure possibilitats on jo encara tenia dubtes i m'ha animat a créixer, investigar, crear i compartir. La seua confiança ha sigut un motor i el seu acompanyament, una inspiració constant.</p>
+      <p>Per això, més que un referent, és el meu <span class="hl">far</span> en el món de la intel·ligència artificial generativa: la persona que m'ha guiat en aquest camí i que m'ha ensenyat que la innovació educativa només té sentit quan naix de la generositat, la col·laboració i el desig de fer créixer els altres.</p>
+    </div>
+  </section>
+
+  <section id="trajectoria">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Formadora i ponent</h2></div>
+    <p class="sec-desc">Forme professorat en intel·ligència artificial educativa per al CEFIRE, universitats, patronals educatives i projectes europeus, sempre des de l'ús ètic, responsable i amb sentit pedagògic.</p>
+    <div class="stats">
+      <div class="stat"><b>+500</b><span>Docents formats</span></div>
+      <div class="stat"><b>13</b><span>Centres acompanyats (PAF · CEFIRE i FECEVAL)</span></div>
+      <div class="stat"><b>4</b><span>Cursos CEFIRE impartits o tutoritzats</span></div>
+      <div class="stat"><b>7</b><span>Ponències en jornades i congressos</span></div>
+    </div>
+    <div class="ponent-grid">
+      <div class="txt">
+        <p>Com a formadora del Programa d'Actualització de Formació (PAF) del CEFIRE, acompanye claustres d'Infantil, Primària i Secundària de tota la província en l'ús ètic i responsable de la IA. He impartit o tutoritzat cursos del CEFIRE com <em>Comboia't amb la IA: transforma la teua aula d'idiomes</em>, <em>IA en Educació Primària</em>, <em>IA en Educació Infantil</em> i <em>Habilitats socials a través de la IA</em>, i soc formadora de l'Observatori d'Intel·ligència Artificial (OIA) i del projecte europeu Erasmus+ PRAISE, on forme docents europeus en competència digital, IA educativa, programació i robòtica.</p>
+        <p>En l'àmbit universitari, soc formadora de la microcredencial <em>IA i tecnologies digitals per a l'ensenyament i l'aprenentatge de llengües</em> de la Universitat de València, col·laboradora del Màster de Professorat de Secundària de Florida Universitària i col·laboradora en projectes d'investigació de la UV sobre IA i competència comunicativa. He sigut ponent, entre altres, en les Jornades d'Innovació i Experimentació amb IA de la Universitat de València, en les Jornades sobre IA i Educació de Vila-real (UNED), en les Jornades de Directors de Secundària ADIES-PV i en el 48é Congrés de FEDADI, a més de les Jornades d'Oratòria i Lliga de Debat del CEFIRE d'Alcoi.</p>
+      </div>
+      <div class="photo-wide">
+        <!-- FOTO DE PONÈNCIA: posa un fitxer anomenat ponencia.jpg en la mateixa carpeta i apareixerà ací -->
+        <img src="ponencia.jpg" alt="Sessió de formació en IA per a professorat impartida per Sandra Fortanet" onerror="this.parentElement.style.display='none'">
+      </div>
+    </div>
+    <div class="creds">
+      <span class="cred">Lingüista externa d'À Punt</span>
+      <span class="cred">Examinadora i formadora JQCV · CIEACOVA</span>
+      <span class="cred">Ambaixadora Brisk i Mizou</span>
+      <span class="cred">Membre de l'Observatori IA</span>
+    </div>
+  </section>
+
+  <section id="prompts">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Prompts i recursos per al professorat</h2></div>
+    <p class="sec-desc">Biblioteques de prompts pensades perquè crear material didàctic amb IA coste minuts i tinga criteri pedagògic.</p>
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Comprensió lectora</span>
+        <h3>Prompts de Lectura<span class="new">NOU</span></h3>
+        <p>Huit generadors basats en la ciència de la lectura: descodificació, cohesió, inferència, multinivell, metacognició, lectura crítica i avaluació estil PISA. Bilingüe valencià/castellà.</p>
+        <a class='go' href='/prompts-lectura'>OBRI LA FERRAMENTA →</a>
+      </article>
+      <article class="card">
+        <span class="tag">Biblioteca general · Accés amb codi</span>
+        <h3>Prompts d'Aula</h3>
+        <p>Biblioteca bilingüe de prompts per a docents amb generador integrat amb IA: programació LOMLOE, materials, DUA, rúbriques, feedback, avaluació, burocràcia i tutoria.</p>
+        <!-- EDITA'M: enllaç real de Prompts d'Aula quan estiga allotjada -->
+        <a class="go pending" href="#">ACCÉS PER A PARTICIPANTS DE LES FORMACIONS</a>
+      </article>
+      <article class="card">
+        <span class="tag">Directori de ferramentes</span>
+        <h3>La Brúixola IA</h3>
+        <p>Directori curat de ferramentes d'IA per a educació: models, imatge, vídeo, àudio, assistents docents i més, amb recomanacions per a l'aula.</p>
+        <a class="go" href="https://sanforbelialenguas.lovable.app/">OBRI EL DIRECTORI →</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="debat">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Debat i oratòria</h2></div>
+    <div class="featured">
+      <div>
+        <span class="tag">RECURS PROPI · EXPRESSIÓ ORAL</span>
+        <h3>Portal de Debat i Oratòria</h3>
+        <p>Recursos, activitats i materials per a treballar el debat acadèmic, l'argumentació i l'expressió oral a Secundària: perquè aprendre a expressar-se, argumentar i escoltar forma ciutadans crítics i reflexius.</p>
+      </div>
+      <a href="https://sites.google.com/fundacionflors.es/debat-i-oratoria/p%C3%A0gina-principal" target="_blank" rel="noopener">ENTRA AL PORTAL →</a>
+    </div>
+  </section>
+
+  <section id="ferramentes">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Laboratori d'IA</h2></div>
+    <p class="sec-desc">Aplicacions, jocs i experiències interactives creades amb IA per a treballar la llengua amb l'alumnat: de la conjugació gamificada als simuladors i escape rooms digitals.</p>
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Morfologia verbal · Castellà</span>
+        <h3>Conjugación Espacial</h3>
+        <p>Joc de conjugació verbal amb anàlisi morfològica, ambientació espacial i sistema de puntuació per a repassar jugant.</p>
+        <!-- EDITA'M: enllaç real (Google Sites o Netlify) -->
+        <a class="go pending" href="#">ENLLAÇ PENDENT</a>
+      </article>
+      <article class="card">
+        <span class="tag">Avaluació · Educació</span>
+        <h3>Avaluador de rúbriques</h3>
+        <p>Sistema d'autoavaluació, coavaluació i heteroavaluació per a centres educatius. L'alumnat s'identifica només per número —mai amb nom i cognoms— i totes les dades es queden dins del domini de Workspace del centre. Inclou informe individual, comparació entre l'autoavaluació i l'avaluació docent, i retroacció generada a partir dels descriptors de la rúbrica.</p>
+        <a class="go" href="https://avaluador-rubriques.netlify.app/">OBRI LA FERRAMENTA →</a>
+      </article>
+      <article class="card">
+        <span class="tag">Gestió d'aula · Oralitat</span>
+        <h3>Tria i Temps</h3>
+        <p>Eina d'aula per a triar alumnat a l'atzar sense repetir —per número o per nom— i controlar el temps de les intervencions orals amb un cronòmetre que avisa amb color. Funciona en el mòbil i projectada, sense connexió i sense guardar cap dada.</p>
+        <a class="go" href="https://sanforbel.github.io/tria-i-temps/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+      </article>
+      <article class="card">
+        <span class="tag">Avaluació · Versió oberta</span>
+        <h3>Avaluador de rúbriques obert</h3>
+        <p>La mateixa idea que l'avaluador del centre, però sense comptes ni permisos: qualsevol docent pot obrir l'enllaç i usar-lo. Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat per número, càlcul de la nota ponderada i descàrrega dels resultats en full de càlcul. Admet qualsevol rúbrica en format JSON.</p>
+        <a class="go" href="https://sanforbel.github.io/avaluador-rubriques/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+      </article>
+      <!-- Per a afegir una ferramenta nova, copia un bloc <article class="card"> sencer ací -->
+    </div>
+  </section>
+
+  <section id="formacio">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Formacions</h2></div>
+    <p class="sec-desc">Les meues principals línies de formació són:</p>
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Línia 1</span>
+        <h3>Intel·ligència Artificial aplicada a l'educació</h3>
+        <p>Eines, prompting, creació de materials, personalització de l'aprenentatge, ètica i ús responsable de la IA.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Línia 2</span>
+        <h3>Didàctica de les llengües</h3>
+        <p>Metodologies actives per a l'ensenyament del valencià i del castellà, desenvolupament de la competència comunicativa i disseny de situacions d'aprenentatge.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Línia 3</span>
+        <h3>Oratòria i debat acadèmic</h3>
+        <p>Estratègies per a potenciar l'expressió oral, l'argumentació, el pensament crític i les habilitats comunicatives de l'alumnat.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Línia 4</span>
+        <h3>Innovació educativa i competència digital docent</h3>
+        <p>Aprenentatge basat en projectes, gamificació, eines digitals i disseny d'experiències d'aprenentatge motivadores.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Línia 5</span>
+        <h3>Creació de recursos educatius digitals</h3>
+        <p>Ús de plataformes i aplicacions per a elaborar materials interactius, activitats competencials i propostes d'avaluació.</p>
+      </article>
+    </div>
+    <div class="about" style="padding-bottom:26px;margin-top:-6px">
+      <p>Les meues formacions es caracteritzen per combinar fonamentació pedagògica, exemples reals i recursos pràctics que permeten al professorat transformar les seues aules de manera <span class="hl">creativa, inclusiva i significativa</span>.</p>
+    </div>
+  </section>
+
+  <section id="recerca">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Recerca i reflexió</h2></div>
+    <p class="sec-desc">M'interessa investigar la intersecció entre la tecnologia i l'aprenentatge de les llengües, amb tres línies de treball:</p>
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Línia de recerca</span>
+        <h3>IA i competència lingüística</h3>
+        <p>Com poden els models de llenguatge millorar la comprensió lectora i l'expressió escrita sense substituir el processament profund que constitueix l'aprenentatge.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Línia de recerca</span>
+        <h3>IA, oratòria i pensament crític</h3>
+        <p>El paper de la IA en el desenvolupament de l'argumentació, el debat acadèmic i la capacitat de l'alumnat per a avaluar críticament la informació.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Línia de recerca</span>
+        <h3>Tecnologia i humanisme educatiu</h3>
+        <p>Com integrar la innovació tecnològica des d'una mirada profundament humana, on la ferramenta amplifica la relació educativa en lloc de reemplaçar-la.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="consultoria">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Consultoria per a centres</h2></div>
+    <div class="consult">
+      <div>
+        <span class="tag">AMB ERNESTO BOIXADER</span>
+        <h3>Pla d'Implantació de la IA</h3>
+        <p>Acompanyament integral per a centres educatius: diagnòstic inicial gratuït, pla d'implantació i formació contínua amb visites presencials mensuals.</p>
+      </div>
+      
+      <a href="mailto:sandra@fundacionflors.es?subject=Pla%20d%27Implantaci%C3%B3%20de%20la%20IA">DEMANA INFORMACIÓ</a>
+    </div>
+  </section>
+
+  <section id="contacte">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Contacte</h2></div>
+    <div class="contact">
+      <p>Vols una formació al teu centre, tens dubtes sobre alguna ferramenta o simplement vols compartir idees i experiències? Escriu-me i en parlem.</p>
+      <!-- EDITA'M: substitueix sandra@fundacionflors.es pel teu correu real (apareix 3 vegades en esta pàgina) -->
+      <a class="mail" href="mailto:sandra@fundacionflors.es">sandra@fundacionflors.es</a>
+    </div>
+  </section>
+
+</main>
+
+<div class="filosofia">
+  <div class="wrap">
+    <span class="tag">LA MEUA FILOSOFIA EDUCATIVA</span>
+    <p>Crec en una educació que combina paraules i tecnologia, rigor i creativitat, innovació i humanitat. Perquè educar és ajudar les persones a trobar la seua veu i oferir-los les eines per a <span class="hl">transformar el món</span>.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <!-- EDITA'M: nom i any -->
+    <span>SANDRA FORTANET · LLENGUA, LECTURA I IA · 2026</span>
+    <span>FET AMB IA, REVISAT AMB CRITERI</span>
+  </div>
+</footer>
+
+</body>
+</html>
