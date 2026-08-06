@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts d'Aula · Sandra Fortanet</title>
+<meta name="description" content="Biblioteca bilingüe de prompts per a docents amb generador integrat: programació LOMLOE, materials, DUA, rúbriques, feedback, avaluació, burocràcia i tutoria.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     PROMPTS D'AULA — COM MANTINDRE ESTA PÀGINA
+     · CODI D'ACCÉS: busca la línia  const CODI_ACCES = "..."
+       i canvia'l pel codi que vulgues donar als participants.
+     · Per a afegir un generador nou: copia un bloc dins de DADES
+       (una entrada { id, titol, ... }) i canvia'n el text.
+     · Tota la pàgina és un sol fitxer: per a publicar-la, arrossega'l
+       a Netlify (projecte nou). Ha de dir-se index.html.
+     ============================================================ -->
+
+<style>
+  :root{
+    --paper:#F6F5F1; --card:#FFFFFF; --ink:#1E2126; --muted:#6D6F76;
+    --line:#DEDCD4; --blue:#2743C7; --blue-dark:#1D33A0;
+    --marker:#FFE45C; --marker-soft:#FFF3B8; --red:#C6392C; --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--marker)}
+  a{color:var(--blue)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+  .mono{font-family:'IBM Plex Mono',monospace}
+
+  /* ---------- Gate (codi d'accés) ---------- */
+  .gate{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:24px;z-index:50}
+  .gate-box{max-width:440px;width:100%;text-align:center}
+  .gate .kick{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--blue);text-transform:uppercase}
+  .gate h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(30px,6vw,44px);line-height:1.05;margin:10px 0 6px}
+  .gate h1 .hl{background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);padding:0 .06em}
+  .gate p{color:var(--muted);margin:0 auto 22px;max-width:360px;font-size:14.5px}
+  .gate .field{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .gate input{flex:1;min-width:180px;font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.06em;text-align:center;padding:14px 16px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink)}
+  .gate input:focus{outline:none;border-color:var(--ink)}
+  .gate button{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;background:var(--blue);color:#fff;border:none;border-radius:999px;padding:14px 24px;cursor:pointer}
+  .gate button:hover{background:var(--blue-dark)}
+  .gate .err{color:var(--red);font-size:13px;margin-top:14px;min-height:18px}
+  .gate .foot{margin-top:26px;font-size:12px;color:var(--muted)}
+  .gate .foot a{color:var(--muted)}
+
+  /* ---------- Top bar ---------- */
+  .topbar{position:sticky;top:0;background:rgba(246,245,241,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:20}
+  .topbar .row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;flex-wrap:wrap}
+  .topbar .brand{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-decoration:none;color:var(--ink)}
+  .topbar .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .backlink{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:7px 10px;border-radius:999px}
+  .backlink:hover{background:#EFEDE6;color:var(--ink)}
+  .lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card)}
+  .lang button{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border:none;background:transparent;color:var(--muted);padding:7px 12px;cursor:pointer}
+  .lang button.on{background:var(--ink);color:var(--paper)}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:44px 0 26px;border-bottom:2px solid var(--ink)}
+  .hero .kick{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
+  .hero h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(30px,5.5vw,50px);line-height:1.04;margin:8px 0 12px;max-width:820px}
+  .hero h1 .hl{background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);padding:0 .06em}
+  .hero p{color:var(--muted);max-width:640px;font-size:16px}
+
+  /* ---------- Category nav ---------- */
+  .catnav{position:sticky;top:57px;background:rgba(246,245,241,.92);backdrop-filter:blur(6px);z-index:15;border-bottom:1px solid var(--line)}
+  .catnav .row{display:flex;gap:6px;overflow-x:auto;padding:12px 0;scrollbar-width:thin}
+  .catnav button{white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border:1px solid var(--line);background:var(--card);color:var(--muted);padding:8px 13px;border-radius:999px;cursor:pointer}
+  .catnav button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .catnav button:hover{border-color:var(--ink);color:var(--ink)}
+  .catnav button.on:hover{color:var(--paper)}
+
+  /* ---------- Category header ---------- */
+  .cat-head{padding:34px 0 6px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .cat-head .num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--blue);letter-spacing:.1em}
+  .cat-head h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(22px,3.4vw,30px)}
+  .cat-desc{color:var(--muted);max-width:640px;margin:2px 0 18px;font-size:14.5px}
+
+  /* ---------- Generator card ---------- */
+  .gens{display:grid;gap:18px;padding-bottom:30px}
+  .gen{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 20px}
+  .gen .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+  .gen h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:20px;line-height:1.2;margin:6px 0 4px}
+  .gen .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px}
+  .f label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+  .f input,.f select,.f textarea{width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+  .f textarea{min-height:74px;resize:vertical;line-height:1.5}
+  .f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--blue)}
+  .f.wide{grid-column:1/-1}
+
+  .preview{background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:14px 14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.6;color:var(--ink);white-space:pre-wrap;max-height:280px;overflow:auto}
+  .preview .ph{color:var(--red)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border-radius:999px;padding:11px 16px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{background:#000}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:#EFEDE6}
+  .btn.blue{background:var(--blue);border-color:var(--blue)}
+  .btn.blue:hover{background:var(--blue-dark)}
+  .btn.copied{background:var(--marker);border-color:var(--marker);color:var(--ink)}
+
+  /* ---------- Biblioteca ---------- */
+  .block-h{display:flex;align-items:baseline;gap:10px;margin:26px 0 4px;flex-wrap:wrap}
+  .block-h h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:21px}
+  .block-h .count{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;background:var(--marker);border-radius:999px;padding:3px 10px;color:var(--ink)}
+  .block-sub{color:var(--muted);font-size:13.5px;margin:0 0 14px}
+  .lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding-bottom:30px}
+  .lp{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s ease}
+  .lp:hover{border-color:var(--ink)}
+  .lp h4{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:16.5px;line-height:1.25}
+  .lp .ptxt{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;color:var(--ink);background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:11px 12px;white-space:pre-wrap;flex:1}
+  .lp .ptxt .ph{background:var(--marker-soft);border-radius:3px;padding:0 3px;color:var(--ink)}
+  .lp .btn{align-self:flex-start;margin-top:2px}
+
+  footer{border-top:2px solid var(--ink);margin-top:20px;padding:24px 0 46px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  footer a{color:var(--muted)}
+  .hidden{display:none!important}
+  @media (max-width:560px){.gen{padding:18px 16px}}
+</style>
+</head>
+<body>
+
+<!-- ====================== PANTALLA DE CODI ====================== -->
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div class="kick" data-t="gate_kick">Accés per a participants de les formacions</div>
+    <h1><span data-t="gate_h1a">Prompts</span> <span class="hl" data-t="gate_h1b">d'Aula</span></h1>
+    <p data-t="gate_p">Introdueix el codi que vas rebre a la formació per a entrar a la biblioteca de prompts.</p>
+    <form class="field" id="gateForm" autocomplete="off">
+      <input id="codeInput" type="text" placeholder="CODI D'ACCÉS" aria-label="Codi d'accés" spellcheck="false">
+      <button type="submit" data-t="gate_btn">ENTRAR</button>
+    </form>
+    <div class="err" id="gateErr"></div>
+    <div class="foot" data-t="gate_foot">Encara no tens codi? Escriu a <a href="mailto:sandra@fundacionflors.es">sandra@fundacionflors.es</a></div>
+  </div>
+</div>
+
+<!-- ====================== APLICACIÓ ====================== -->
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="wrap row">
+      <a class="brand" href="https://sandrafortanet.netlify.app">SANDRA FORTANET</a>
+      <div class="tools">
+        <a class="backlink" href="https://sandrafortanet.netlify.app">← <span data-t="back">Tornar a la web</span></a>
+        <div class="lang" role="group" aria-label="Idioma">
+          <button id="langCa" class="on" onclick="setLang('ca')">VAL</button>
+          <button id="langEs" onclick="setLang('es')">CAST</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="kick" data-t="hero_kick">Biblioteca general · Generador integrat</div>
+      <h1><span data-t="hero_h1a">Prompts</span> <span class="hl" data-t="hero_h1b">d'Aula</span></h1>
+      <p data-t="hero_p">Tria un generador, ompli els camps i el web et muntarà el prompt llest per a copiar o obrir directament a ChatGPT o Claude. Bilingüe valencià / castellà.</p>
+    </div>
+  </header>
+
+  <nav class="catnav"><div class="wrap row" id="catNav"></div></nav>
+
+  <main class="wrap" id="main"></main>
+
+  <footer>
+    <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%">
+      <span data-t="foot_a">Prompts d'Aula · Sandra Fortanet · 2026</span>
+      <span data-t="foot_b">Fet amb IA, revisat amb criteri</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   1) CODI D'ACCÉS  —  canvia'l ací quan vulgues
+   ============================================================ */
+const CODI_ACCES = "AULAIA2026";
+
+/* ============================================================
+   2) TEXTOS DE LA INTERFÍCIE (bilingüe)
+   ============================================================ */
+const UI = {
+  gate_kick:{ca:"Accés per a participants de les formacions",es:"Acceso para participantes de las formaciones"},
+  gate_h1a:{ca:"Prompts",es:"Prompts"},
+  gate_h1b:{ca:"d'Aula",es:"de Aula"},
+  gate_p:{ca:"Introdueix el codi que vas rebre a la formació per a entrar a la biblioteca de prompts.",es:"Introduce el código que recibiste en la formación para entrar a la biblioteca de prompts."},
+  gate_btn:{ca:"ENTRAR",es:"ENTRAR"},
+  gate_foot:{ca:'Encara no tens codi? Escriu a ',es:'¿Aún no tienes código? Escribe a '},
+  back:{ca:"Tornar a la web",es:"Volver a la web"},
+  hero_kick:{ca:"Biblioteca general · Generador integrat",es:"Biblioteca general · Generador integrado"},
+  hero_h1a:{ca:"Prompts",es:"Prompts"},
+  hero_h1b:{ca:"d'Aula",es:"de Aula"},
+  hero_p:{ca:"Tria un generador i ompli els camps, o agafa un prompt de la biblioteca i adapta'l: copia'l amb un clic i apega'l en la teua IA preferida. Bilingüe valencià / castellà.",es:"Elige un generador y rellena los campos, o toma un prompt de la biblioteca y adáptalo: cópialo con un clic y pégalo en tu IA preferida. Bilingüe valenciano / castellano."},
+  foot_a:{ca:"Prompts d'Aula · Sandra Fortanet · 2026",es:"Prompts de Aula · Sandra Fortanet · 2026"},
+  foot_b:{ca:"Fet amb IA, revisat amb criteri",es:"Hecho con IA, revisado con criterio"},
+  copy:{ca:"Copia el prompt",es:"Copia el prompt"},
+  copied:{ca:"Copiat!",es:"¡Copiado!"},
+  clear:{ca:"Buidar",es:"Vaciar"},
+  gens_h:{ca:"Generadors",es:"Generadores"},
+  gens_sub:{ca:"Ompli els camps i el prompt es munta sol.",es:"Rellena los campos y el prompt se monta solo."},
+  lib_h:{ca:"Biblioteca de prompts",es:"Biblioteca de prompts"},
+  lib_sub:{ca:"Prompts llestos per a copiar. Substitueix els [claudàtors] pel teu contingut.",es:"Prompts listos para copiar. Sustituye los [corchetes] por tu contenido."}
+};
+
+/* ============================================================
+   3) DADES: categories i generadors
+   Cada camp usa {{id}} dins de la plantilla (tmpl).
+   ============================================================ */
+const NIVELLS = [
+  {ca:"1r d'ESO",es:"1º de ESO"},{ca:"2n d'ESO",es:"2º de ESO"},
+  {ca:"3r d'ESO",es:"3º de ESO"},{ca:"4t d'ESO",es:"4º de ESO"},
+  {ca:"1r de Batxillerat",es:"1º de Bachillerato"},{ca:"2n de Batxillerat",es:"2º de Bachillerato"},
+  {ca:"FP Bàsica",es:"FP Básica"}
+];
+
+const DADES = [
+  {
+    id:"lomloe", num:"01",
+    name:{ca:"Programació LOMLOE",es:"Programación LOMLOE"},
+    desc:{ca:"Situacions d'aprenentatge i concreció curricular alineades amb el currículum valencià.",es:"Situaciones de aprendizaje y concreción curricular alineadas con el currículo valenciano."},
+    prompts:[
+      {
+        tag:{ca:"Situació d'aprenentatge",es:"Situación de aprendizaje"},
+        titol:{ca:"Situació d'aprenentatge completa",es:"Situación de aprendizaje completa"},
+        sub:{ca:"Genera una SA sencera amb competències, sabers, seqüència d'activitats i avaluació.",es:"Genera una SA completa con competencias, saberes, secuencia de actividades y evaluación."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"materia",label:{ca:"Matèria",es:"Materia"},type:"text",ph:{ca:"ex. Valencià, Llengua castellana...",es:"ej. Valenciano, Lengua castellana..."}},
+          {id:"tema",label:{ca:"Tema",es:"Tema"},type:"text",ph:{ca:"ex. la notícia periodística",es:"ej. la noticia periodística"}},
+          {id:"sessions",label:{ca:"Nre. de sessions",es:"Nº de sesiones"},type:"text",ph:{ca:"ex. 6",es:"ej. 6"}},
+          {id:"producte",label:{ca:"Producte final",es:"Producto final"},type:"text",ph:{ca:"ex. un telenotícies de classe",es:"ej. un telediario de clase"}}
+        ],
+        tmpl:{
+          ca:`Actua com a expert en didàctica i currículum LOMLOE de la Comunitat Valenciana. Dissenya una SITUACIÓ D'APRENENTATGE completa per a {{nivell}} de la matèria {{materia}}, sobre el tema «{{tema}}», amb una durada de {{sessions}} sessions i este producte final: {{producte}}.
+
+Inclou i estructura en taules clares:
+1. Títol motivador i justificació (connexió amb reptes del segle XXI o ODS).
+2. Competències específiques i criteris d'avaluació implicats.
+3. Sabers bàsics.
+4. Descriptors del perfil d'eixida.
+5. Seqüència d'activitats (inici, desenvolupament i tancament) amb metodologies actives.
+6. Mesures DUA i d'atenció a la diversitat.
+7. Instruments i moments d'avaluació, amb una rúbrica de l'avaluació del producte final.
+
+Escriu-ho en valencià normatiu.`,
+          es:`Actúa como experto en didáctica y currículo LOMLOE. Diseña una SITUACIÓN DE APRENDIZAJE completa para {{nivell}} de la materia {{materia}}, sobre el tema «{{tema}}», con una duración de {{sessions}} sesiones y este producto final: {{producte}}.
+
+Incluye y estructura en tablas claras:
+1. Título motivador y justificación (conexión con retos del siglo XXI u ODS).
+2. Competencias específicas y criterios de evaluación implicados.
+3. Saberes básicos.
+4. Descriptores del perfil de salida.
+5. Secuencia de actividades (inicio, desarrollo y cierre) con metodologías activas.
+6. Medidas DUA y de atención a la diversidad.
+7. Instrumentos y momentos de evaluación, con una rúbrica de evaluación del producto final.
+
+Escríbelo en castellano.`
+        }
+      },
+      {
+        tag:{ca:"Concreció curricular",es:"Concreción curricular"},
+        titol:{ca:"Desglossament de criteris i sabers",es:"Desglose de criterios y saberes"},
+        sub:{ca:"Relaciona competències, criteris, sabers i indicadors graduats per a una unitat.",es:"Relaciona competencias, criterios, saberes e indicadores graduados para una unidad."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"materia",label:{ca:"Matèria",es:"Materia"},type:"text",ph:{ca:"ex. Llengua castellana",es:"ej. Lengua castellana"}},
+          {id:"unitat",label:{ca:"Unitat / tema",es:"Unidad / tema"},type:"text",ph:{ca:"ex. el text argumentatiu",es:"ej. el texto argumentativo"}}
+        ],
+        tmpl:{
+          ca:`Actua com a assessor LOMLOE. Per a {{nivell}} de {{materia}}, unitat «{{unitat}}», elabora una taula que relacione: competències específiques, criteris d'avaluació, sabers bàsics i indicadors d'assoliment graduats en 4 nivells (insuficient, suficient, notable i excel·lent). Afig una segona taula amb propostes d'instruments d'avaluació per a cada criteri. En valencià normatiu.`,
+          es:`Actúa como asesor LOMLOE. Para {{nivell}} de {{materia}}, unidad «{{unitat}}», elabora una tabla que relacione: competencias específicas, criterios de evaluación, saberes básicos e indicadores de logro graduados en 4 niveles (insuficiente, suficiente, notable y excelente). Añade una segunda tabla con propuestas de instrumentos de evaluación para cada criterio. En castellano.`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"materials", num:"02",
+    name:{ca:"Materials",es:"Materiales"},
+    desc:{ca:"Activitats a mida i adaptació de textos i lectures per a l'aula.",es:"Actividades a medida y adaptación de textos y lecturas para el aula."},
+    prompts:[
+      {
+        tag:{ca:"Bateria d'activitats",es:"Batería de actividades"},
+        titol:{ca:"Activitats graduades",es:"Actividades graduadas"},
+        sub:{ca:"Un conjunt d'activitats sobre un tema, ordenades per dificultat i amb solucionari.",es:"Un conjunto de actividades sobre un tema, ordenadas por dificultad y con solucionario."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"materia",label:{ca:"Matèria",es:"Materia"},type:"text",ph:{ca:"ex. Valencià",es:"ej. Valenciano"}},
+          {id:"tema",label:{ca:"Tema / contingut",es:"Tema / contenido"},type:"text",ph:{ca:"ex. els connectors textuals",es:"ej. los conectores textuales"}},
+          {id:"tipus",label:{ca:"Tipus d'activitat",es:"Tipo de actividad"},type:"select",options:[{ca:"comprensió lectora",es:"comprensión lectora"},{ca:"expressió escrita",es:"expresión escrita"},{ca:"vocabulari",es:"vocabulario"},{ca:"gramàtica",es:"gramática"},{ca:"expressió oral",es:"expresión oral"},{ca:"gamificades",es:"gamificadas"}]},
+          {id:"quantitat",label:{ca:"Quantes",es:"Cuántas"},type:"text",ph:{ca:"ex. 8",es:"ej. 8"}}
+        ],
+        tmpl:{
+          ca:`Crea {{quantitat}} activitats de {{tipus}} per a {{nivell}} de {{materia}} sobre «{{tema}}». Gradua-les de menor a major dificultat. Per a cada activitat indica: enunciat clar, temps estimat i solució. Al final, afig una activitat d'ampliació i una de reforç. En valencià normatiu.`,
+          es:`Crea {{quantitat}} actividades de {{tipus}} para {{nivell}} de {{materia}} sobre «{{tema}}». Gradúalas de menor a mayor dificultad. Para cada actividad indica: enunciado claro, tiempo estimado y solución. Al final, añade una actividad de ampliación y una de refuerzo. En castellano.`
+        }
+      },
+      {
+        tag:{ca:"Adaptar un text",es:"Adaptar un texto"},
+        titol:{ca:"Adaptació de textos i lectures",es:"Adaptación de textos y lecturas"},
+        sub:{ca:"Ajusta un text al nivell de l'alumnat i afig preguntes de comprensió.",es:"Ajusta un texto al nivel del alumnado y añade preguntas de comprensión."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"objectiu",label:{ca:"Objectiu",es:"Objetivo"},type:"select",options:[{ca:"simplificar-lo",es:"simplificarlo"},{ca:"enriquir-ne el vocabulari",es:"enriquecer su vocabulario"},{ca:"fer-lo més breu",es:"hacerlo más breve"},{ca:"adaptar-lo a lectura fàcil",es:"adaptarlo a lectura fácil"}]},
+          {id:"text",label:{ca:"Enganxa ací el text",es:"Pega aquí el texto"},type:"textarea",wide:true,ph:{ca:"Text original...",es:"Texto original..."}}
+        ],
+        tmpl:{
+          ca:`Adapta el text següent per a {{nivell}} amb l'objectiu de {{objectiu}}. Mantín el sentit original, ajusta la complexitat lèxica i sintàctica i respecta el registre. Després, afig 5 preguntes de comprensió (2 literals, 2 inferencials i 1 de valoració crítica) amb el solucionari. En valencià normatiu.
+
+TEXT:
+{{text}}`,
+          es:`Adapta el texto siguiente para {{nivell}} con el objetivo de {{objectiu}}. Mantén el sentido original, ajusta la complejidad léxica y sintáctica y respeta el registro. Después, añade 5 preguntas de comprensión (2 literales, 2 inferenciales y 1 de valoración crítica) con el solucionario. En castellano.
+
+TEXTO:
+{{text}}`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"dua", num:"03",
+    name:{ca:"DUA",es:"DUA"},
+    desc:{ca:"Disseny Universal per a l'Aprenentatge: elimina barreres i atén la diversitat.",es:"Diseño Universal para el Aprendizaje: elimina barreras y atiende la diversidad."},
+    prompts:[
+      {
+        tag:{ca:"Pautes DUA",es:"Pautas DUA"},
+        titol:{ca:"Revisió DUA d'una activitat",es:"Revisión DUA de una actividad"},
+        sub:{ca:"Analitza una activitat segons els 3 principis del DUA i proposa millores.",es:"Analiza una actividad según los 3 principios del DUA y propone mejoras."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"activitat",label:{ca:"Descriu l'activitat",es:"Describe la actividad"},type:"textarea",wide:true,ph:{ca:"ex. lectura en grup i qüestionari escrit...",es:"ej. lectura en grupo y cuestionario escrito..."}}
+        ],
+        tmpl:{
+          ca:`Actua com a expert en Disseny Universal per a l'Aprenentatge (DUA / CAST). Revisa esta activitat per a {{nivell}} i proposa millores concretes segons els 3 principis del DUA: múltiples formes d'implicació (el perquè), de representació (el què) i d'acció i expressió (el com). Identifica primer les barreres possibles i, per a cada una, dona una alternativa aplicable. Presenta-ho en una taula. En valencià normatiu.
+
+ACTIVITAT:
+{{activitat}}`,
+          es:`Actúa como experto en Diseño Universal para el Aprendizaje (DUA / CAST). Revisa esta actividad para {{nivell}} y propón mejoras concretas según los 3 principios del DUA: múltiples formas de implicación (el porqué), de representación (el qué) y de acción y expresión (el cómo). Identifica primero las barreras posibles y, para cada una, da una alternativa aplicable. Preséntalo en una tabla. En castellano.
+
+ACTIVIDAD:
+{{activitat}}`
+        }
+      },
+      {
+        tag:{ca:"Atenció a la diversitat",es:"Atención a la diversidad"},
+        titol:{ca:"Adaptacions per a un perfil concret",es:"Adaptaciones para un perfil concreto"},
+        sub:{ca:"Ajustos concrets d'una tasca per a un tipus de necessitat específica.",es:"Ajustes concretos de una tarea para un tipo de necesidad específica."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"perfil",label:{ca:"Perfil de l'alumne",es:"Perfil del alumno"},type:"select",options:[{ca:"TDAH",es:"TDAH"},{ca:"dislèxia",es:"dislexia"},{ca:"TEA (autisme)",es:"TEA (autismo)"},{ca:"altes capacitats",es:"altas capacidades"},{ca:"desconeixement de la llengua vehicular",es:"desconocimiento de la lengua vehicular"}]},
+          {id:"tasca",label:{ca:"Descriu la tasca",es:"Describe la tarea"},type:"textarea",wide:true,ph:{ca:"ex. comentari de text de 300 paraules...",es:"ej. comentario de texto de 300 palabras..."}}
+        ],
+        tmpl:{
+          ca:`Proposa adaptacions metodològiques (no significatives) d'esta tasca per a un alumne de {{nivell}} amb {{perfil}}. Inclou ajustos en tres blocs: presentació de la informació, forma de resposta i gestió del temps/entorn. Afig 2 materials o suports concrets que li facilitarien la tasca. Sigues pràctica i realista. En valencià normatiu.
+
+TASCA:
+{{tasca}}`,
+          es:`Propón adaptaciones metodológicas (no significativas) de esta tarea para un alumno de {{nivell}} con {{perfil}}. Incluye ajustes en tres bloques: presentación de la información, forma de respuesta y gestión del tiempo/entorno. Añade 2 materiales o apoyos concretos que le facilitarían la tarea. Sé práctica y realista. En castellano.
+
+TAREA:
+{{tasca}}`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"rubriques", num:"04",
+    name:{ca:"Rúbriques",es:"Rúbricas"},
+    desc:{ca:"Rúbriques analítiques clares, amb descriptors observables i puntuació.",es:"Rúbricas analíticas claras, con descriptores observables y puntuación."},
+    prompts:[
+      {
+        tag:{ca:"Rúbrica analítica",es:"Rúbrica analítica"},
+        titol:{ca:"Rúbrica per criteris",es:"Rúbrica por criterios"},
+        sub:{ca:"Munta una rúbrica en taula per a avaluar una tasca amb els criteris que indiques.",es:"Monta una rúbrica en tabla para evaluar una tarea con los criterios que indiques."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"tasca",label:{ca:"Tasca a avaluar",es:"Tarea a evaluar"},type:"text",ph:{ca:"ex. una exposició oral",es:"ej. una exposición oral"}},
+          {id:"criteris",label:{ca:"Criteris (separats per comes)",es:"Criterios (separados por comas)"},type:"text",wide:true,ph:{ca:"ex. contingut, organització, llengua, veu i mirada",es:"ej. contenido, organización, lengua, voz y mirada"}},
+          {id:"nivells",label:{ca:"Nivells d'assoliment",es:"Niveles de logro"},type:"select",options:[{ca:"4 nivells",es:"4 niveles"},{ca:"3 nivells",es:"3 niveles"},{ca:"5 nivells",es:"5 niveles"}]}
+        ],
+        tmpl:{
+          ca:`Crea una rúbrica analítica en format de taula per a avaluar «{{tasca}}» en {{nivell}}. Criteris (files): {{criteris}}. Usa {{nivells}} d'assoliment (columnes) amb descriptors observables, concrets i redactats en positiu. Assigna una puntuació a cada nivell i afig una fila final de puntuació total. En valencià normatiu.`,
+          es:`Crea una rúbrica analítica en formato de tabla para evaluar «{{tasca}}» en {{nivell}}. Criterios (filas): {{criteris}}. Usa {{nivells}} de logro (columnas) con descriptores observables, concretos y redactados en positivo. Asigna una puntuación a cada nivel y añade una fila final de puntuación total. En castellano.`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"feedback", num:"05",
+    name:{ca:"Feedback",es:"Feedback"},
+    desc:{ca:"Retroacció individualitzada, concreta i accionable per a l'alumnat.",es:"Retroalimentación individualizada, concreta y accionable para el alumnado."},
+    prompts:[
+      {
+        tag:{ca:"Retroacció",es:"Retroalimentación"},
+        titol:{ca:"Feedback d'un treball",es:"Feedback de un trabajo"},
+        sub:{ca:"Comentari constructiu amb punts forts, millores i un pas següent.",es:"Comentario constructivo con puntos fuertes, mejoras y un paso siguiente."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"tasca",label:{ca:"Sobre què és",es:"Sobre qué es"},type:"text",ph:{ca:"ex. una redacció argumentativa",es:"ej. una redacción argumentativa"}},
+          {id:"to",label:{ca:"To",es:"Tono"},type:"select",options:[{ca:"motivador",es:"motivador"},{ca:"equilibrat",es:"equilibrado"},{ca:"exigent però respectuós",es:"exigente pero respetuoso"}]},
+          {id:"treball",label:{ca:"Enganxa el treball de l'alumne",es:"Pega el trabajo del alumno"},type:"textarea",wide:true,ph:{ca:"Text de l'alumne...",es:"Texto del alumno..."}}
+        ],
+        tmpl:{
+          ca:`Actua com a docent de {{nivell}}. Dona una retroacció {{to}} i constructiva a este treball d'alumne sobre «{{tasca}}». Estructura-la així: 1) Dos punts forts concrets (amb exemples del text). 2) Dos aspectes a millorar amb un suggeriment accionable per a cada un. 3) Un únic pas següent prioritari. Usa un llenguatge proper, en segona persona, en valencià normatiu. No reescrigues el treball sencer.
+
+TREBALL:
+{{treball}}`,
+          es:`Actúa como docente de {{nivell}}. Da una retroalimentación {{to}} y constructiva a este trabajo de alumno sobre «{{tasca}}». Estructúrala así: 1) Dos puntos fuertes concretos (con ejemplos del texto). 2) Dos aspectos a mejorar con una sugerencia accionable para cada uno. 3) Un único paso siguiente prioritario. Usa un lenguaje cercano, en segunda persona, en castellano. No reescribas el trabajo entero.
+
+TRABAJO:
+{{treball}}`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"avaluacio", num:"06",
+    name:{ca:"Avaluació",es:"Evaluación"},
+    desc:{ca:"Proves, exàmens i ítems competencials estil PISA amb criteris de correcció.",es:"Pruebas, exámenes e ítems competenciales estilo PISA con criterios de corrección."},
+    prompts:[
+      {
+        tag:{ca:"Prova / examen",es:"Prueba / examen"},
+        titol:{ca:"Prova amb solucionari",es:"Prueba con solucionario"},
+        sub:{ca:"Un examen a mida amb barem i criteris de correcció.",es:"Un examen a medida con baremo y criterios de corrección."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"materia",label:{ca:"Matèria",es:"Materia"},type:"text",ph:{ca:"ex. Valencià",es:"ej. Valenciano"}},
+          {id:"tema",label:{ca:"Tema",es:"Tema"},type:"text",ph:{ca:"ex. les varietats lingüístiques",es:"ej. las variedades lingüísticas"}},
+          {id:"tipus",label:{ca:"Tipus",es:"Tipo"},type:"select",options:[{ca:"competencial",es:"competencial"},{ca:"tipus test",es:"tipo test"},{ca:"mixt (test + desenvolupament)",es:"mixto (test + desarrollo)"}]},
+          {id:"preguntes",label:{ca:"Nre. de preguntes",es:"Nº de preguntas"},type:"text",ph:{ca:"ex. 10",es:"ej. 10"}}
+        ],
+        tmpl:{
+          ca:`Dissenya una prova {{tipus}} per a {{nivell}} de {{materia}} sobre «{{tema}}», amb {{preguntes}} preguntes. Inclou enunciats clars i variats en dificultat, la puntuació de cada pregunta (barem sobre 10), els criteris de correcció i el solucionari complet al final. En valencià normatiu.`,
+          es:`Diseña una prueba {{tipus}} para {{nivell}} de {{materia}} sobre «{{tema}}», con {{preguntes}} preguntas. Incluye enunciados claros y variados en dificultad, la puntuación de cada pregunta (baremo sobre 10), los criterios de corrección y el solucionario completo al final. En castellano.`
+        }
+      },
+      {
+        tag:{ca:"Ítems PISA",es:"Ítems PISA"},
+        titol:{ca:"Ítems competencials estil PISA",es:"Ítems competenciales estilo PISA"},
+        sub:{ca:"Preguntes situades en un context real, amb estímul i rúbrica.",es:"Preguntas situadas en un contexto real, con estímulo y rúbrica."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"competencia",label:{ca:"Competència",es:"Competencia"},type:"select",options:[{ca:"comprensió lectora",es:"comprensión lectora"},{ca:"competència matemàtica",es:"competencia matemática"},{ca:"competència científica",es:"competencia científica"}]},
+          {id:"context",label:{ca:"Context / situació",es:"Contexto / situación"},type:"text",wide:true,ph:{ca:"ex. una campanya de reciclatge al barri",es:"ej. una campaña de reciclaje en el barrio"}}
+        ],
+        tmpl:{
+          ca:`Crea 3 ítems d'avaluació competencial estil PISA de {{competencia}} per a {{nivell}}, situats en el context «{{context}}». Per a cada ítem: 1) un estímul (text breu o descripció d'un gràfic/taula), 2) la pregunta, 3) el tipus de resposta (opció múltiple, resposta construïda...), 4) la rúbrica de correcció. Gradua la dificultat dels 3 ítems. En valencià normatiu.`,
+          es:`Crea 3 ítems de evaluación competencial estilo PISA de {{competencia}} para {{nivell}}, situados en el contexto «{{context}}». Para cada ítem: 1) un estímulo (texto breve o descripción de un gráfico/tabla), 2) la pregunta, 3) el tipo de respuesta (opción múltiple, respuesta construida...), 4) la rúbrica de corrección. Gradúa la dificultad de los 3 ítems. En castellano.`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"burocracia", num:"07",
+    name:{ca:"Burocràcia",es:"Burocracia"},
+    desc:{ca:"Informes, actes, memòries i comunicats redactats i llestos per a revisar.",es:"Informes, actas, memorias y comunicados redactados y listos para revisar."},
+    prompts:[
+      {
+        tag:{ca:"Document formal",es:"Documento formal"},
+        titol:{ca:"Informe, acta o comunicat",es:"Informe, acta o comunicado"},
+        sub:{ca:"Redacta un document administratiu a partir d'unes dades.",es:"Redacta un documento administrativo a partir de unos datos."},
+        fields:[
+          {id:"tipus",label:{ca:"Tipus de document",es:"Tipo de documento"},type:"select",options:[{ca:"informe d'avaluació individualitzat",es:"informe de evaluación individualizado"},{ca:"acta de reunió",es:"acta de reunión"},{ca:"comunicat a les famílies",es:"comunicado a las familias"},{ca:"memòria d'una activitat",es:"memoria de una actividad"}]},
+          {id:"dades",label:{ca:"Dades / punts a incloure",es:"Datos / puntos a incluir"},type:"textarea",wide:true,ph:{ca:"ex. alumnat, data, acords presos...",es:"ej. alumnado, fecha, acuerdos tomados..."}}
+        ],
+        tmpl:{
+          ca:`Redacta un {{tipus}} amb un to professional i clar, a partir d'estes dades: {{dades}}. Estructura'l amb encapçalaments, sigues concís i deixa'l llest perquè jo només l'haja de revisar. En valencià normatiu.`,
+          es:`Redacta un {{tipus}} con un tono profesional y claro, a partir de estos datos: {{dades}}. Estructúralo con encabezados, sé conciso y déjalo listo para que yo solo tenga que revisarlo. En castellano.`
+        }
+      },
+      {
+        tag:{ca:"Correu a famílies",es:"Correo a familias"},
+        titol:{ca:"Correu a les famílies",es:"Correo a las familias"},
+        sub:{ca:"Un correu clar i cordial amb l'assumpte suggerit.",es:"Un correo claro y cordial con el asunto sugerido."},
+        fields:[
+          {id:"motiu",label:{ca:"Motiu",es:"Motivo"},type:"text",ph:{ca:"ex. eixida a la biblioteca municipal",es:"ej. salida a la biblioteca municipal"}},
+          {id:"to",label:{ca:"To",es:"Tono"},type:"select",options:[{ca:"informatiu",es:"informativo"},{ca:"positiu / de felicitació",es:"positivo / de felicitación"},{ca:"de preocupació (respectuós)",es:"de preocupación (respetuoso)"}]},
+          {id:"detalls",label:{ca:"Detalls",es:"Detalles"},type:"textarea",wide:true,ph:{ca:"ex. data, hora, autorització, material...",es:"ej. fecha, hora, autorización, material..."}}
+        ],
+        tmpl:{
+          ca:`Redacta un correu {{to}} a les famílies sobre {{motiu}}. Detalls a incloure: {{detalls}}. Que siga breu, cordial i clar. Proposa també un assumpte per al correu. En valencià normatiu.`,
+          es:`Redacta un correo {{to}} a las familias sobre {{motiu}}. Detalles a incluir: {{detalls}}. Que sea breve, cordial y claro. Propón también un asunto para el correo. En castellano.`
+        }
+      }
+    ]
+  },
+
+  {
+    id:"tutoria", num:"08",
+    name:{ca:"Tutoria",es:"Tutoría"},
+    desc:{ca:"Dinàmiques del PAT i preparació de reunions amb les famílies.",es:"Dinámicas del PAT y preparación de reuniones con las familias."},
+    prompts:[
+      {
+        tag:{ca:"Dinàmica de tutoria",es:"Dinámica de tutoría"},
+        titol:{ca:"Sessió de tutoria (PAT)",es:"Sesión de tutoría (PAT)"},
+        sub:{ca:"Una dinàmica completa amb objectius, materials i tancament reflexiu.",es:"Una dinámica completa con objetivos, materiales y cierre reflexivo."},
+        fields:[
+          {id:"nivell",label:{ca:"Nivell",es:"Nivel"},type:"select",options:NIVELLS},
+          {id:"tema",label:{ca:"Tema de la sessió",es:"Tema de la sesión"},type:"select",options:[{ca:"cohesió de grup",es:"cohesión de grupo"},{ca:"resolució de conflictes",es:"resolución de conflictos"},{ca:"hàbits d'estudi",es:"hábitos de estudio"},{ca:"ús responsable de les pantalles",es:"uso responsable de las pantallas"},{ca:"educació emocional",es:"educación emocional"},{ca:"prevenció de l'assetjament",es:"prevención del acoso"}]},
+          {id:"durada",label:{ca:"Durada",es:"Duración"},type:"text",ph:{ca:"ex. 55 minuts",es:"ej. 55 minutos"}}
+        ],
+        tmpl:{
+          ca:`Dissenya una dinàmica de tutoria per a {{nivell}} sobre «{{tema}}», amb una durada de {{durada}}. Inclou: objectius, materials necessaris, desenvolupament pas a pas (amb temps de cada part), una activitat central engrescadora i una activitat de tancament o reflexió final. Adequa-la a l'edat de l'alumnat. En valencià normatiu.`,
+          es:`Diseña una dinámica de tutoría para {{nivell}} sobre «{{tema}}», con una duración de {{durada}}. Incluye: objetivos, materiales necesarios, desarrollo paso a paso (con el tiempo de cada parte), una actividad central motivadora y una actividad de cierre o reflexión final. Adecúala a la edad del alumnado. En castellano.`
+        }
+      },
+      {
+        tag:{ca:"Reunió amb famílies",es:"Reunión con familias"},
+        titol:{ca:"Preparar una entrevista amb una família",es:"Preparar una entrevista con una familia"},
+        sub:{ca:"Un guió amb missatges clau, to empàtic i acords de seguiment.",es:"Un guion con mensajes clave, tono empático y acuerdos de seguimiento."},
+        fields:[
+          {id:"motiu",label:{ca:"Motiu de la reunió",es:"Motivo de la reunión"},type:"text",ph:{ca:"ex. baixada del rendiment",es:"ej. bajada del rendimiento"}},
+          {id:"punts",label:{ca:"Punts a tractar",es:"Puntos a tratar"},type:"textarea",wide:true,ph:{ca:"ex. faltes, actitud, acords possibles...",es:"ej. faltas, actitud, acuerdos posibles..."}}
+        ],
+        tmpl:{
+          ca:`Ajuda'm a preparar una reunió amb la família d'un alumne. Motiu: {{motiu}}. Punts a tractar: {{punts}}. Dona'm un guió amb: 1) una obertura que genere confiança, 2) els missatges clau en to empàtic i constructiu, 3) possibles reaccions de la família i com respondre-hi, i 4) uns acords de seguiment concrets per a tancar la reunió. En valencià normatiu.`,
+          es:`Ayúdame a preparar una reunión con la familia de un alumno. Motivo: {{motiu}}. Puntos a tratar: {{punts}}. Dame un guion con: 1) una apertura que genere confianza, 2) los mensajes clave en tono empático y constructivo, 3) posibles reacciones de la familia y cómo responder, y 4) unos acuerdos de seguimiento concretos para cerrar la reunión. En castellano.`
+        }
+      }
+    ]
+  }
+];
+
+/* ============================================================
+   3b) BIBLIOTECA DE PROMPTS LLESTOS PER A COPIAR
+   Els buits van entre claudàtors [així]. Per a afegir-ne un,
+   copia un bloc {t:{...},p:{...}} i canvia'n el text.
+   ============================================================ */
+const LIB = {
+  lomloe:[
+    {t:{ca:"Sessió lectiva completa",es:"Sesión lectiva completa"},
+     p:{ca:"Actua com a docent experta en didàctica de [matèria]. Dissenya una sessió de [durada] per a [curs] sobre [tema], amb: objectiu d'aprenentatge, activitat d'inici (5 min), desenvolupament amb metodologia activa, tancament amb comprovació d'aprenentatge i deures opcionals. En valencià normatiu.",
+        es:"Actúa como docente experta en didáctica de [materia]. Diseña una sesión de [duración] para [curso] sobre [tema], con: objetivo de aprendizaje, actividad de inicio (5 min), desarrollo con metodología activa, cierre con comprobación de aprendizaje y deberes opcionales."}},
+    {t:{ca:"Unitat didàctica sencera",es:"Unidad didáctica completa"},
+     p:{ca:"Dissenya una unitat didàctica de [nre. de sessions] sessions per a [curs] de [matèria] sobre [tema]. Inclou: objectius, competències específiques i criteris d'avaluació LOMLOE, sabers bàsics, seqüència sessió a sessió, producte final i instruments d'avaluació. Presenta-ho en taules. En valencià normatiu.",
+        es:"Diseña una unidad didáctica de [nº de sesiones] sesiones para [curso] de [materia] sobre [tema]. Incluye: objetivos, competencias específicas y criterios de evaluación LOMLOE, saberes básicos, secuencia sesión a sesión, producto final e instrumentos de evaluación. Preséntalo en tablas."}},
+    {t:{ca:"Projecte interdisciplinari",es:"Proyecto interdisciplinar"},
+     p:{ca:"Proposa un projecte interdisciplinari per a [curs] que unisca [matèria 1] i [matèria 2] al voltant de [tema o repte]. Defineix: pregunta guia, producte final, fases del projecte, repartiment de tasques entre matèries, i com s'avaluarà des de cada una. En valencià normatiu.",
+        es:"Propón un proyecto interdisciplinar para [curso] que una [materia 1] y [materia 2] en torno a [tema o reto]. Define: pregunta guía, producto final, fases del proyecto, reparto de tareas entre materias, y cómo se evaluará desde cada una."}},
+    {t:{ca:"Contextos per a situacions d'aprenentatge",es:"Contextos para situaciones de aprendizaje"},
+     p:{ca:"Genera 10 contextos reals i pròxims a l'alumnat de [curs] que puguen servir de punt de partida per a situacions d'aprenentatge de [matèria] sobre [tema]. Han de ser variats (personal, social, escolar, digital) i connectats amb els ODS quan tinga sentit. En valencià normatiu.",
+        es:"Genera 10 contextos reales y cercanos al alumnado de [curso] que puedan servir de punto de partida para situaciones de aprendizaje de [materia] sobre [tema]. Deben ser variados (personal, social, escolar, digital) y conectados con los ODS cuando tenga sentido."}},
+    {t:{ca:"Temporalització anual",es:"Temporalización anual"},
+     p:{ca:"Ajuda'm a distribuir estos continguts de [matèria] de [curs] en un calendari anual de 3 avaluacions: [llista de continguts o unitats]. Té en compte [nre. d'hores setmanals] hores setmanals, els períodes de vacances de la Comunitat Valenciana i deixa marge per a repàs i imprevistos. Presenta-ho en una taula per avaluacions. En valencià normatiu.",
+        es:"Ayúdame a distribuir estos contenidos de [materia] de [curso] en un calendario anual de 3 evaluaciones: [lista de contenidos o unidades]. Ten en cuenta [nº de horas semanales] horas semanales, los periodos de vacaciones y deja margen para repaso e imprevistos. Preséntalo en una tabla por evaluaciones."}},
+    {t:{ca:"Revisió d'una programació",es:"Revisión de una programación"},
+     p:{ca:"Revisa esta part de la meua programació didàctica i digues-me: 1) si hi ha coherència entre criteris, sabers i activitats; 2) què hi falta segons la LOMLOE; 3) tres millores concretes. Sigues sincera i específica. En valencià normatiu. Text: [apega ací la programació]",
+        es:"Revisa esta parte de mi programación didáctica y dime: 1) si hay coherencia entre criterios, saberes y actividades; 2) qué falta según la LOMLOE; 3) tres mejoras concretas. Sé sincera y específica. Texto: [pega aquí la programación]"}}
+  ],
+  materials:[
+    {t:{ca:"Kit complet d'un tema",es:"Kit completo de un tema"},
+     p:{ca:"Crea un kit complet per a treballar [tema] amb [curs]: 1) un text introductori motivador, 2) un esquema del contingut, 3) 6 activitats graduades, 4) un joc o dinàmica per a repassar, 5) una eixida de tasca final. Tot llest per a imprimir o projectar. En valencià normatiu.",
+        es:"Crea un kit completo para trabajar [tema] con [curso]: 1) un texto introductorio motivador, 2) un esquema del contenido, 3) 6 actividades graduadas, 4) un juego o dinámica para repasar, 5) una propuesta de tarea final. Todo listo para imprimir o proyectar."}},
+    {t:{ca:"Text amb preguntes per nivells",es:"Texto con preguntas por niveles"},
+     p:{ca:"Escriu un text original de [nre. de paraules] paraules per a [curs] sobre [tema], i acompanya'l de 9 preguntes en 3 nivells: 3 literals, 3 inferencials i 3 crítiques o creatives. Afig el solucionari amb orientacions de correcció. En valencià normatiu.",
+        es:"Escribe un texto original de [nº de palabras] palabras para [curso] sobre [tema], y acompáñalo de 9 preguntas en 3 niveles: 3 literales, 3 inferenciales y 3 críticas o creativas. Añade el solucionario con orientaciones de corrección."}},
+    {t:{ca:"Escape room / breakout",es:"Escape room / breakout"},
+     p:{ca:"Dissenya un breakout educatiu per a [curs] sobre [tema], d'una sessió de [durada]. Inclou: narrativa motivadora, 4 proves encadenades amb els seus codis o cadenats, materials necessaris (senzills), pistes per si es bloquegen i una recompensa final simbòlica. En valencià normatiu.",
+        es:"Diseña un breakout educativo para [curso] sobre [tema], de una sesión de [duración]. Incluye: narrativa motivadora, 4 pruebas encadenadas con sus códigos o candados, materiales necesarios (sencillos), pistas por si se bloquean y una recompensa final simbólica."}},
+    {t:{ca:"Qüestionari amb distractors intel·ligents",es:"Cuestionario con distractores inteligentes"},
+     p:{ca:"Crea un qüestionari de [nre. de preguntes] preguntes tipus test sobre [tema] per a [curs]. Cada pregunta ha de tindre 4 opcions amb distractors plausibles basats en errors freqüents de l'alumnat (no opcions absurdes). Marca la resposta correcta i explica en una línia per què els distractors són temptadors. En valencià normatiu.",
+        es:"Crea un cuestionario de [nº de preguntas] preguntas tipo test sobre [tema] para [curso]. Cada pregunta debe tener 4 opciones con distractores plausibles basados en errores frecuentes del alumnado (no opciones absurdas). Marca la respuesta correcta y explica en una línea por qué los distractores son tentadores."}},
+    {t:{ca:"Glossari en tres nivells",es:"Glosario en tres niveles"},
+     p:{ca:"Elabora un glossari dels 15 termes clau de [tema] per a [curs]. Per a cada terme dona: una definició acadèmica, una explicació \"com si tingueres 12 anys\" i un exemple quotidià. Format de taula amb tres columnes. En valencià normatiu.",
+        es:"Elabora un glosario de los 15 términos clave de [tema] para [curso]. Para cada término da: una definición académica, una explicación \"como si tuvieras 12 años\" y un ejemplo cotidiano. Formato de tabla con tres columnas."}},
+    {t:{ca:"Guió d'una infografia o mural",es:"Guion de una infografía o mural"},
+     p:{ca:"Prepara el guió complet d'una infografia sobre [tema] per a [curs]: títol atractiu, 5 blocs d'informació amb el text exacte de cada un (màxim 30 paraules per bloc), suggeriments d'icones o imatges per a cada bloc i una dada sorprenent per a tancar. En valencià normatiu.",
+        es:"Prepara el guion completo de una infografía sobre [tema] para [curso]: título atractivo, 5 bloques de información con el texto exacto de cada uno (máximo 30 palabras por bloque), sugerencias de iconos o imágenes para cada bloque y un dato sorprendente para cerrar."}}
+  ],
+  dua:[
+    {t:{ca:"Convertir una activitat a DUA",es:"Convertir una actividad a DUA"},
+     p:{ca:"Transforma esta activitat en una versió DUA per a [curs]: [descriu l'activitat]. Oferix: 2 formes diferents de presentar la informació, 2 formes diferents que l'alumnat mostre el que sap i 2 estratègies per a mantindre la motivació. Marca què canvia respecte de l'original. En valencià normatiu.",
+        es:"Transforma esta actividad en una versión DUA para [curso]: [describe la actividad]. Ofrece: 2 formas diferentes de presentar la información, 2 formas diferentes de que el alumnado muestre lo que sabe y 2 estrategias para mantener la motivación. Marca qué cambia respecto al original."}},
+    {t:{ca:"Menú d'opcions de producte final",es:"Menú de opciones de producto final"},
+     p:{ca:"Per a demostrar l'aprenentatge de [tema] en [curs], proposa un menú de 8 productes finals diferents (oral, escrit, visual, digital, manipulatiu...) amb el mateix nivell d'exigència. Per a cada un: què ha de contindre com a mínim i com s'avaluaria amb els mateixos criteris. En valencià normatiu.",
+        es:"Para demostrar el aprendizaje de [tema] en [curso], propón un menú de 8 productos finales diferentes (oral, escrito, visual, digital, manipulativo...) con el mismo nivel de exigencia. Para cada uno: qué debe contener como mínimo y cómo se evaluaría con los mismos criterios."}},
+    {t:{ca:"Bastides per a una tasca difícil",es:"Andamiajes para una tarea difícil"},
+     p:{ca:"L'alumnat de [curs] es bloqueja amb esta tasca: [descriu la tasca]. Dissenya bastides (suports temporals) en 3 nivells d'ajuda: molt guiat, semiguiat i autònom, de manera que tots arriben al mateix objectiu. Inclou frases d'inici, organitzadors gràfics o llistes de passos quan calga. En valencià normatiu.",
+        es:"El alumnado de [curso] se bloquea con esta tarea: [describe la tarea]. Diseña andamiajes (apoyos temporales) en 3 niveles de ayuda: muy guiado, semiguiado y autónomo, de manera que todos lleguen al mismo objetivo. Incluye frases de inicio, organizadores gráficos o listas de pasos cuando haga falta."}},
+    {t:{ca:"Versió en lectura fàcil",es:"Versión en lectura fácil"},
+     p:{ca:"Reescriu este text seguint pautes de lectura fàcil per a alumnat de [curs] amb dificultats de comprensió: frases curtes, una idea per frase, vocabulari freqüent, connectors explícits i estructura clara. Mantín tota la informació essencial. En valencià normatiu. Text: [apega el text]",
+        es:"Reescribe este texto siguiendo pautas de lectura fácil para alumnado de [curso] con dificultades de comprensión: frases cortas, una idea por frase, vocabulario frecuente, conectores explícitos y estructura clara. Mantén toda la información esencial. Texto: [pega el texto]"}},
+    {t:{ca:"Pla de suports d'aula",es:"Plan de apoyos de aula"},
+     p:{ca:"Elabora un pla de suports generals d'aula per a un grup de [curs] amb esta diversitat: [descriu perfils, p. ex. 2 TDAH, 1 nouvingut, 3 amb dificultats lectores]. Organitza'l en: suports visuals, gestió del temps, agrupaments, materials i avaluació. Tot ha de ser aplicable sense recursos extraordinaris. En valencià normatiu.",
+        es:"Elabora un plan de apoyos generales de aula para un grupo de [curso] con esta diversidad: [describe perfiles, p. ej. 2 TDAH, 1 recién llegado, 3 con dificultades lectoras]. Organízalo en: apoyos visuales, gestión del tiempo, agrupamientos, materiales y evaluación. Todo debe ser aplicable sin recursos extraordinarios."}},
+    {t:{ca:"Enriquiment per a altes capacitats",es:"Enriquecimiento para altas capacidades"},
+     p:{ca:"Proposa 5 activitats d'enriquiment (no més faena, sinó més profunditat) sobre [tema] per a alumnat d'altes capacitats de [curs]: reptes oberts, connexions amb altres àmbits, creació pròpia i xicoteta investigació. Que es puguen fer dins de l'aula ordinària. En valencià normatiu.",
+        es:"Propón 5 actividades de enriquecimiento (no más trabajo, sino más profundidad) sobre [tema] para alumnado de altas capacidades de [curso]: retos abiertos, conexiones con otros ámbitos, creación propia y pequeña investigación. Que se puedan hacer dentro del aula ordinaria."}}
+  ],
+  rubriques:[
+    {t:{ca:"Rúbrica d'un producte concret",es:"Rúbrica de un producto concreto"},
+     p:{ca:"Dissenya una rúbrica analítica en taula per a avaluar [producte: exposició, pòdcast, maqueta, informe...] en [curs]. Tria tu els 4-5 criteris més rellevants per a este producte, amb 4 nivells d'assoliment i descriptors observables redactats en positiu. Afig el barem sobre 10. En valencià normatiu.",
+        es:"Diseña una rúbrica analítica en tabla para evaluar [producto: exposición, pódcast, maqueta, informe...] en [curso]. Elige tú los 4-5 criterios más relevantes para este producto, con 4 niveles de logro y descriptores observables redactados en positivo. Añade el baremo sobre 10."}},
+    {t:{ca:"Llista de verificació (checklist)",es:"Lista de verificación (checklist)"},
+     p:{ca:"Crea una llista de verificació de 10-12 ítems perquè l'alumnat de [curs] revise el seu [tasca o producte] abans d'entregar-lo. Redacta els ítems en primera persona (\"He revisat que...\") i ordena'ls de contingut a forma. En valencià normatiu.",
+        es:"Crea una lista de verificación de 10-12 ítems para que el alumnado de [curso] revise su [tarea o producto] antes de entregarlo. Redacta los ítems en primera persona (\"He revisado que...\") y ordénalos de contenido a forma."}},
+    {t:{ca:"Escala d'observació d'oralitat",es:"Escala de observación de oralidad"},
+     p:{ca:"Prepara una escala d'observació per a avaluar intervencions orals espontànies (debats, posades en comú) en [curs], amb 6 indicadors observables i una escala d'1 a 4. Ha de ser tan àgil que es puga omplir en directe mentre parlen. Format de graella per a 6 alumnes per full. En valencià normatiu.",
+        es:"Prepara una escala de observación para evaluar intervenciones orales espontáneas (debates, puestas en común) en [curso], con 6 indicadores observables y una escala de 1 a 4. Debe ser tan ágil que se pueda rellenar en directo mientras hablan. Formato de parrilla para 6 alumnos por hoja."}},
+    {t:{ca:"Rúbrica d'autoavaluació",es:"Rúbrica de autoevaluación"},
+     p:{ca:"Converteix estos criteris d'avaluació en una rúbrica d'autoavaluació per a [curs], redactada en primera persona i amb llenguatge que l'alumnat entenga: [apega els criteris]. Afig al final dos preguntes de reflexió: què m'ha costat més i què faré diferent la pròxima vegada. En valencià normatiu.",
+        es:"Convierte estos criterios de evaluación en una rúbrica de autoevaluación para [curso], redactada en primera persona y con lenguaje que el alumnado entienda: [pega los criterios]. Añade al final dos preguntas de reflexión: qué me ha costado más y qué haré diferente la próxima vez."}},
+    {t:{ca:"Coavaluació de treball en equip",es:"Coevaluación de trabajo en equipo"},
+     p:{ca:"Dissenya un instrument de coavaluació del treball en equip per a [curs]: 5 ítems sobre el funcionament del grup i 4 sobre l'aportació individual de cada company. Inclou una pregunta oberta constructiva. Ha d'evitar que es puntuen per amistat: redacta ítems sobre fets observables, no sobre opinions. En valencià normatiu.",
+        es:"Diseña un instrumento de coevaluación del trabajo en equipo para [curso]: 5 ítems sobre el funcionamiento del grupo y 4 sobre la aportación individual de cada compañero. Incluye una pregunta abierta constructiva. Debe evitar que se puntúen por amistad: redacta ítems sobre hechos observables, no sobre opiniones."}},
+    {t:{ca:"Rúbrica de rúbriques (revisió)",es:"Rúbrica de rúbricas (revisión)"},
+     p:{ca:"Revisa esta rúbrica meua i digues-me: si els descriptors són observables o vagues, si hi ha salts bruscos entre nivells, si algun criteri sobra o falta, i reescriu les cel·les fluixes. Rúbrica: [apega la rúbrica]. En valencià normatiu.",
+        es:"Revisa esta rúbrica mía y dime: si los descriptores son observables o vagos, si hay saltos bruscos entre niveles, si algún criterio sobra o falta, y reescribe las celdas flojas. Rúbrica: [pega la rúbrica]."}}
+  ],
+  feedback:[
+    {t:{ca:"Comentaris per a butlletins",es:"Comentarios para boletines"},
+     p:{ca:"Redacta 10 models de comentari per a butlletins de notes de [curs], variats: 3 per a alumnat amb bona evolució, 4 per a evolució irregular i 3 per a situacions de dificultat. Màxim 40 paraules cada un, to respectuós i sempre amb una orientació de millora concreta. En valencià normatiu.",
+        es:"Redacta 10 modelos de comentario para boletines de notas de [curso], variados: 3 para alumnado con buena evolución, 4 para evolución irregular y 3 para situaciones de dificultad. Máximo 40 palabras cada uno, tono respetuoso y siempre con una orientación de mejora concreta."}},
+    {t:{ca:"Banc de frases de retroacció",es:"Banco de frases de retroalimentación"},
+     p:{ca:"Crea un banc de 20 frases de retroacció per a corregir [tipus de tasca] en [curs], organitzades en 4 blocs: reconéixer encerts, assenyalar errors sense desanimar, orientar la millora i convidar a la reflexió. Que sonen naturals, no robòtiques. En valencià normatiu.",
+        es:"Crea un banco de 20 frases de retroalimentación para corregir [tipo de tarea] en [curso], organizadas en 4 bloques: reconocer aciertos, señalar errores sin desanimar, orientar la mejora e invitar a la reflexión. Que suenen naturales, no robóticas."}},
+    {t:{ca:"Correcció d'errors freqüents",es:"Corrección de errores frecuentes"},
+     p:{ca:"He corregit [tasca] de [curs] i els errors més repetits són: [llista d'errors]. Prepara'm una sessió de 20 minuts de correcció col·lectiva: com presentar cada error de manera anònima, una miniactivitat perquè el detecten ells i una regla mnemotècnica o truc per a no repetir-lo. En valencià normatiu.",
+        es:"He corregido [tarea] de [curso] y los errores más repetidos son: [lista de errores]. Prepárame una sesión de 20 minutos de corrección colectiva: cómo presentar cada error de manera anónima, una miniactividad para que lo detecten ellos y una regla mnemotécnica o truco para no repetirlo."}},
+    {t:{ca:"Pla de millora individual",es:"Plan de mejora individual"},
+     p:{ca:"Un alumne de [curs] presenta estes dificultats en [matèria]: [descriu-les]. Elabora un pla de millora de 4 setmanes: un objectiu xicotet i mesurable per setmana, una tasca concreta per a cada objectiu, com el faré conscient del seu progrés i un missatge motivador per a presentar-li el pla. En valencià normatiu.",
+        es:"Un alumno de [curso] presenta estas dificultades en [materia]: [descríbelas]. Elabora un plan de mejora de 4 semanas: un objetivo pequeño y medible por semana, una tarea concreta para cada objetivo, cómo le haré consciente de su progreso y un mensaje motivador para presentarle el plan."}},
+    {t:{ca:"Feedback entre iguals guiat",es:"Feedback entre iguales guiado"},
+     p:{ca:"Dissenya un protocol perquè l'alumnat de [curs] es done feedback entre iguals sobre [tasca]: 3 passos senzills (llig/observa, valora amb esta guia, suggerix), amb frases d'inici per a cada pas i 2 normes de respecte. Ha de cabre en mitja cara de full. En valencià normatiu.",
+        es:"Diseña un protocolo para que el alumnado de [curso] se dé feedback entre iguales sobre [tarea]: 3 pasos sencillos (lee/observa, valora con esta guía, sugiere), con frases de inicio para cada paso y 2 normas de respeto. Debe caber en media cara de folio."}},
+    {t:{ca:"Transformar una nota en aprenentatge",es:"Transformar una nota en aprendizaje"},
+     p:{ca:"Després d'un examen de [tema] en [curs], dissenya una activitat de 25 minuts perquè cada alumne analitze els seus errors: una fitxa de reflexió (quins errors he fet, de quin tipus són, què repassaré), i com convertir-ho en un compromís concret per a la pròxima prova. En valencià normatiu.",
+        es:"Después de un examen de [tema] en [curso], diseña una actividad de 25 minutos para que cada alumno analice sus errores: una ficha de reflexión (qué errores he cometido, de qué tipo son, qué repasaré), y cómo convertirlo en un compromiso concreto para la próxima prueba."}}
+  ],
+  avaluacio:[
+    {t:{ca:"Avaluació inicial diagnòstica",es:"Evaluación inicial diagnóstica"},
+     p:{ca:"Prepara una avaluació inicial de [matèria] per a [curs] que es faça en una sessió: 5 activitats curtes que em diguen el nivell real de partida en [continguts clau], més una pregunta oberta sobre interessos i una sobre com els agrada aprendre. Que no parega un examen: to distés. En valencià normatiu.",
+        es:"Prepara una evaluación inicial de [materia] para [curso] que se haga en una sesión: 5 actividades cortas que me digan el nivel real de partida en [contenidos clave], más una pregunta abierta sobre intereses y una sobre cómo les gusta aprender. Que no parezca un examen: tono distendido."}},
+    {t:{ca:"Prova competencial contextualitzada",es:"Prueba competencial contextualizada"},
+     p:{ca:"Dissenya una prova competencial de [matèria] per a [curs] sobre [tema], ambientada en un únic context real que done sentit a totes les preguntes: [context, p. ex. organitzar un festival al poble]. 8 preguntes que demanen aplicar, no repetir. Barem i solucionari inclosos. En valencià normatiu.",
+        es:"Diseña una prueba competencial de [materia] para [curso] sobre [tema], ambientada en un único contexto real que dé sentido a todas las preguntas: [contexto, p. ej. organizar un festival en el pueblo]. 8 preguntas que pidan aplicar, no repetir. Baremo y solucionario incluidos."}},
+    {t:{ca:"Portafoli d'aprenentatge",es:"Portafolio de aprendizaje"},
+     p:{ca:"Dissenya un portafoli d'avaluació per a [matèria] en [curs] durant una avaluació: quines 5-6 evidències ha d'arreplegar l'alumnat, amb quina reflexió breu acompanyarà cada una, com s'organitzarà (paper o digital) i amb quina rúbrica final es valorarà el conjunt. En valencià normatiu.",
+        es:"Diseña un portafolio de evaluación para [materia] en [curso] durante una evaluación: qué 5-6 evidencias debe recoger el alumnado, con qué reflexión breve acompañará cada una, cómo se organizará (papel o digital) y con qué rúbrica final se valorará el conjunto."}},
+    {t:{ca:"Preguntes per nivells de Bloom",es:"Preguntas por niveles de Bloom"},
+     p:{ca:"Sobre [tema] per a [curs], genera 12 preguntes organitzades segons la taxonomia de Bloom: 2 de recordar, 2 de comprendre, 2 d'aplicar, 2 d'analitzar, 2 d'avaluar i 2 de crear. Marca el nivell de cada una i indica quines usaries en un examen i quines en classe. En valencià normatiu.",
+        es:"Sobre [tema] para [curso], genera 12 preguntas organizadas según la taxonomía de Bloom: 2 de recordar, 2 de comprender, 2 de aplicar, 2 de analizar, 2 de evaluar y 2 de crear. Marca el nivel de cada una e indica cuáles usarías en un examen y cuáles en clase."}},
+    {t:{ca:"Qüestionari metacognitiu",es:"Cuestionario metacognitivo"},
+     p:{ca:"Crea un qüestionari metacognitiu breu (8 preguntes) perquè l'alumnat de [curs] reflexione després de [tasca o unitat]: què he aprés, com ho he aprés, on m'he bloquejat, quines estratègies m'han funcionat i què necessite ara. Llenguatge pròxim, gens acadèmic. En valencià normatiu.",
+        es:"Crea un cuestionario metacognitivo breve (8 preguntas) para que el alumnado de [curso] reflexione después de [tarea o unidad]: qué he aprendido, cómo lo he aprendido, dónde me he bloqueado, qué estrategias me han funcionado y qué necesito ahora. Lenguaje cercano, nada académico."}},
+    {t:{ca:"Dos versions d'una mateixa prova",es:"Dos versiones de una misma prueba"},
+     p:{ca:"A partir d'esta prova, crea'n una versió B equivalent (mateixos continguts i dificultat, preguntes diferents) per a evitar còpies entre grups, i una versió adaptada amb suports (enunciats més guiats, exemples, espai per a passos) per a alumnat amb dificultats. Prova original: [apega la prova]. En valencià normatiu.",
+        es:"A partir de esta prueba, crea una versión B equivalente (mismos contenidos y dificultad, preguntas diferentes) para evitar copias entre grupos, y una versión adaptada con apoyos (enunciados más guiados, ejemplos, espacio para pasos) para alumnado con dificultades. Prueba original: [pega la prueba]."}}
+  ],
+  burocracia:[
+    {t:{ca:"Pla de reforç individual",es:"Plan de refuerzo individual"},
+     p:{ca:"Redacta un pla de reforç per a un alumne de [curs] que té pendent [matèria o avaluació]. Inclou: dificultats detectades, objectius de recuperació, activitats i calendari de [nre. de setmanes] setmanes, criteris i data de la prova o entrega, i un apartat de seguiment amb la família. To professional i clar. En valencià normatiu.",
+        es:"Redacta un plan de refuerzo para un alumno de [curso] que tiene pendiente [materia o evaluación]. Incluye: dificultades detectadas, objetivos de recuperación, actividades y calendario de [nº de semanas] semanas, criterios y fecha de la prueba o entrega, y un apartado de seguimiento con la familia. Tono profesional y claro."}},
+    {t:{ca:"Informe individualitzat NESE",es:"Informe individualizado NESE"},
+     p:{ca:"Ajuda'm a redactar un informe de seguiment d'un alumne amb [tipus de necessitat] de [curs]. Dades: [mesures aplicades, evolució, dificultats persistents]. Estructura'l en: situació de partida, mesures adoptades, evolució observada i propostes per al pròxim període. Llenguatge tècnic però respectuós, sense etiquetes estigmatitzadores. En valencià normatiu.",
+        es:"Ayúdame a redactar un informe de seguimiento de un alumno con [tipo de necesidad] de [curso]. Datos: [medidas aplicadas, evolución, dificultades persistentes]. Estructúralo en: situación de partida, medidas adoptadas, evolución observada y propuestas para el próximo periodo. Lenguaje técnico pero respetuoso, sin etiquetas estigmatizadoras."}},
+    {t:{ca:"Acta de reunió de departament",es:"Acta de reunión de departamento"},
+     p:{ca:"Redacta l'acta de la reunió del departament de [departament] del dia [data]. Assistents: [noms o càrrecs]. Punts tractats i acords: [apega les teues notes]. Format formal d'acta: ordre del dia, desenvolupament, acords numerats amb responsables i terminis, i peu de signatures. En valencià normatiu.",
+        es:"Redacta el acta de la reunión del departamento de [departamento] del día [fecha]. Asistentes: [nombres o cargos]. Puntos tratados y acuerdos: [pega tus notas]. Formato formal de acta: orden del día, desarrollo, acuerdos numerados con responsables y plazos, y pie de firmas."}},
+    {t:{ca:"Memòria d'una activitat",es:"Memoria de una actividad"},
+     p:{ca:"Redacta la memòria de l'activitat [nom de l'activitat] feta amb [curs] el [data]. Dades: [objectius, desenvolupament, incidències, valoració]. Estructura: justificació curricular, descripció, participació, valoració amb propostes de millora i annex de fotos (indica on anirien). Màxim una pàgina i mitja. En valencià normatiu.",
+        es:"Redacta la memoria de la actividad [nombre de la actividad] hecha con [curso] el [fecha]. Datos: [objetivos, desarrollo, incidencias, valoración]. Estructura: justificación curricular, descripción, participación, valoración con propuestas de mejora y anexo de fotos (indica dónde irían). Máximo una página y media."}},
+    {t:{ca:"Sol·licitud o projecte per a direcció",es:"Solicitud o proyecto para dirección"},
+     p:{ca:"Ajuda'm a redactar una proposta per a presentar a l'equip directiu: [descriu la idea, p. ex. crear un club de lectura, demanar pressupost per a una eixida]. Estructura-la en: justificació pedagògica, descripció, recursos necessaris amb cost estimat, beneficis per al centre i proposta de calendari. Persuasiva però realista. En valencià normatiu.",
+        es:"Ayúdame a redactar una propuesta para presentar al equipo directivo: [describe la idea, p. ej. crear un club de lectura, pedir presupuesto para una salida]. Estructúrala en: justificación pedagógica, descripción, recursos necesarios con coste estimado, beneficios para el centro y propuesta de calendario. Persuasiva pero realista."}},
+    {t:{ca:"Resposta a una reclamació",es:"Respuesta a una reclamación"},
+     p:{ca:"Una família ha presentat una reclamació sobre [motiu: una nota, una decisió...]. Ajuda'm a redactar una resposta formal que: reconega la recepció, explique amb claredat els criteris aplicats (dades: [criteris, evidències]), mantinga un to respectuós i ferm, i indique els passos següents del procediment. En valencià normatiu.",
+        es:"Una familia ha presentado una reclamación sobre [motivo: una nota, una decisión...]. Ayúdame a redactar una respuesta formal que: reconozca la recepción, explique con claridad los criterios aplicados (datos: [criterios, evidencias]), mantenga un tono respetuoso y firme, e indique los pasos siguientes del procedimiento."}}
+  ],
+  tutoria:[
+    {t:{ca:"Dinàmiques d'inici de curs",es:"Dinámicas de inicio de curso"},
+     p:{ca:"Proposa 5 dinàmiques de presentació i cohesió per a les dos primeres setmanes de curs amb un grup de [curs] que [es coneix poc / ve de grups diferents / té mal ambient previ]. Per a cada una: durada, materials, desenvolupament i quin aspecte del grup em permet observar. En valencià normatiu.",
+        es:"Propón 5 dinámicas de presentación y cohesión para las dos primeras semanas de curso con un grupo de [curso] que [se conoce poco / viene de grupos diferentes / tiene mal ambiente previo]. Para cada una: duración, materiales, desarrollo y qué aspecto del grupo me permite observar."}},
+    {t:{ca:"Guió de sociograma",es:"Guion de sociograma"},
+     p:{ca:"Prepara un qüestionari sociomètric senzill per a [curs] (6-8 preguntes) que em permeta detectar lideratges, aïllaments i possibles conflictes, redactat de manera amable i no invasiva. Explica'm després com interpretar els resultats i 3 accions si detecte un alumne aïllat. En valencià normatiu.",
+        es:"Prepara un cuestionario sociométrico sencillo para [curso] (6-8 preguntas) que me permita detectar liderazgos, aislamientos y posibles conflictos, redactado de manera amable y no invasiva. Explícame después cómo interpretar los resultados y 3 acciones si detecto un alumno aislado."}},
+    {t:{ca:"Protocol davant d'un conflicte",es:"Protocolo ante un conflicto"},
+     p:{ca:"Com a tutora de [curs], tinc este conflicte al grup: [descriu la situació]. Proposa'm una intervenció en 3 fases: conversa individual amb els implicats (amb preguntes concretes), mediació o dinàmica grupal si cal, i seguiment posterior. Inclou què NO convé fer. En valencià normatiu.",
+        es:"Como tutora de [curso], tengo este conflicto en el grupo: [describe la situación]. Propón una intervención en 3 fases: conversación individual con los implicados (con preguntas concretas), mediación o dinámica grupal si hace falta, y seguimiento posterior. Incluye qué NO conviene hacer."}},
+    {t:{ca:"Reunió col·lectiva amb famílies",es:"Reunión colectiva con familias"},
+     p:{ca:"Prepara el guió de la reunió d'inici de curs amb les famílies de [curs]: benvinguda, presentació del curs i les normes clau, com poden acompanyar des de casa, canals de comunicació i torn de preguntes. Afig 3 consells per a gestionar preguntes difícils i una diapositiva resum final. En valencià normatiu.",
+        es:"Prepara el guion de la reunión de inicio de curso con las familias de [curso]: bienvenida, presentación del curso y las normas clave, cómo pueden acompañar desde casa, canales de comunicación y turno de preguntas. Añade 3 consejos para gestionar preguntas difíciles y una diapositiva resumen final."}},
+    {t:{ca:"Orientació acadèmica (itineraris)",es:"Orientación académica (itinerarios)"},
+     p:{ca:"Dissenya una sessió de tutoria per a [curs] sobre itineraris acadèmics: què poden triar l'any que ve, en què es diferencien les opcions i com decidir segons interessos i punts forts. Inclou una activitat d'autoconeixement i un joc de mites i realitats sobre les eixides de cada itinerari. En valencià normatiu.",
+        es:"Diseña una sesión de tutoría para [curso] sobre itinerarios académicos: qué pueden elegir el año que viene, en qué se diferencian las opciones y cómo decidir según intereses y puntos fuertes. Incluye una actividad de autoconocimiento y un juego de mitos y realidades sobre las salidas de cada itinerario."}},
+    {t:{ca:"Seguiment d'un alumne en risc",es:"Seguimiento de un alumno en riesgo"},
+     p:{ca:"Un alumne de [curs] mostra estos senyals: [absentisme, baixada de notes, aïllament...]. Prepara'm: un guió de conversa individual amb ell (to de cura, no d'interrogatori), els indicadors que he de registrar per escrit, quan i com implicar la família i l'orientadora, i 3 mesures de suport dins de l'aula. En valencià normatiu.",
+        es:"Un alumno de [curso] muestra estas señales: [absentismo, bajada de notas, aislamiento...]. Prepárame: un guion de conversación individual con él (tono de cuidado, no de interrogatorio), los indicadores que debo registrar por escrito, cuándo y cómo implicar a la familia y a la orientadora, y 3 medidas de apoyo dentro del aula."}}
+  ]
+};
+
+/* ============================================================
+   4) LÒGICA
+   ============================================================ */
+let lang = "ca";
+let activeCat = DADES[0].id;
+
+function tt(key){ return (UI[key] && UI[key][lang]) || ""; }
+
+function applyStaticText(){
+  document.querySelectorAll("[data-t]").forEach(el=>{
+    const k = el.getAttribute("data-t");
+    if(UI[k]) el.textContent = UI[k][lang];
+  });
+  document.documentElement.lang = lang;
+  document.getElementById("langCa").classList.toggle("on", lang==="ca");
+  document.getElementById("langEs").classList.toggle("on", lang==="es");
+}
+
+function setLang(l){
+  lang = l;
+  applyStaticText();
+  renderNav();
+  renderCat();
+}
+
+function renderNav(){
+  const nav = document.getElementById("catNav");
+  nav.innerHTML = "";
+  DADES.forEach(cat=>{
+    const b = document.createElement("button");
+    b.textContent = cat.num + " · " + cat.name[lang];
+    b.className = cat.id===activeCat ? "on" : "";
+    b.onclick = ()=>{ activeCat = cat.id; renderNav(); renderCat(); window.scrollTo({top:0,behavior:"smooth"}); };
+    nav.appendChild(b);
+  });
+}
+
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function buildPrompt(prompt, values){
+  let t = prompt.tmpl[lang];
+  prompt.fields.forEach(f=>{
+    let v = values[f.id];
+    if(v===undefined || v==="") v = "[" + f.label[lang] + "]";
+    t = t.split("{{"+f.id+"}}").join(v);
+  });
+  return t;
+}
+// versió HTML amb els buits marcats
+function buildPreviewHTML(prompt, values){
+  let t = esc(prompt.tmpl[lang]);
+  prompt.fields.forEach(f=>{
+    let v = values[f.id];
+    const token = "{{"+f.id+"}}";
+    if(v===undefined || v===""){
+      t = t.split(token).join('<span class="ph">['+esc(f.label[lang])+']</span>');
+    } else {
+      t = t.split(token).join(esc(v));
+    }
+  });
+  return t;
+}
+
+function renderCat(){
+  const cat = DADES.find(c=>c.id===activeCat);
+  const main = document.getElementById("main");
+  const libItems = LIB[cat.id] || [];
+  main.innerHTML = `
+    <div class="cat-head"><span class="num">${cat.num}</span><h2>${cat.name[lang]}</h2></div>
+    <p class="cat-desc">${cat.desc[lang]}</p>
+    <div class="block-h"><h3>${tt("gens_h")}</h3></div>
+    <p class="block-sub">${tt("gens_sub")}</p>
+    <div class="gens" id="gens"></div>
+    <div class="block-h"><h3>${tt("lib_h")}</h3><span class="count">${libItems.length} PROMPTS</span></div>
+    <p class="block-sub">${tt("lib_sub")}</p>
+    <div class="lib" id="lib"></div>`;
+  const gensEl = document.getElementById("gens");
+
+  // Biblioteca de prompts llestos per a copiar
+  const libEl = document.getElementById("lib");
+  libItems.forEach(item=>{
+    const c = document.createElement("div");
+    c.className = "lp";
+    const txt = item.p[lang];
+    const html = esc(txt).replace(/\[([^\]]+)\]/g,'<span class="ph">[$1]</span>');
+    c.innerHTML = `<h4>${esc(item.t[lang])}</h4><div class="ptxt">${html}</div><button class="btn">${tt("copy")}</button>`;
+    const b = c.querySelector("button");
+    b.addEventListener("click", async ()=>{
+      try{ await navigator.clipboard.writeText(txt); }
+      catch(e){
+        const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select();
+        try{document.execCommand("copy");}catch(_){} ta.remove();
+      }
+      b.textContent = tt("copied"); b.classList.add("copied");
+      setTimeout(()=>{ b.textContent = tt("copy"); b.classList.remove("copied"); },1600);
+    });
+    libEl.appendChild(c);
+  });
+
+  cat.prompts.forEach((prompt, pi)=>{
+    const values = {};
+    const card = document.createElement("div");
+    card.className = "gen";
+
+    const fieldsHTML = prompt.fields.map((f, fi)=>{
+      const wide = f.wide ? " wide" : "";
+      let control;
+      if(f.type==="select"){
+        control = `<select data-fid="${f.id}">` + f.options.map((o,oi)=>`<option value="${esc(o[lang])}">${esc(o[lang])}</option>`).join("") + `</select>`;
+        values[f.id] = f.options[0][lang];
+      } else if(f.type==="textarea"){
+        control = `<textarea data-fid="${f.id}" placeholder="${f.ph?esc(f.ph[lang]):""}"></textarea>`;
+      } else {
+        control = `<input type="text" data-fid="${f.id}" placeholder="${f.ph?esc(f.ph[lang]):""}">`;
+      }
+      return `<div class="f${wide}"><label>${esc(f.label[lang])}</label>${control}</div>`;
+    }).join("");
+
+    card.innerHTML = `
+      <span class="tag">${prompt.tag[lang]}</span>
+      <h3>${prompt.titol[lang]}</h3>
+      <div class="sub">${prompt.sub[lang]}</div>
+      <div class="fields">${fieldsHTML}</div>
+      <div class="preview" data-preview></div>
+      <div class="actions">
+        <button class="btn copy" data-copy>${tt("copy")}</button>
+        <button class="btn ghost clr" data-clear>${tt("clear")}</button>
+      </div>`;
+
+    gensEl.appendChild(card);
+
+    const previewEl = card.querySelector("[data-preview]");
+    const copyBtn = card.querySelector("[data-copy]");
+
+    function refresh(){
+      previewEl.innerHTML = buildPreviewHTML(prompt, values);
+      copyBtn.textContent = tt("copy");
+      copyBtn.classList.remove("copied");
+    }
+
+    card.querySelectorAll("[data-fid]").forEach(ctrl=>{
+      const fid = ctrl.getAttribute("data-fid");
+      const ev = ctrl.tagName==="SELECT" ? "change" : "input";
+      ctrl.addEventListener(ev, ()=>{ values[fid] = ctrl.value; refresh(); });
+    });
+
+    copyBtn.addEventListener("click", async ()=>{
+      const plain = buildPrompt(prompt, values);
+      try{ await navigator.clipboard.writeText(plain); }
+      catch(e){
+        const ta=document.createElement("textarea"); ta.value=plain; document.body.appendChild(ta); ta.select();
+        try{document.execCommand("copy");}catch(_){} ta.remove();
+      }
+      copyBtn.textContent = tt("copied");
+      copyBtn.classList.add("copied");
+      setTimeout(()=>{ copyBtn.textContent = tt("copy"); copyBtn.classList.remove("copied"); }, 1600);
+    });
+
+    card.querySelector("[data-clear]").addEventListener("click", ()=>{
+      card.querySelectorAll("[data-fid]").forEach(ctrl=>{
+        if(ctrl.tagName==="SELECT"){ ctrl.selectedIndex=0; values[ctrl.getAttribute("data-fid")]=ctrl.value; }
+        else { ctrl.value=""; values[ctrl.getAttribute("data-fid")]=""; }
+      });
+      refresh();
+    });
+
+    refresh();
+  });
+}
+
+/* ---------- Gate ---------- */
+function unlock(){
+  document.getElementById("gate").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  applyStaticText();
+  renderNav();
+  renderCat();
+}
+
+function initGate(){
+  let saved=false;
+  try{ saved = localStorage.getItem("promptsaula_ok")==="1"; }catch(e){}
+  if(saved){ unlock(); return; }
+
+  document.getElementById("gateForm").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const val = document.getElementById("codeInput").value.trim();
+    if(val.toUpperCase() === CODI_ACCES.toUpperCase()){
+      try{ localStorage.setItem("promptsaula_ok","1"); }catch(e){}
+      unlock();
+    } else {
+      const err = document.getElementById("gateErr");
+      err.textContent = lang==="ca" ? "Codi incorrecte. Torna-ho a provar." : "Código incorrecto. Inténtalo de nuevo.";
+      document.getElementById("codeInput").value="";
+    }
+  });
+}
+
+applyStaticText();
+initGate();
+</script>
+</body>
+</html>
