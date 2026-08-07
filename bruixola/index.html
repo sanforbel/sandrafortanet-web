@@ -81,7 +81,9 @@
   .card:hover .obri{color:var(--blue-dark)}
   .buit{text-align:center;color:var(--muted);padding:50px 10px;grid-column:1/-1}
   /* peu */
-  .nota{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(--muted)}
+  .nota{border-top:1px solid var(--line);padding:24px 0 8px;font-size:13.5px;color:var(--muted);max-width:760px}
+  .nota p{margin:0 0 16px}
+  .nota-h{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:19px;color:var(--ink);margin:26px 0 8px}
   footer{border-top:1px solid var(--line);padding:20px 0 40px;
     font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.05em;
     color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -121,6 +123,8 @@
 
   <div class="nota">
     <p data-t="nota"></p>
+    <h2 class="nota-h" data-t="det_h"></h2>
+    <p data-t="det"></p>
   </div>
 </div>
 
@@ -144,6 +148,8 @@
         obri:"OBRI-LA →", avis:"Avís", propi:"RECURS PROPI", est:"ESTRELLA",
         compte:"ferramentes", buit:"Cap ferramenta coincidix amb la cerca.",
         peu:"Revisada periòdicament",
+        det_h:"I els detectors de text fet amb IA?",
+        det:"Ací no en trobaràs cap, i no és un descuit. Els fabricants admeten falsos positius a escala d'oració, la recerca independent els dona una fiabilitat pròxima a la d'una moneda amb els textos mixtos —que és com escriu ja l'alumnat— i universitats com el MIT o la de Texas desaconsellen usar-los. A més, cap detector té model per al valencià. Poden servir per a obrir una conversa amb un alumne, mai per a tancar-la: el que sí que funciona és redissenyar la tasca (esborranys visibles, defensa oral, treball en classe).",
         nota:"Els avisos grocs no volen dir que la ferramenta siga dolenta: assenyalen canvis de nom, de condicions del pla gratuït o d'estat de manteniment que convé conéixer abans de portar-la a l'aula o de recomanar-la a l'alumnat."},
     es:{t1:"Mi brújula", t2:"digital IA",
         sub:"Directorio de herramientas de inteligencia artificial para el aula, con un aviso en cada una cuando hay algo que conviene saber antes de usarla.",
@@ -151,6 +157,8 @@
         obri:"ÁBRELA →", avis:"Aviso", propi:"RECURSO PROPIO", est:"ESTRELLA",
         compte:"herramientas", buit:"Ninguna herramienta coincide con la búsqueda.",
         peu:"Revisada periódicamente",
+        det_h:"¿Y los detectores de texto hecho con IA?",
+        det:"Aquí no encontrarás ninguno, y no es un descuido. Los fabricantes admiten falsos positivos a escala de oración, la investigación independiente les da una fiabilidad cercana a la de una moneda con los textos mixtos —que es como escribe ya el alumnado— y universidades como el MIT o la de Texas desaconsejan usarlos. Además, ningún detector tiene modelo para el valenciano. Pueden servir para abrir una conversación con un alumno, nunca para cerrarla: lo que sí funciona es rediseñar la tarea (borradores visibles, defensa oral, trabajo en clase).",
         nota:"Los avisos amarillos no significan que la herramienta sea mala: señalan cambios de nombre, de condiciones del plan gratuito o de estado de mantenimiento que conviene conocer antes de llevarla al aula o de recomendarla al alumnado."},
     en:{t1:"My digital", t2:"AI compass",
         sub:"A directory of AI tools for the classroom, each with a note when there is something you should know before using it.",
@@ -158,6 +166,8 @@
         obri:"OPEN IT →", avis:"Note", propi:"MY OWN RESOURCE", est:"STANDOUT",
         compte:"tools", buit:"No tool matches your search.",
         peu:"Reviewed regularly",
+        det_h:"What about AI text detectors?",
+        det:"You will not find one here, and that is deliberate. Vendors themselves admit false positives at sentence level, independent research finds near-coin-flip reliability on mixed human-AI texts — which is how students now write — and universities such as MIT and UT Austin advise against using them. No detector has a model for Catalan or Valencian either. They may open a conversation with a student, never close one: what does work is redesigning the task (visible drafts, oral defence, in-class work).",
         nota:"A yellow note does not mean the tool is bad: it flags name changes, free-plan conditions or maintenance status worth knowing before you take it into a classroom or recommend it to students."},
     fr:{t1:"Ma boussole", t2:"numérique IA",
         sub:"Répertoire d'outils d'intelligence artificielle pour la classe, chacun avec un avertissement lorsqu'il y a quelque chose à savoir avant de l'utiliser.",
@@ -165,6 +175,8 @@
         obri:"OUVRIR →", avis:"Avis", propi:"RESSOURCE PROPRE", est:"COUP DE CŒUR",
         compte:"outils", buit:"Aucun outil ne correspond à la recherche.",
         peu:"Révisé régulièrement",
+        det_h:"Et les détecteurs de texte généré par IA ?",
+        det:"Vous n'en trouverez aucun ici, et ce n'est pas un oubli. Les éditeurs admettent des faux positifs au niveau de la phrase, la recherche indépendante leur attribue une fiabilité proche du hasard sur les textes mixtes — ce qui correspond à la façon d'écrire des élèves aujourd'hui — et des universités comme le MIT ou celle du Texas déconseillent leur usage. Aucun détecteur n'a de modèle pour le valencien. Ils peuvent ouvrir une conversation avec un élève, jamais la clore : ce qui fonctionne, c'est de repenser la tâche (brouillons visibles, défense orale, travail en classe).",
         nota:"Un avertissement jaune ne signifie pas que l'outil est mauvais : il signale des changements de nom, de conditions du plan gratuit ou de maintenance qu'il vaut mieux connaître avant de l'utiliser en classe."}
   };
 
