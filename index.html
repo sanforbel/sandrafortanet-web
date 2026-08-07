@@ -273,6 +273,10 @@
   .btn:hover{background:var(--blue-dark);border-color:var(--blue-dark)}
   .btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
   .btn.ghost:hover{background:var(--ink);color:#F6F5F1}
+  .xarxes{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}
+  .xarxes a{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}
+  .xarxes a:hover{color:var(--ink);border-color:var(--ink)}
   .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
   @media(max-width:760px){.contact-grid{grid-template-columns:1fr}}
   .form{display:grid;gap:13px;margin-top:4px}
@@ -315,6 +319,11 @@
   "email": "sandra@fundacionflors.es",
   "jobTitle": "Professora d'ESO i formadora de professorat en intel\u00b7lig\u00e8ncia artificial educativa",
   "description": "Professora de llengua i literatura en valenci\u00e0 i castell\u00e0, formadora de professorat en intel\u00b7lig\u00e8ncia artificial aplicada a l'educaci\u00f3, oratòria i debat acad\u00e8mic.",
+  "sameAs": [
+    "https://www.linkedin.com/in/sandra-fortanet-3409a9327",
+    "https://www.instagram.com/sanforbel1",
+    "https://www.threads.com/@sanforbel1"
+  ],
   "knowsLanguage": ["ca", "es"],
   "knowsAbout": ["Intel\u00b7lig\u00e8ncia artificial educativa", "Did\u00e0ctica de les lleng\u00fces", "Comprensi\u00f3 lectora", "Orat\u00f2ria i debat acad\u00e8mic", "Compet\u00e8ncia digital docent"],
   "worksFor": { "@type": "Organization", "name": "Fundaci\u00f3n Flors" }
@@ -591,6 +600,11 @@
       <div>
         <p>Vols una formació al teu centre, tens dubtes sobre alguna ferramenta o simplement vols compartir idees i experiències? Escriu-me i en parlem.</p>
         <p style="margin-top:14px"><a class="mail" href="mailto:sandra@fundacionflors.es">sandra@fundacionflors.es</a></p>
+        <p class="xarxes">
+          <a href="https://www.linkedin.com/in/sandra-fortanet-3409a9327" target="_blank" rel="noopener">LINKEDIN</a>
+          <a href="https://www.instagram.com/sanforbel1" target="_blank" rel="noopener">INSTAGRAM</a>
+          <a href="https://www.threads.com/@sanforbel1" target="_blank" rel="noopener">THREADS</a>
+        </p>
       </div>
       <!-- Formulari de contacte gestionat per Netlify Forms -->
       <form class="form" name="contacte" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/gracies">
