@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Brúixola IA · Sandra Fortanet</title>
+<meta name="description" content="Directori curat de ferramentes d'intel·ligència artificial per a l'educació: models de llenguatge, imatge, vídeo, àudio, assistents docents i més, amb avisos sobre què ha canviat en cada una.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="La Brúixola IA · directori de ferramentes per a l'aula">
+<meta property="og:description" content="Ferramentes d'IA per a educació, revisades i amb avisos sobre canvis de nom, de condicions o de manteniment.">
+<meta property="og:url" content="https://sandrafortanet.netlify.app/bruixola">
+<meta property="og:image" content="https://sandrafortanet.netlify.app/og.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F1; --card:#FFFFFF; --ink:#1E2126; --muted:#6D6F76;
+    --line:#DEDCD4; --blue:#2743C7; --blue-dark:#1D33A0; --marker:#FFE45C;
+    --marker-soft:#FFF3B8; --red:#C6392C; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;line-height:1.55}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  a{color:var(--blue)}
+  /* capçalera */
+  .top{display:flex;justify-content:space-between;align-items:center;gap:14px;
+    padding:20px 0;flex-wrap:wrap}
+  .brand{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.12em;
+    text-decoration:none;color:var(--ink)}
+  .idiomes{display:flex;gap:4px}
+  .idiomes button{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;
+    border:1px solid var(--line);background:var(--card);color:var(--muted);
+    border-radius:999px;padding:6px 12px;cursor:pointer}
+  .idiomes button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  header.hero{border-bottom:2px solid var(--ink);padding:22px 0 40px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:700;letter-spacing:-.01em;
+    font-size:clamp(32px,5.5vw,52px);line-height:1.05;margin:0}
+  h1 .hl{background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);padding:0 .06em}
+  .sub{color:var(--muted);font-size:17px;max-width:620px;margin:14px 0 0}
+  .revisio{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;
+    color:var(--muted);text-transform:uppercase;margin-top:18px}
+  /* controls */
+  .controls{padding:26px 0 6px;position:sticky;top:0;background:var(--paper);z-index:5}
+  #cerca{width:100%;font:inherit;font-size:15px;padding:13px 16px;border-radius:999px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink)}
+  #cerca:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+  .cats{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
+  .cats button{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;
+    text-transform:uppercase;border:1px solid var(--line);background:var(--card);
+    color:var(--muted);border-radius:999px;padding:7px 13px;cursor:pointer}
+  .cats button:hover{border-color:var(--muted)}
+  .cats button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+  .compte{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;
+    color:var(--muted);text-transform:uppercase;padding:10px 0 0}
+  /* graella */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:16px;padding:18px 0 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
+    transition:transform .12s ease,border-color .12s ease}
+  .card:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .card .cap{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .card .tag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
+    color:var(--muted);text-transform:uppercase}
+  .badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.07em;
+    border-radius:4px;padding:3px 7px;white-space:nowrap}
+  .badge.est{background:var(--marker)}
+  .badge.propi{background:var(--ink);color:var(--paper)}
+  .card h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:19px;
+    line-height:1.2;margin:0}
+  .card h2 small{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;
+    color:var(--muted);display:block;margin-top:4px;font-weight:400}
+  .card p{font-size:13.5px;color:var(--muted);margin:0;flex:1}
+  .avis{font-size:12.5px;background:var(--marker-soft);border-radius:9px;padding:9px 11px;
+    color:#5d4a00;display:flex;gap:7px;align-items:flex-start}
+  .avis b{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;
+    text-transform:uppercase;flex:0 0 auto;padding-top:1px}
+  .obri{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;
+    color:var(--blue)}
+  .card:hover .obri{color:var(--blue-dark)}
+  .buit{text-align:center;color:var(--muted);padding:50px 10px;grid-column:1/-1}
+  /* peu */
+  .nota{border-top:1px solid var(--line);padding:24px 0;font-size:13px;color:var(--muted)}
+  footer{border-top:1px solid var(--line);padding:20px 0 40px;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.05em;
+    color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="/">← SANDRA FORTANET</a>
+    <div class="idiomes" role="group" aria-label="Idioma">
+      <button data-l="ca" aria-pressed="true">VALENCIÀ</button>
+      <button data-l="es" aria-pressed="false">CASTELLANO</button>
+      <button data-l="en" aria-pressed="false">ENGLISH</button>
+      <button data-l="fr" aria-pressed="false">FRANÇAIS</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <h1><span data-t="t1">La meua brúixola</span><br><span class="hl" data-t="t2">digital IA</span></h1>
+    <p class="sub" data-t="sub">Directori de ferramentes d'intel·ligència artificial per a l'aula, amb un avís en cada una quan hi ha alguna cosa que convé saber abans d'usar-la.</p>
+    <p class="revisio"><span data-t="rev">Última revisió</span>: <span id="data-revisio"></span></p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="controls">
+    <input id="cerca" type="search" placeholder="Cerca ferramentes, categories, paraules clau..." aria-label="Cerca">
+    <div class="cats" id="cats"></div>
+    <p class="compte" id="compte"></p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="nota">
+    <p data-t="nota"></p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%">
+    <span>LA BRÚIXOLA IA · <a href="https://sandrafortanet.netlify.app/">@sanforbel</a></span>
+    <span data-t="peu">Revisada periòdicament</span>
+  </div>
+</footer>
+
+<script src="dades.js"></script>
+<script>
+(function(){
+  "use strict";
+  var D = window.BRUIXOLA, lang = "ca", cat = "totes", q = "";
+
+  var UI = {
+    ca:{t1:"La meua brúixola", t2:"digital IA",
+        sub:"Directori de ferramentes d'intel·ligència artificial per a l'aula, amb un avís en cada una quan hi ha alguna cosa que convé saber abans d'usar-la.",
+        rev:"Última revisió", totes:"Totes", cerca:"Cerca ferramentes, categories, paraules clau...",
+        obri:"OBRI-LA →", avis:"Avís", propi:"RECURS PROPI", est:"ESTRELLA",
+        compte:"ferramentes", buit:"Cap ferramenta coincidix amb la cerca.",
+        peu:"Revisada periòdicament",
+        nota:"Els avisos grocs no volen dir que la ferramenta siga dolenta: assenyalen canvis de nom, de condicions del pla gratuït o d'estat de manteniment que convé conéixer abans de portar-la a l'aula o de recomanar-la a l'alumnat."},
+    es:{t1:"Mi brújula", t2:"digital IA",
+        sub:"Directorio de herramientas de inteligencia artificial para el aula, con un aviso en cada una cuando hay algo que conviene saber antes de usarla.",
+        rev:"Última revisión", totes:"Todas", cerca:"Busca herramientas, categorías, palabras clave...",
+        obri:"ÁBRELA →", avis:"Aviso", propi:"RECURSO PROPIO", est:"ESTRELLA",
+        compte:"herramientas", buit:"Ninguna herramienta coincide con la búsqueda.",
+        peu:"Revisada periódicamente",
+        nota:"Los avisos amarillos no significan que la herramienta sea mala: señalan cambios de nombre, de condiciones del plan gratuito o de estado de mantenimiento que conviene conocer antes de llevarla al aula o de recomendarla al alumnado."},
+    en:{t1:"My digital", t2:"AI compass",
+        sub:"A directory of AI tools for the classroom, each with a note when there is something you should know before using it.",
+        rev:"Last reviewed", totes:"All", cerca:"Search tools, categories, keywords...",
+        obri:"OPEN IT →", avis:"Note", propi:"MY OWN RESOURCE", est:"STANDOUT",
+        compte:"tools", buit:"No tool matches your search.",
+        peu:"Reviewed regularly",
+        nota:"A yellow note does not mean the tool is bad: it flags name changes, free-plan conditions or maintenance status worth knowing before you take it into a classroom or recommend it to students."},
+    fr:{t1:"Ma boussole", t2:"numérique IA",
+        sub:"Répertoire d'outils d'intelligence artificielle pour la classe, chacun avec un avertissement lorsqu'il y a quelque chose à savoir avant de l'utiliser.",
+        rev:"Dernière révision", totes:"Tous", cerca:"Rechercher outils, catégories, mots-clés...",
+        obri:"OUVRIR →", avis:"Avis", propi:"RESSOURCE PROPRE", est:"COUP DE CŒUR",
+        compte:"outils", buit:"Aucun outil ne correspond à la recherche.",
+        peu:"Révisé régulièrement",
+        nota:"Un avertissement jaune ne signifie pas que l'outil est mauvais : il signale des changements de nom, de conditions du plan gratuit ou de maintenance qu'il vaut mieux connaître avant de l'utiliser en classe."}
+  };
+
+  function t(k){ return UI[lang][k]; }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function nomCat(id){
+    var c = D.categories.filter(function(x){ return x.id===id; })[0];
+    return c ? c[lang] : id;
+  }
+
+  function pintaCats(){
+    var h = '<button data-c="totes"' + (cat==="totes"?' aria-pressed="true"':' aria-pressed="false"') +
+            '>' + esc(t("totes")) + '</button>';
+    D.categories.forEach(function(c){
+      var usades = D.ferramentes.some(function(f){ return f.c===c.id; });
+      if(!usades) return;
+      h += '<button data-c="' + c.id + '"' + (cat===c.id?' aria-pressed="true"':' aria-pressed="false"') +
+           '>' + esc(c[lang]) + '</button>';
+    });
+    document.getElementById("cats").innerHTML = h;
+    Array.prototype.forEach.call(document.querySelectorAll("#cats button"), function(b){
+      b.addEventListener("click", function(){ cat = b.dataset.c; pintaCats(); pinta(); });
+    });
+  }
+
+  function pinta(){
+    var text = q.trim().toLowerCase();
+    var llista = D.ferramentes.filter(function(f){
+      if(cat !== "totes" && f.c !== cat) return false;
+      if(!text) return true;
+      var pal = [f.n, f.alies||"", f.d, f.avis||"", nomCat(f.c)].join(" ").toLowerCase();
+      return pal.indexOf(text) > -1;
+    });
+
+    var h = "";
+    llista.forEach(function(f){
+      h += '<a class="card" href="' + esc(f.u) + '" target="_blank" rel="noopener">' +
+           '<div class="cap"><span class="tag">' + esc(nomCat(f.c)) + '</span>' +
+           (f.estrella ? '<span class="badge est">★ ' + esc(t("est")) + '</span>' : '') +
+           (f.propi ? '<span class="badge propi">◆ ' + esc(t("propi")) + '</span>' : '') +
+           '</div>' +
+           '<h2>' + esc(f.n) +
+           (f.alies ? '<small>abans: ' + esc(f.alies) + '</small>' : '') + '</h2>' +
+           '<p>' + esc(f.d) + '</p>' +
+           (f.avis ? '<div class="avis"><b>' + esc(t("avis")) + '</b><span>' + esc(f.avis) + '</span></div>' : '') +
+           '<span class="obri">' + esc(t("obri")) + '</span>' +
+           '</a>';
+    });
+    document.getElementById("grid").innerHTML = h ||
+      '<p class="buit">' + esc(t("buit")) + '</p>';
+    document.getElementById("compte").textContent = llista.length + " " + t("compte");
+  }
+
+  function pintaIdioma(){
+    document.documentElement.lang = lang === "ca" ? "ca" : lang;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-t]"), function(e){
+      var k = e.dataset.t;
+      if(UI[lang][k] != null) e.textContent = UI[lang][k];
+    });
+    document.getElementById("cerca").placeholder = t("cerca");
+    pintaCats(); pinta();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll(".idiomes button"), function(b){
+    b.addEventListener("click", function(){
+      lang = b.dataset.l;
+      Array.prototype.forEach.call(document.querySelectorAll(".idiomes button"), function(x){
+        x.setAttribute("aria-pressed", String(x === b));
+      });
+      pintaIdioma();
+    });
+  });
+
+  document.getElementById("cerca").addEventListener("input", function(e){
+    q = e.target.value; pinta();
+  });
+
+  var d = D.revisio.split("-");
+  document.getElementById("data-revisio").textContent = d[2] + "/" + d[1] + "/" + d[0];
+  pintaIdioma();
+})();
+</script>
+</body>
+</html>
