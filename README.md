@@ -16,6 +16,8 @@ tocar res en Netlify. L'adreça pública no canvia mai.
 | `index.html` | La pàgina principal, amb tot l'estil dins. No hi ha cap procés de compilació. |
 | `prompts-lectura/index.html` | Generadors de prompts basats en la ciència de la lectura. |
 | `prompts-aula/index.html` | Biblioteca de prompts per al professorat, amb codi d'accés per a les participants de les formacions. |
+| `bruixola/` | La Brúixola IA: el directori de ferramentes (`index.html` i `dades.js`, on estan totes les fitxes). |
+| `img/` | Les miniatures de les targetes. Són captures reals de cada ferramenta, de 880 × 466 píxels. |
 | `sandra.jpg`, `ponencia.jpg` | Les fotos de la pàgina principal. |
 | `sitemap.xml`, `robots.txt` | Perquè els cercadors troben les tres pàgines. |
 | `google614fbad6a7feb0e6.html` | Verificació de Google Search Console. **No l'esborreu**: sense este fitxer, Google deixa de reconéixer el web com a propi. |

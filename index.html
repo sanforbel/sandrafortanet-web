@@ -63,6 +63,13 @@
     text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:999px;
   }
   .nav-links a:hover{background:#EFEDE6;color:var(--ink)}
+  @media (max-width:820px){
+    .nav{flex-wrap:nowrap;align-items:center}
+    .nav-links{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+      mask-image:linear-gradient(to right,#000 88%,transparent)}
+    .nav-links::-webkit-scrollbar{display:none}
+    .nav-links a{white-space:nowrap}
+  }
 
   /* ---------- Hero ---------- */
   .hero{padding:64px 0 54px;border-bottom:2px solid var(--ink)}
@@ -299,6 +306,34 @@
   .banda{background:#EFEDE6;box-shadow:0 0 0 100vmax #EFEDE6;clip-path:inset(0 -100vmax);
     padding-top:34px;padding-bottom:10px;margin-top:14px}
   .banda .card{background:#fff}
+  /* --- graella de dos columnes --- */
+  .grid.g2{grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr))}
+  /* --- nota lateral --- */
+  .nota{border-left:3px solid var(--marker);padding:4px 0 4px 20px;align-self:center;
+    display:flex;flex-direction:column;gap:9px}
+  .nota .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    color:var(--muted);text-transform:uppercase}
+  .nota p{font-size:14.5px;color:var(--ink);max-width:460px}
+  /* --- passos de la consultoria --- */
+  .passos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;
+    margin:22px 0 26px}
+  .passos > div{border-top:2px solid var(--ink);padding-top:14px}
+  .passos .p{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;
+    color:var(--blue);display:block;margin-bottom:6px}
+  .passos b{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:18px;
+    display:block;line-height:1.25;margin-bottom:5px}
+  .passos .d{font-size:13.5px;color:var(--muted);display:block}
+  /* --- entitats on ha format --- */
+  .entitats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:18px 0;margin:14px 0 22px;display:grid;grid-template-columns:150px 1fr;
+    gap:20px;align-items:center}
+  @media(max-width:640px){.entitats{grid-template-columns:1fr;gap:12px}}
+  .entitats .et{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+    color:var(--muted);text-transform:uppercase;line-height:1.6}
+  .entitats ul{list-style:none;display:flex;flex-wrap:wrap;gap:9px 0}
+  .entitats li{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:16px;
+    color:var(--ink);padding:0 16px;border-left:1px solid var(--line)}
+  .entitats li:first-child{padding-left:0;border-left:0}
   /* --- targetes informatives (sense enllaç) --- */
   .card.info{border-left:3px solid var(--marker);position:relative}
   .card.info h3{padding-right:40px}
@@ -375,12 +410,12 @@
     <div class="nav-links">
       <a href="#sobre-mi">SOBRE MI</a>
       <a href="#formacio">FORMACIONS</a>
+      <a href="#consultoria">CENTRES</a>
       <a href="#trajectoria">TRAJECTÒRIA</a>
       <a href="#prompts">PROMPTS</a>
       <a href="#debat">DEBAT</a>
-      <a href="#ferramentes">LABORATORI D'IA</a>
+      <a href="#ferramentes">LABORATORI</a>
       <a href="#recerca">RECERCA</a>
-      <a href="#consultoria">CONSULTORIA</a>
       <a href="#contacte">CONTACTE</a>
     </div>
   </nav>
@@ -500,8 +535,31 @@
     </div>
   </section>
 
+  <section id="consultoria" class="banda">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Consultoria per a centres</h2></div>
+    <p class="sec-desc">Si el teu centre vol passar de les proves soltes a un pla de veritat, açò és el que fem: diagnòstic, pla i acompanyament durant el curs.</p>
+    <div class="consult">
+      <div>
+        <span class="tag">AMB ERNESTO BOIXADER</span>
+        <h3>Pla d'Implantació de la IA</h3>
+        <p>Acompanyament integral per a centres educatius: diagnòstic inicial gratuït, pla d'implantació i formació contínua amb visites presencials mensuals.</p>
+      </div>
+      <a href="mailto:sandra@fundacionflors.es?subject=Pla%20d%27Implantaci%C3%B3%20de%20la%20IA">DEMANA INFORMACIÓ</a>
+    </div>
+    <div class="passos">
+      <div><span class="p">01</span><b>Diagnòstic inicial</b><span class="d">Gratuït. On esteu, què useu ja i què necessiteu de veritat.</span></div>
+      <div><span class="p">02</span><b>Pla d'implantació</b><span class="d">Per etapes, amb criteris d'ús ètic i responsable acordats amb el claustre.</span></div>
+      <div><span class="p">03</span><b>Formació contínua</b><span class="d">Visites presencials mensuals i acompanyament al llarg del curs.</span></div>
+    </div>
+    <div class="far" style="margin-top:4px;background:#fff;border-color:var(--line)">
+      <span class="tag">Amb qui treballe</span>
+      <h3><a href="https://eboixader.es/" target="_blank" rel="noopener">Ernesto Boixader</a></h3>
+      <p>D'Ernesto he aprés bona part del que sé sobre intel·ligència artificial aplicada a l'educació, i amb ell acompanye els centres en la implantació. És el meu <span class="hl">far</span> en este camí: qui m'ha ensenyat que la innovació educativa només té sentit quan naix de la generositat i la col·laboració.</p>
+    </div>
+  </section>
+
   <section id="trajectoria">
-    <div class="sec-head"><span class="sec-num">03</span><h2>Formadora i ponent</h2></div>
+    <div class="sec-head"><span class="sec-num">04</span><h2>Formadora i ponent</h2></div>
     <p class="sec-desc">Forme professorat en intel·ligència artificial educativa per al CEFIRE, universitats, patronals educatives i projectes europeus, sempre des de l'ús ètic, responsable i amb sentit pedagògic.</p>
     <div class="ponent-grid">
       <div class="txt">
@@ -513,6 +571,20 @@
         <img src="ponencia.jpg" alt="Sessió de formació en IA per a professorat impartida per Sandra Fortanet" onerror="this.parentElement.style.display='none'">
       </div>
     </div>
+    <div class="entitats">
+      <span class="et">On he format o he sigut ponent</span>
+      <ul>
+        <li>CEFIRE</li>
+        <li>Universitat de València</li>
+        <li>Florida Universitària</li>
+        <li>UNED Vila-real</li>
+        <li>Erasmus+ PRAISE</li>
+        <li>Observatori d'IA</li>
+        <li>FECEVAL</li>
+        <li>ADIES-PV</li>
+        <li>FEDADI</li>
+      </ul>
+    </div>
     <div class="creds">
       <span class="cred">Lingüista externa d'À Punt</span>
       <span class="cred">Examinadora i formadora JQCV · CIEACOVA</span>
@@ -522,35 +594,35 @@
   </section>
 
   <section id="prompts" class="banda">
-    <div class="sec-head"><span class="sec-num">04</span><h2>Prompts i recursos per al professorat</h2></div>
+    <div class="sec-head"><span class="sec-num">05</span><h2>Prompts i recursos per al professorat</h2></div>
     <p class="sec-desc">Biblioteques de prompts pensades perquè crear material didàctic amb IA coste minuts i tinga criteri pedagògic.</p>
     <div class="grid">
       <article class="card">
         <img class="mini" src="img/prompts-lectura.jpg" alt="Captura de Prompts de Lectura: índex de generadors i prompt generat" loading="lazy" width="880" height="466">
         <span class="tag">Comprensió lectora</span>
         <h3>Prompts de Lectura<span class="new">NOU</span></h3>
-        <p>Huit generadors basats en la ciència de la lectura: descodificació, cohesió, inferència, multinivell, metacognició, lectura crítica i avaluació estil PISA. Bilingüe valencià/castellà.</p>
+        <p>Huit generadors basats en la ciència de la lectura, de la descodificació a l'avaluació estil PISA. Bilingüe valencià/castellà.</p>
         <a class='go' href='/prompts-lectura'>OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/prompts-aula.jpg" alt="Captura de Prompts d'Aula: apartats de la biblioteca i generador de prompts" loading="lazy" width="880" height="466">
         <span class="tag">Biblioteca general · Accés amb codi</span>
         <h3>Prompts d'Aula</h3>
-        <p>Biblioteca bilingüe de prompts per a docents amb generador integrat amb IA: programació LOMLOE, materials, DUA, rúbriques, feedback, avaluació, burocràcia i tutoria.</p>
+        <p>Biblioteca bilingüe amb generador integrat: programació LOMLOE, materials, DUA, rúbriques, retroacció i tutoria.</p>
         <a class="go" href="/prompts-aula">ACCÉS PER A PARTICIPANTS DE LES FORMACIONS →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/bruixola.jpg" alt="Captura de La Brúixola IA: fitxes de ferramentes amb els avisos en groc" loading="lazy" width="880" height="466">
         <span class="tag">Directori de ferramentes</span>
         <h3>La Brúixola IA</h3>
-        <p>Directori curat de ferramentes d'IA per a educació: models, imatge, vídeo, àudio, assistents docents i més. Cada ferramenta porta un avís quan canvia de nom, de condicions o deixa de rebre manteniment.</p>
+        <p>Directori curat de ferramentes d'IA per a l'aula. Cada fitxa porta un avís quan la ferramenta canvia de nom, de condicions o deixa de rebre manteniment.</p>
         <a class="go" href="/bruixola">OBRI EL DIRECTORI →</a>
       </article>
     </div>
   </section>
 
   <section id="debat">
-    <div class="sec-head"><span class="sec-num">05</span><h2>Debat i oratòria</h2></div>
+    <div class="sec-head"><span class="sec-num">06</span><h2>Debat i oratòria</h2></div>
     <div class="featured">
       <div>
         <span class="tag">RECURS PROPI · EXPRESSIÓ ORAL</span>
@@ -559,11 +631,25 @@
       </div>
       <a href="https://sites.google.com/fundacionflors.es/debat-i-oratoria/p%C3%A0gina-principal" target="_blank" rel="noopener">ENTRA AL PORTAL →</a>
     </div>
+    <div class="grid g2">
+      <article class="card">
+        <img class="mini" src="img/entrenador-debat.jpg" alt="Captura de l'Entrenador de Debat: configuració del tema, el rol i el temps per torn" loading="lazy" width="880" height="466">
+        <span class="tag">Entrenament · Expressió oral</span>
+        <h3>Entrenador de Debat</h3>
+        <p>Practica el debat per torns: tries tema, rol i temps, parles amb el micròfon i en queda la transcripció, amb una rúbrica de 0 a 2 per criteri per a posar-te nota.</p>
+        <a class="go" href="https://sanforbel.github.io/ENTRENADORDEBATE/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+      </article>
+      <div class="nota">
+        <span class="tag">Formació en oratòria</span>
+        <p>Entrene alumnat en debat acadèmic i he sigut ponent en les Jornades d'Oratòria i Lliga de Debat del CEFIRE d'Alcoi. Si el teu centre vol muntar un equip de debat o preparar la Lliga, ho podem treballar junts.</p>
+        <a class="go" href="#contacte">PARLEM-NE →</a>
+      </div>
+    </div>
   </section>
 
   <section id="ferramentes" class="banda">
-    <div class="sec-head"><span class="sec-num">06</span><h2>Laboratori d'IA</h2></div>
-    <p class="sec-desc">Aplicacions, jocs i experiències interactives creades amb IA per a treballar la llengua amb l'alumnat: de la conjugació gamificada als simuladors i escape rooms digitals.</p>
+    <div class="sec-head"><span class="sec-num">07</span><h2>Laboratori d'IA</h2></div>
+    <p class="sec-desc">Aplicacions que he fet amb IA per a l'aula de llengua i per a avaluar. Totes són obertes, funcionen des del navegador i no recullen dades de l'alumnat.</p>
     <div class="grid">
       <!-- Targeta de Conjugación Espacial amagada mentres el joc no tinga adreça
            publica. Per a recuperar-la, lleva les dos linies de comentari de baix i
@@ -577,32 +663,33 @@
       </article>
       -->
       <article class="card">
-        <img class="mini" src="img/avaluador-centre.jpg" alt="Esquema de l'Avaluador de rúbriques: autoavaluació, coavaluació i heteroavaluació conflueixen en un informe individual" loading="lazy" width="880" height="466">
-        <span class="tag">Avaluació · Educació</span>
+        <img class="mini" src="img/avaluador-obert.jpg" alt="Captura de l'Avaluador de rúbriques: tria del tipus d'avaluació i identificació per número" loading="lazy" width="880" height="466">
+        <span class="tag">Avaluació · Rúbriques</span>
         <h3>Avaluador de rúbriques</h3>
-        <p>Sistema d'autoavaluació, coavaluació i heteroavaluació per a centres educatius. L'alumnat s'identifica només per número —mai amb nom i cognoms— i totes les dades es queden dins del domini de Workspace del centre. Inclou informe individual, comparació entre l'autoavaluació i l'avaluació docent, i retroacció generada a partir dels descriptors de la rúbrica.</p>
-        <a class="go" href="https://avaluador-rubriques.netlify.app/">OBRI LA FERRAMENTA →</a>
+        <p>Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat només per número. Calcula la nota ponderada i deixa descarregar els resultats. Les dades no ixen del navegador.</p>
+        <a class="go" href="https://avaluador-rubriques.netlify.app/">VERSIÓ COMPLETA · RÚBRICA, ALUMNAT I INFORMES →</a>
+        <a class="go" href="https://sanforbel.github.io/avaluador-rubriques/" target="_blank" rel="noopener">VERSIÓ BREU · AVALUAR I DESCARREGAR →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/tria-i-temps.jpg" alt="Captura de Tria i Temps: el número triat a l'atzar i el cronòmetre" loading="lazy" width="880" height="466">
         <span class="tag">Gestió d'aula · Oralitat</span>
         <h3>Tria i Temps</h3>
-        <p>Eina d'aula per a triar alumnat a l'atzar sense repetir —per número o per nom— i controlar el temps de les intervencions orals amb un cronòmetre que avisa amb color. Funciona en el mòbil i projectada, sense connexió i sense guardar cap dada.</p>
+        <p>Tria alumnat a l'atzar sense repetir i controla el temps de les intervencions orals amb un cronòmetre que avisa amb color. Va projectada, sense connexió i sense guardar cap dada.</p>
         <a class="go" href="https://sanforbel.github.io/tria-i-temps/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
-        <img class="mini" src="img/avaluador-obert.jpg" alt="Captura de l'Avaluador de rúbriques obert: tria del tipus d'avaluació i identificació per número" loading="lazy" width="880" height="466">
-        <span class="tag">Avaluació · Versió oberta</span>
-        <h3>Avaluador de rúbriques obert</h3>
-        <p>La mateixa idea que l'avaluador del centre, però sense comptes ni permisos: qualsevol docent pot obrir l'enllaç i usar-lo. Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat per número, càlcul de la nota ponderada i descàrrega dels resultats en full de càlcul. Admet qualsevol rúbrica en format JSON.</p>
-        <a class="go" href="https://sanforbel.github.io/avaluador-rubriques/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+        <img class="mini" src="img/subordinades.jpg" alt="Captura de la Guía Interactiva de Oraciones Subordinadas: pestanyes i exercicis de pràctica" loading="lazy" width="880" height="466">
+        <span class="tag">Sintaxi · Castellà · 4t d'ESO</span>
+        <h3>Oraciones Subordinadas</h3>
+        <p>Guia interactiva de subordinades substantives, adjectives i adverbials, amb exercicis de pràctica, joc i glossari. En castellà.</p>
+        <a class="go" href="https://sanforbel.github.io/SUBORDINADAS1/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
       </article>
       <!-- Per a afegir una ferramenta nova, copia un bloc <article class="card"> sencer ací -->
     </div>
   </section>
 
   <section id="recerca">
-    <div class="sec-head"><span class="sec-num">07</span><h2>Recerca i reflexió</h2></div>
+    <div class="sec-head"><span class="sec-num">08</span><h2>Recerca i reflexió</h2></div>
     <p class="sec-desc">M'interessa investigar la intersecció entre la tecnologia i l'aprenentatge de les llengües, amb tres línies de treball:</p>
     <div class="linies">
       <div class="linia">
@@ -626,24 +713,6 @@
           <p>Com integrar la innovació tecnològica des d'una mirada profundament humana, on la ferramenta amplifica la relació educativa en lloc de reemplaçar-la.</p>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="consultoria">
-    <div class="sec-head"><span class="sec-num">08</span><h2>Consultoria per a centres</h2></div>
-    <div class="consult">
-      <div>
-        <span class="tag">AMB ERNESTO BOIXADER</span>
-        <h3>Pla d'Implantació de la IA</h3>
-        <p>Acompanyament integral per a centres educatius: diagnòstic inicial gratuït, pla d'implantació i formació contínua amb visites presencials mensuals.</p>
-      </div>
-      
-      <a href="mailto:sandra@fundacionflors.es?subject=Pla%20d%27Implantaci%C3%B3%20de%20la%20IA">DEMANA INFORMACIÓ</a>
-    </div>
-    <div class="far" style="margin-top:20px">
-      <span class="tag">Amb qui treballe</span>
-      <h3><a href="https://eboixader.es/" target="_blank" rel="noopener">Ernesto Boixader</a></h3>
-      <p>D'Ernesto he aprés bona part del que sé sobre intel·ligència artificial aplicada a l'educació, i amb ell acompanye els centres en la implantació. És el meu <span class="hl">far</span> en este camí: qui m'ha ensenyat que la innovació educativa només té sentit quan naix de la generositat i la col·laboració.</p>
     </div>
   </section>
 
@@ -696,7 +765,7 @@
   <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <!-- EDITA'M: nom i any -->
     <span>SANDRA FORTANET · LLENGUA, LECTURA I IA · 2026</span>
-    <span>FET AMB IA, REVISAT AMB CRITERI</span>
+    <span>ÚLTIMA ACTUALITZACIÓ: 11/08/2026 · FET AMB IA, REVISAT AMB CRITERI</span>
   </div>
 </footer>
 
