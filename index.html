@@ -288,6 +288,25 @@
   .form input:focus,.form textarea:focus{outline:2px solid var(--blue);outline-offset:1px;
     border-color:transparent}
   .form .btn{justify-self:start;border:1px solid var(--blue)}
+
+  /* --- miniatures de les ferramentes --- */
+  .card .mini{display:block;flex:0 0 auto;width:calc(100% + 40px);height:180px;
+    min-height:0;margin:-20px -20px 6px;object-fit:cover;object-position:top center;
+    border-radius:var(--radius) var(--radius) 0 0;border-bottom:1px solid var(--line);
+    background:var(--paper)}
+  @media(max-width:520px){.card .mini{height:150px}}
+  /* --- bandes per a trencar el ritme --- */
+  .banda{background:#EFEDE6;box-shadow:0 0 0 100vmax #EFEDE6;clip-path:inset(0 -100vmax);
+    padding-top:34px;padding-bottom:10px;margin-top:14px}
+  .banda .card{background:#fff}
+  /* --- xifres destacades --- */
+  .xifres{background:var(--ink);color:#F6F5F1;padding:38px 0 34px}
+  .xifres-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:26px}
+  .xifres-grid div{border-left:2px solid var(--marker);padding-left:16px}
+  .xifres-grid b{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(34px,4.4vw,46px);
+    display:block;line-height:1;letter-spacing:-.02em}
+  .xifres-grid span{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;
+    color:#B9BBC0;text-transform:uppercase;display:block;margin-top:10px;line-height:1.45}
 </style>
 
 <!-- Previsualitzacio en xarxes i missatgeria -->
@@ -400,6 +419,17 @@
   </div>
 </div>
 
+<div class="xifres">
+  <div class="wrap">
+    <div class="xifres-grid">
+      <div><b>+500</b><span>Docents formats</span></div>
+      <div><b>13</b><span>Centres acompanyats (PAF · CEFIRE i FECEVAL)</span></div>
+      <div><b>4</b><span>Cursos CEFIRE impartits o tutoritzats</span></div>
+      <div><b>7</b><span>Ponències en jornades i congressos</span></div>
+    </div>
+  </div>
+</div>
+
 <main class="wrap">
   <section id="sobre-mi">
     <div class="sec-head"><span class="sec-num">01</span><h2>Sobre mi</h2></div>
@@ -453,15 +483,9 @@
     </div>
   </section>
 
-  <section id="trajectoria">
+  <section id="trajectoria" class="banda">
     <div class="sec-head"><span class="sec-num">03</span><h2>Formadora i ponent</h2></div>
     <p class="sec-desc">Forme professorat en intel·ligència artificial educativa per al CEFIRE, universitats, patronals educatives i projectes europeus, sempre des de l'ús ètic, responsable i amb sentit pedagògic.</p>
-    <div class="stats">
-      <div class="stat"><b>+500</b><span>Docents formats</span></div>
-      <div class="stat"><b>13</b><span>Centres acompanyats (PAF · CEFIRE i FECEVAL)</span></div>
-      <div class="stat"><b>4</b><span>Cursos CEFIRE impartits o tutoritzats</span></div>
-      <div class="stat"><b>7</b><span>Ponències en jornades i congressos</span></div>
-    </div>
     <div class="ponent-grid">
       <div class="txt">
         <p>Com a formadora del Programa d'Actualització de Formació (PAF) del CEFIRE, acompanye claustres d'Infantil, Primària i Secundària de tota la província en l'ús ètic i responsable de la IA. He impartit o tutoritzat cursos del CEFIRE com <em>Comboia't amb la IA: transforma la teua aula d'idiomes</em>, <em>IA en Educació Primària</em>, <em>IA en Educació Infantil</em> i <em>Habilitats socials a través de la IA</em>, i soc formadora de l'Observatori d'Intel·ligència Artificial (OIA) i del projecte europeu Erasmus+ PRAISE, on forme docents europeus en competència digital, IA educativa, programació i robòtica.</p>
@@ -517,7 +541,7 @@
     </div>
   </section>
 
-  <section id="ferramentes">
+  <section id="ferramentes" class="banda">
     <div class="sec-head"><span class="sec-num">06</span><h2>Laboratori d'IA</h2></div>
     <p class="sec-desc">Aplicacions, jocs i experiències interactives creades amb IA per a treballar la llengua amb l'alumnat: de la conjugació gamificada als simuladors i escape rooms digitals.</p>
     <div class="grid">
@@ -533,18 +557,21 @@
       </article>
       -->
       <article class="card">
+        <img class="mini" src="img/avaluador-centre.jpg" alt="Captura de l'Avaluador de rúbriques del centre" loading="lazy" width="880" height="550">
         <span class="tag">Avaluació · Educació</span>
         <h3>Avaluador de rúbriques</h3>
         <p>Sistema d'autoavaluació, coavaluació i heteroavaluació per a centres educatius. L'alumnat s'identifica només per número —mai amb nom i cognoms— i totes les dades es queden dins del domini de Workspace del centre. Inclou informe individual, comparació entre l'autoavaluació i l'avaluació docent, i retroacció generada a partir dels descriptors de la rúbrica.</p>
         <a class="go" href="https://avaluador-rubriques.netlify.app/">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
+        <img class="mini" src="img/tria-i-temps.jpg" alt="Captura de Tria i Temps" loading="lazy" width="880" height="550">
         <span class="tag">Gestió d'aula · Oralitat</span>
         <h3>Tria i Temps</h3>
         <p>Eina d'aula per a triar alumnat a l'atzar sense repetir —per número o per nom— i controlar el temps de les intervencions orals amb un cronòmetre que avisa amb color. Funciona en el mòbil i projectada, sense connexió i sense guardar cap dada.</p>
         <a class="go" href="https://sanforbel.github.io/tria-i-temps/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
+        <img class="mini" src="img/avaluador-obert.jpg" alt="Captura de l'Avaluador de rúbriques obert" loading="lazy" width="880" height="550">
         <span class="tag">Avaluació · Versió oberta</span>
         <h3>Avaluador de rúbriques obert</h3>
         <p>La mateixa idea que l'avaluador del centre, però sense comptes ni permisos: qualsevol docent pot obrir l'enllaç i usar-lo. Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat per número, càlcul de la nota ponderada i descàrrega dels resultats en full de càlcul. Admet qualsevol rúbrica en format JSON.</p>
