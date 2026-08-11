@@ -299,6 +299,23 @@
   .banda{background:#EFEDE6;box-shadow:0 0 0 100vmax #EFEDE6;clip-path:inset(0 -100vmax);
     padding-top:34px;padding-bottom:10px;margin-top:14px}
   .banda .card{background:#fff}
+  /* --- targetes informatives (sense enllaç) --- */
+  .card.info{border-left:3px solid var(--marker);position:relative}
+  .card.info h3{padding-right:40px}
+  .card.info .idx{position:absolute;top:15px;right:18px;
+    font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:27px;line-height:1;
+    color:#E4E2D8}
+  /* --- llista de línies de recerca --- */
+  .linies{max-width:900px;padding-bottom:28px}
+  .linia{display:grid;grid-template-columns:78px 1fr;gap:20px;align-items:start;
+    padding:22px 0;border-top:1px solid var(--line)}
+  .linia:last-child{border-bottom:1px solid var(--line)}
+  .linia .n{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;
+    color:var(--blue);padding-top:7px}
+  .linia h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:20.5px;
+    line-height:1.25;margin-bottom:6px}
+  .linia p{font-size:14px;color:var(--muted);max-width:650px}
+  @media(max-width:560px){.linia{grid-template-columns:1fr;gap:2px}.linia .n{padding-top:0}}
   /* --- xifres destacades --- */
   .xifres{background:var(--ink);color:#F6F5F1;padding:38px 0 34px}
   .xifres-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:26px}
@@ -452,28 +469,28 @@
     <div class="sec-head"><span class="sec-num">02</span><h2>Formacions</h2></div>
     <p class="sec-desc">Les meues principals línies de formació són:</p>
     <div class="grid">
-      <article class="card">
-        <span class="tag">Línia 1</span>
+      <article class="card info">
+        <span class="idx" aria-hidden="true">01</span>
         <h3>Intel·ligència Artificial aplicada a l'educació</h3>
         <p>Eines, prompting, creació de materials, personalització de l'aprenentatge, ètica i ús responsable de la IA.</p>
       </article>
-      <article class="card">
-        <span class="tag">Línia 2</span>
+      <article class="card info">
+        <span class="idx" aria-hidden="true">02</span>
         <h3>Didàctica de les llengües</h3>
         <p>Metodologies actives per a l'ensenyament del valencià i del castellà, desenvolupament de la competència comunicativa i disseny de situacions d'aprenentatge.</p>
       </article>
-      <article class="card">
-        <span class="tag">Línia 3</span>
+      <article class="card info">
+        <span class="idx" aria-hidden="true">03</span>
         <h3>Oratòria i debat acadèmic</h3>
         <p>Estratègies per a potenciar l'expressió oral, l'argumentació, el pensament crític i les habilitats comunicatives de l'alumnat.</p>
       </article>
-      <article class="card">
-        <span class="tag">Línia 4</span>
+      <article class="card info">
+        <span class="idx" aria-hidden="true">04</span>
         <h3>Innovació educativa i competència digital docent</h3>
         <p>Aprenentatge basat en projectes, gamificació, eines digitals i disseny d'experiències d'aprenentatge motivadores.</p>
       </article>
-      <article class="card">
-        <span class="tag">Línia 5</span>
+      <article class="card info">
+        <span class="idx" aria-hidden="true">05</span>
         <h3>Creació de recursos educatius digitals</h3>
         <p>Ús de plataformes i aplicacions per a elaborar materials interactius, activitats competencials i propostes d'avaluació.</p>
       </article>
@@ -483,7 +500,7 @@
     </div>
   </section>
 
-  <section id="trajectoria" class="banda">
+  <section id="trajectoria">
     <div class="sec-head"><span class="sec-num">03</span><h2>Formadora i ponent</h2></div>
     <p class="sec-desc">Forme professorat en intel·ligència artificial educativa per al CEFIRE, universitats, patronals educatives i projectes europeus, sempre des de l'ús ètic, responsable i amb sentit pedagògic.</p>
     <div class="ponent-grid">
@@ -504,23 +521,26 @@
     </div>
   </section>
 
-  <section id="prompts">
+  <section id="prompts" class="banda">
     <div class="sec-head"><span class="sec-num">04</span><h2>Prompts i recursos per al professorat</h2></div>
     <p class="sec-desc">Biblioteques de prompts pensades perquè crear material didàctic amb IA coste minuts i tinga criteri pedagògic.</p>
     <div class="grid">
       <article class="card">
+        <img class="mini" src="img/prompts-lectura.jpg" alt="Captura de Prompts de Lectura: índex de generadors i prompt generat" loading="lazy" width="880" height="466">
         <span class="tag">Comprensió lectora</span>
         <h3>Prompts de Lectura<span class="new">NOU</span></h3>
         <p>Huit generadors basats en la ciència de la lectura: descodificació, cohesió, inferència, multinivell, metacognició, lectura crítica i avaluació estil PISA. Bilingüe valencià/castellà.</p>
         <a class='go' href='/prompts-lectura'>OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
+        <img class="mini" src="img/prompts-aula.jpg" alt="Captura de Prompts d'Aula: apartats de la biblioteca i generador de prompts" loading="lazy" width="880" height="466">
         <span class="tag">Biblioteca general · Accés amb codi</span>
         <h3>Prompts d'Aula</h3>
         <p>Biblioteca bilingüe de prompts per a docents amb generador integrat amb IA: programació LOMLOE, materials, DUA, rúbriques, feedback, avaluació, burocràcia i tutoria.</p>
         <a class="go" href="/prompts-aula">ACCÉS PER A PARTICIPANTS DE LES FORMACIONS →</a>
       </article>
       <article class="card">
+        <img class="mini" src="img/bruixola.jpg" alt="Captura de La Brúixola IA: fitxes de ferramentes amb els avisos en groc" loading="lazy" width="880" height="466">
         <span class="tag">Directori de ferramentes</span>
         <h3>La Brúixola IA</h3>
         <p>Directori curat de ferramentes d'IA per a educació: models, imatge, vídeo, àudio, assistents docents i més. Cada ferramenta porta un avís quan canvia de nom, de condicions o deixa de rebre manteniment.</p>
@@ -557,21 +577,21 @@
       </article>
       -->
       <article class="card">
-        <img class="mini" src="img/avaluador-centre.jpg" alt="Captura de l'Avaluador de rúbriques del centre" loading="lazy" width="880" height="550">
+        <img class="mini" src="img/avaluador-centre.jpg" alt="Esquema de l'Avaluador de rúbriques: autoavaluació, coavaluació i heteroavaluació conflueixen en un informe individual" loading="lazy" width="880" height="466">
         <span class="tag">Avaluació · Educació</span>
         <h3>Avaluador de rúbriques</h3>
         <p>Sistema d'autoavaluació, coavaluació i heteroavaluació per a centres educatius. L'alumnat s'identifica només per número —mai amb nom i cognoms— i totes les dades es queden dins del domini de Workspace del centre. Inclou informe individual, comparació entre l'autoavaluació i l'avaluació docent, i retroacció generada a partir dels descriptors de la rúbrica.</p>
         <a class="go" href="https://avaluador-rubriques.netlify.app/">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
-        <img class="mini" src="img/tria-i-temps.jpg" alt="Captura de Tria i Temps" loading="lazy" width="880" height="550">
+        <img class="mini" src="img/tria-i-temps.jpg" alt="Captura de Tria i Temps: el número triat a l'atzar i el cronòmetre" loading="lazy" width="880" height="466">
         <span class="tag">Gestió d'aula · Oralitat</span>
         <h3>Tria i Temps</h3>
         <p>Eina d'aula per a triar alumnat a l'atzar sense repetir —per número o per nom— i controlar el temps de les intervencions orals amb un cronòmetre que avisa amb color. Funciona en el mòbil i projectada, sense connexió i sense guardar cap dada.</p>
         <a class="go" href="https://sanforbel.github.io/tria-i-temps/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
-        <img class="mini" src="img/avaluador-obert.jpg" alt="Captura de l'Avaluador de rúbriques obert" loading="lazy" width="880" height="550">
+        <img class="mini" src="img/avaluador-obert.jpg" alt="Captura de l'Avaluador de rúbriques obert: tria del tipus d'avaluació i identificació per número" loading="lazy" width="880" height="466">
         <span class="tag">Avaluació · Versió oberta</span>
         <h3>Avaluador de rúbriques obert</h3>
         <p>La mateixa idea que l'avaluador del centre, però sense comptes ni permisos: qualsevol docent pot obrir l'enllaç i usar-lo. Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat per número, càlcul de la nota ponderada i descàrrega dels resultats en full de càlcul. Admet qualsevol rúbrica en format JSON.</p>
@@ -584,22 +604,28 @@
   <section id="recerca">
     <div class="sec-head"><span class="sec-num">07</span><h2>Recerca i reflexió</h2></div>
     <p class="sec-desc">M'interessa investigar la intersecció entre la tecnologia i l'aprenentatge de les llengües, amb tres línies de treball:</p>
-    <div class="grid">
-      <article class="card">
-        <span class="tag">Línia de recerca</span>
-        <h3>IA i competència lingüística</h3>
-        <p>Com poden els models de llenguatge millorar la comprensió lectora i l'expressió escrita sense substituir el processament profund que constitueix l'aprenentatge.</p>
-      </article>
-      <article class="card">
-        <span class="tag">Línia de recerca</span>
-        <h3>IA, oratòria i pensament crític</h3>
-        <p>El paper de la IA en el desenvolupament de l'argumentació, el debat acadèmic i la capacitat de l'alumnat per a avaluar críticament la informació.</p>
-      </article>
-      <article class="card">
-        <span class="tag">Línia de recerca</span>
-        <h3>Tecnologia i humanisme educatiu</h3>
-        <p>Com integrar la innovació tecnològica des d'una mirada profundament humana, on la ferramenta amplifica la relació educativa en lloc de reemplaçar-la.</p>
-      </article>
+    <div class="linies">
+      <div class="linia">
+        <span class="n">LÍNIA 01</span>
+        <div>
+          <h3>IA i competència lingüística</h3>
+          <p>Com poden els models de llenguatge millorar la comprensió lectora i l'expressió escrita sense substituir el processament profund que constitueix l'aprenentatge.</p>
+        </div>
+      </div>
+      <div class="linia">
+        <span class="n">LÍNIA 02</span>
+        <div>
+          <h3>IA, oratòria i pensament crític</h3>
+          <p>El paper de la IA en el desenvolupament de l'argumentació, el debat acadèmic i la capacitat de l'alumnat per a avaluar críticament la informació.</p>
+        </div>
+      </div>
+      <div class="linia">
+        <span class="n">LÍNIA 03</span>
+        <div>
+          <h3>Tecnologia i humanisme educatiu</h3>
+          <p>Com integrar la innovació tecnològica des d'una mirada profundament humana, on la ferramenta amplifica la relació educativa en lloc de reemplaçar-la.</p>
+        </div>
+      </div>
     </div>
   </section>
 
