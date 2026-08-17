@@ -66,6 +66,8 @@
   .hero h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(30px,5.5vw,50px);line-height:1.04;margin:8px 0 12px;max-width:820px}
   .hero h1 .hl{background:linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);padding:0 .06em}
   .hero p{color:var(--muted);max-width:640px;font-size:16px}
+  .hero .genlink{display:inline-block;margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;background:var(--blue);color:#fff;text-decoration:none;border-radius:999px;padding:12px 20px}
+  .hero .genlink:hover{background:var(--blue-dark)}
 
   /* ---------- Category nav ---------- */
   .catnav{position:sticky;top:57px;background:rgba(246,245,241,.92);backdrop-filter:blur(6px);z-index:15;border-bottom:1px solid var(--line)}
@@ -161,6 +163,7 @@
       <div class="kick" data-t="hero_kick">Biblioteca general · Generador integrat</div>
       <h1><span data-t="hero_h1a">Prompts</span> <span class="hl" data-t="hero_h1b">d'Aula</span></h1>
       <p data-t="hero_p">Tria un generador, ompli els camps i el web et muntarà el prompt llest per a copiar o obrir directament a ChatGPT o Claude. Bilingüe valencià / castellà.</p>
+      <p><a class="genlink" href="https://sanforbel.github.io/generador-fitxes/" target="_blank" rel="noopener" data-t="genfitxes">🎮 Generador de fitxes gamificades →</a></p>
     </div>
   </header>
 
@@ -205,7 +208,8 @@ const UI = {
   gens_h:{ca:"Generadors",es:"Generadores"},
   gens_sub:{ca:"Ompli els camps i el prompt es munta sol.",es:"Rellena los campos y el prompt se monta solo."},
   lib_h:{ca:"Biblioteca de prompts",es:"Biblioteca de prompts"},
-  lib_sub:{ca:"Prompts llestos per a copiar. Substitueix els [claudàtors] pel teu contingut.",es:"Prompts listos para copiar. Sustituye los [corchetes] por tu contenido."}
+  lib_sub:{ca:"Prompts llestos per a copiar. Substitueix els [claudàtors] pel teu contingut.",es:"Prompts listos para copiar. Sustituye los [corchetes] por tu contenido."},
+  genfitxes:{ca:"🎮 Generador de fitxes gamificades →",es:"🎮 Generador de fichas gamificadas →"}
 };
 
 /* ============================================================
