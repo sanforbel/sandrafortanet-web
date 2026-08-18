@@ -359,6 +359,12 @@
     display:block;line-height:1;letter-spacing:-.02em}
   .xifres-grid span{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;
     color:#B9BBC0;text-transform:uppercase;display:block;margin-top:10px;line-height:1.45}
+  /* --- selector d'idioma --- */
+  .nav-right{display:flex;align-items:center;gap:10px;min-width:0}
+  .langsw{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card);flex:0 0 auto}
+  .langsw button{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;border:none;background:transparent;color:var(--muted);padding:6px 11px;cursor:pointer}
+  .langsw button.on{background:var(--ink);color:var(--paper)}
+  @media (max-width:820px){.nav-right{min-width:0}.nav-links{min-width:0}}
 </style>
 
 <!-- Previsualitzacio en xarxes i missatgeria -->
@@ -407,16 +413,22 @@
   <nav class="nav" aria-label="Principal">
     <!-- EDITA'M: el teu nom o marca curta -->
     <a class="brand" href="#">SANDRA FORTANET</a>
-    <div class="nav-links">
-      <a href="#sobre-mi">SOBRE MI</a>
-      <a href="#formacio">FORMACIONS</a>
-      <a href="#consultoria">CENTRES</a>
-      <a href="#trajectoria">TRAJECTÒRIA</a>
-      <a href="#prompts">PROMPTS</a>
-      <a href="#debat">DEBAT</a>
-      <a href="#ferramentes">LABORATORI</a>
-      <a href="#recerca">RECERCA</a>
-      <a href="#contacte">CONTACTE</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#sobre-mi" data-i18n="nav_sobremi">SOBRE MI</a>
+        <a href="#formacio" data-i18n="nav_formacions">FORMACIONS</a>
+        <a href="#consultoria" data-i18n="nav_centres">CENTRES</a>
+        <a href="#trajectoria" data-i18n="nav_trajectoria">TRAJECTÒRIA</a>
+        <a href="#prompts" data-i18n="nav_prompts">PROMPTS</a>
+        <a href="#debat" data-i18n="nav_debat">DEBAT</a>
+        <a href="#ferramentes" data-i18n="nav_laboratori">LABORATORI</a>
+        <a href="#recerca" data-i18n="nav_recerca">RECERCA</a>
+        <a href="#contacte" data-i18n="nav_contacte">CONTACTE</a>
+      </div>
+      <div class="langsw" role="group" aria-label="Idioma / Idioma">
+        <button type="button" data-lang="ca" class="on" onclick="setLang('ca')">VAL</button>
+        <button type="button" data-lang="es" onclick="setLang('es')">CAST</button>
+      </div>
     </div>
   </nav>
 </div>
@@ -425,17 +437,17 @@
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <h1>Hola, soc <span class="hl">Sandra Fortanet</span></h1>
-        <p class="claim">Forme professorat en <span class="hl">intel·ligència artificial educativa</span> i en didàctica de les llengües, i cree ferramentes obertes per a l'aula.</p>
+        <h1 data-i18n="hero_h1">Hola, soc <span class="hl">Sandra Fortanet</span></h1>
+        <p class="claim" data-i18n="hero_claim">Forme professorat en <span class="hl">intel·ligència artificial educativa</span> i en didàctica de les llengües, i cree ferramentes obertes per a l'aula.</p>
         <div class="cta">
-          <a class="btn" href="#contacte">VOLS UNA FORMACIÓ AL TEU CENTRE?</a>
-          <a class="btn ghost" href="#ferramentes">MIRA LES FERRAMENTES</a>
+          <a class="btn" href="#contacte" data-i18n="hero_cta1">VOLS UNA FORMACIÓ AL TEU CENTRE?</a>
+          <a class="btn ghost" href="#ferramentes" data-i18n="hero_cta2">MIRA LES FERRAMENTES</a>
         </div>
-        <p>Soc professora d'Educació Secundària Obligatòria, especialitzada en l'ensenyament de la llengua i la literatura, tant en valencià com en castellà. Entenc l'educació com una oportunitat per a despertar la curiositat, desenvolupar el pensament crític i ajudar cada alumne a descobrir la seua pròpia veu.</p>
+        <p data-i18n="hero_bio">Soc professora d'Educació Secundària Obligatòria, especialitzada en l'ensenyament de la llengua i la literatura, tant en valencià com en castellà. Entenc l'educació com una oportunitat per a despertar la curiositat, desenvolupar el pensament crític i ajudar cada alumne a descobrir la seua pròpia veu.</p>
         <div class="roles">
-          <span class="role">PROFESSORA D'ESO</span>
-          <span class="role">FORMADORA EN IA</span>
-          <span class="role">VALENCIÀ NORMATIU AVL</span>
+          <span class="role" data-i18n="hero_role1">PROFESSORA D'ESO</span>
+          <span class="role" data-i18n="hero_role2">FORMADORA EN IA</span>
+          <span class="role" data-i18n="hero_role3">VALENCIÀ NORMATIU AVL</span>
         </div>
       </div>
       <div class="hero-art" aria-hidden="true">
@@ -467,24 +479,24 @@
 
 <div class="quoteband">
   <div class="wrap">
-    <blockquote>«La intel·ligència artificial no substitueix el docent; <span class="hl">amplifica</span> la seua capacitat per a inspirar, crear i transformar l'aprenentatge.»</blockquote>
+    <blockquote data-i18n="quote_main">«La intel·ligència artificial no substitueix el docent; <span class="hl">amplifica</span> la seua capacitat per a inspirar, crear i transformar l'aprenentatge.»</blockquote>
   </div>
 </div>
 
 <div class="xifres">
   <div class="wrap">
     <div class="xifres-grid">
-      <div><b>+500</b><span>Docents formats</span></div>
-      <div><b>13</b><span>Centres acompanyats (PAF · CEFIRE i FECEVAL)</span></div>
-      <div><b>4</b><span>Cursos CEFIRE impartits o tutoritzats</span></div>
-      <div><b>7</b><span>Ponències en jornades i congressos</span></div>
+      <div><b>+500</b><span data-i18n="xifra1">Docents formats</span></div>
+      <div><b>13</b><span data-i18n="xifra2">Centres acompanyats (PAF · CEFIRE i FECEVAL)</span></div>
+      <div><b>4</b><span data-i18n="xifra3">Cursos CEFIRE impartits o tutoritzats</span></div>
+      <div><b>7</b><span data-i18n="xifra4">Ponències en jornades i congressos</span></div>
     </div>
   </div>
 </div>
 
 <main class="wrap">
   <section id="sobre-mi">
-    <div class="sec-head"><span class="sec-num">01</span><h2>Sobre mi</h2></div>
+    <div class="sec-head"><span class="sec-num">01</span><h2 data-i18n="s01_h2">Sobre mi</h2></div>
     <div class="about-grid">
       <div class="photo">
         <!-- FOTO: posa un fitxer anomenat sandra.jpg en la mateixa carpeta i apareixerà ací automàticament -->
@@ -492,79 +504,79 @@
         <div class="photo-fallback" style="display:none">S</div>
       </div>
     <div class="about">
-      <p>Al llarg de la meua trajectòria professional he combinat la meua passió per les llengües amb un ferm compromís amb la innovació educativa. Dissenye situacions d'aprenentatge creatives, projectes interdisciplinaris i experiències que situen l'alumnat en el centre del procés educatiu, fent-lo protagonista del seu aprenentatge.</p>
-      <p>M'apassiona especialment la didàctica de l'oratòria i el debat acadèmic, ja que estic convençuda que aprendre a expressar-se, argumentar i escoltar és essencial per a formar ciutadans crítics, reflexius i compromesos amb la societat.</p>
-      <p>A més, soc formadora de professorat en l'àmbit de la intel·ligència artificial aplicada a l'educació. Investigue i compartisc maneres d'integrar la tecnologia de manera ètica, creativa i significativa per a enriquir els processos d'ensenyament i aprenentatge.</p>
-      <p>Aquest espai naix amb la voluntat de compartir recursos, idees i experiències que inspiren altres docents i que demostren que és possible construir una educació innovadora, humana i transformadora. Perquè educar no és només transmetre coneixements: és <span class="hl">acompanyar, inspirar i ajudar a créixer</span>.</p>
+      <p data-i18n="about_p1">Al llarg de la meua trajectòria professional he combinat la meua passió per les llengües amb un ferm compromís amb la innovació educativa. Dissenye situacions d'aprenentatge creatives, projectes interdisciplinaris i experiències que situen l'alumnat en el centre del procés educatiu, fent-lo protagonista del seu aprenentatge.</p>
+      <p data-i18n="about_p2">M'apassiona especialment la didàctica de l'oratòria i el debat acadèmic, ja que estic convençuda que aprendre a expressar-se, argumentar i escoltar és essencial per a formar ciutadans crítics, reflexius i compromesos amb la societat.</p>
+      <p data-i18n="about_p3">A més, soc formadora de professorat en l'àmbit de la intel·ligència artificial aplicada a l'educació. Investigue i compartisc maneres d'integrar la tecnologia de manera ètica, creativa i significativa per a enriquir els processos d'ensenyament i aprenentatge.</p>
+      <p data-i18n="about_p4">Aquest espai naix amb la voluntat de compartir recursos, idees i experiències que inspiren altres docents i que demostren que és possible construir una educació innovadora, humana i transformadora. Perquè educar no és només transmetre coneixements: és <span class="hl">acompanyar, inspirar i ajudar a créixer</span>.</p>
     </div>
     </div>
   </section>
 
   <section id="formacio">
-    <div class="sec-head"><span class="sec-num">02</span><h2>Formacions</h2></div>
-    <p class="sec-desc">Les meues principals línies de formació són:</p>
+    <div class="sec-head"><span class="sec-num">02</span><h2 data-i18n="s02_h2">Formacions</h2></div>
+    <p class="sec-desc" data-i18n="s02_desc">Les meues principals línies de formació són:</p>
     <div class="grid">
       <article class="card info">
         <span class="idx" aria-hidden="true">01</span>
-        <h3>Intel·ligència Artificial aplicada a l'educació</h3>
-        <p>Eines, prompting, creació de materials, personalització de l'aprenentatge, ètica i ús responsable de la IA.</p>
+        <h3 data-i18n="f1_h3">Intel·ligència Artificial aplicada a l'educació</h3>
+        <p data-i18n="f1_p">Eines, prompting, creació de materials, personalització de l'aprenentatge, ètica i ús responsable de la IA.</p>
       </article>
       <article class="card info">
         <span class="idx" aria-hidden="true">02</span>
-        <h3>Didàctica de les llengües</h3>
-        <p>Metodologies actives per a l'ensenyament del valencià i del castellà, desenvolupament de la competència comunicativa i disseny de situacions d'aprenentatge.</p>
+        <h3 data-i18n="f2_h3">Didàctica de les llengües</h3>
+        <p data-i18n="f2_p">Metodologies actives per a l'ensenyament del valencià i del castellà, desenvolupament de la competència comunicativa i disseny de situacions d'aprenentatge.</p>
       </article>
       <article class="card info">
         <span class="idx" aria-hidden="true">03</span>
-        <h3>Oratòria i debat acadèmic</h3>
-        <p>Estratègies per a potenciar l'expressió oral, l'argumentació, el pensament crític i les habilitats comunicatives de l'alumnat.</p>
+        <h3 data-i18n="f3_h3">Oratòria i debat acadèmic</h3>
+        <p data-i18n="f3_p">Estratègies per a potenciar l'expressió oral, l'argumentació, el pensament crític i les habilitats comunicatives de l'alumnat.</p>
       </article>
       <article class="card info">
         <span class="idx" aria-hidden="true">04</span>
-        <h3>Innovació educativa i competència digital docent</h3>
-        <p>Aprenentatge basat en projectes, gamificació, eines digitals i disseny d'experiències d'aprenentatge motivadores.</p>
+        <h3 data-i18n="f4_h3">Innovació educativa i competència digital docent</h3>
+        <p data-i18n="f4_p">Aprenentatge basat en projectes, gamificació, eines digitals i disseny d'experiències d'aprenentatge motivadores.</p>
       </article>
       <article class="card info">
         <span class="idx" aria-hidden="true">05</span>
-        <h3>Creació de recursos educatius digitals</h3>
-        <p>Ús de plataformes i aplicacions per a elaborar materials interactius, activitats competencials i propostes d'avaluació.</p>
+        <h3 data-i18n="f5_h3">Creació de recursos educatius digitals</h3>
+        <p data-i18n="f5_p">Ús de plataformes i aplicacions per a elaborar materials interactius, activitats competencials i propostes d'avaluació.</p>
       </article>
     </div>
     <div class="about" style="padding-bottom:26px;margin-top:-6px">
-      <p>Les meues formacions es caracteritzen per combinar fonamentació pedagògica, exemples reals i recursos pràctics que permeten al professorat transformar les seues aules de manera <span class="hl">creativa, inclusiva i significativa</span>.</p>
+      <p data-i18n="f_close">Les meues formacions es caracteritzen per combinar fonamentació pedagògica, exemples reals i recursos pràctics que permeten al professorat transformar les seues aules de manera <span class="hl">creativa, inclusiva i significativa</span>.</p>
     </div>
   </section>
 
   <section id="consultoria" class="banda">
-    <div class="sec-head"><span class="sec-num">03</span><h2>Consultoria per a centres</h2></div>
-    <p class="sec-desc">Si el teu centre vol passar de les proves soltes a un pla de veritat, açò és el que fem: diagnòstic, pla i acompanyament durant el curs.</p>
+    <div class="sec-head"><span class="sec-num">03</span><h2 data-i18n="s03_h2">Consultoria per a centres</h2></div>
+    <p class="sec-desc" data-i18n="s03_desc">Si el teu centre vol passar de les proves soltes a un pla de veritat, açò és el que fem: diagnòstic, pla i acompanyament durant el curs.</p>
     <div class="consult">
       <div>
-        <span class="tag">AMB ERNESTO BOIXADER</span>
-        <h3>Pla d'Implantació de la IA</h3>
-        <p>Acompanyament integral per a centres educatius: diagnòstic inicial gratuït, pla d'implantació i formació contínua amb visites presencials mensuals.</p>
+        <span class="tag" data-i18n="con_tag">AMB ERNESTO BOIXADER</span>
+        <h3 data-i18n="con_h3">Pla d'Implantació de la IA</h3>
+        <p data-i18n="con_p">Acompanyament integral per a centres educatius: diagnòstic inicial gratuït, pla d'implantació i formació contínua amb visites presencials mensuals.</p>
       </div>
-      <a href="mailto:sandra@fundacionflors.es?subject=Pla%20d%27Implantaci%C3%B3%20de%20la%20IA">DEMANA INFORMACIÓ</a>
+      <a href="mailto:sandra@fundacionflors.es?subject=Pla%20d%27Implantaci%C3%B3%20de%20la%20IA" data-i18n="con_btn">DEMANA INFORMACIÓ</a>
     </div>
     <div class="passos">
-      <div><span class="p">01</span><b>Diagnòstic inicial</b><span class="d">Gratuït. On esteu, què useu ja i què necessiteu de veritat.</span></div>
-      <div><span class="p">02</span><b>Pla d'implantació</b><span class="d">Per etapes, amb criteris d'ús ètic i responsable acordats amb el claustre.</span></div>
-      <div><span class="p">03</span><b>Formació contínua</b><span class="d">Visites presencials mensuals i acompanyament al llarg del curs.</span></div>
+      <div><span class="p">01</span><b data-i18n="pas1_b">Diagnòstic inicial</b><span class="d" data-i18n="pas1_d">Gratuït. On esteu, què useu ja i què necessiteu de veritat.</span></div>
+      <div><span class="p">02</span><b data-i18n="pas2_b">Pla d'implantació</b><span class="d" data-i18n="pas2_d">Per etapes, amb criteris d'ús ètic i responsable acordats amb el claustre.</span></div>
+      <div><span class="p">03</span><b data-i18n="pas3_b">Formació contínua</b><span class="d" data-i18n="pas3_d">Visites presencials mensuals i acompanyament al llarg del curs.</span></div>
     </div>
     <div class="far" style="margin-top:4px;background:#fff;border-color:var(--line)">
-      <span class="tag">Amb qui treballe</span>
+      <span class="tag" data-i18n="far_tag">Amb qui treballe</span>
       <h3><a href="https://eboixader.es/" target="_blank" rel="noopener">Ernesto Boixader</a></h3>
-      <p>D'Ernesto he aprés bona part del que sé sobre intel·ligència artificial aplicada a l'educació, i amb ell acompanye els centres en la implantació. És el meu <span class="hl">far</span> en este camí: qui m'ha ensenyat que la innovació educativa només té sentit quan naix de la generositat i la col·laboració.</p>
+      <p data-i18n="far_p">D'Ernesto he aprés bona part del que sé sobre intel·ligència artificial aplicada a l'educació, i amb ell acompanye els centres en la implantació. És el meu <span class="hl">far</span> en este camí: qui m'ha ensenyat que la innovació educativa només té sentit quan naix de la generositat i la col·laboració.</p>
     </div>
   </section>
 
   <section id="trajectoria">
-    <div class="sec-head"><span class="sec-num">04</span><h2>Formadora i ponent</h2></div>
-    <p class="sec-desc">Forme professorat en intel·ligència artificial educativa per al CEFIRE, universitats, patronals educatives i projectes europeus, sempre des de l'ús ètic, responsable i amb sentit pedagògic.</p>
+    <div class="sec-head"><span class="sec-num">04</span><h2 data-i18n="s04_h2">Formadora i ponent</h2></div>
+    <p class="sec-desc" data-i18n="s04_desc">Forme professorat en intel·ligència artificial educativa per al CEFIRE, universitats, patronals educatives i projectes europeus, sempre des de l'ús ètic, responsable i amb sentit pedagògic.</p>
     <div class="ponent-grid">
       <div class="txt">
-        <p>Com a formadora del Programa d'Actualització de Formació (PAF) del CEFIRE, acompanye claustres d'Infantil, Primària i Secundària de tota la província en l'ús ètic i responsable de la IA. He impartit o tutoritzat cursos del CEFIRE com <em>Comboia't amb la IA: transforma la teua aula d'idiomes</em>, <em>IA en Educació Primària</em>, <em>IA en Educació Infantil</em> i <em>Habilitats socials a través de la IA</em>, i soc formadora de l'Observatori d'Intel·ligència Artificial (OIA) i del projecte europeu Erasmus+ PRAISE, on forme docents europeus en competència digital, IA educativa, programació i robòtica.</p>
-        <p>En l'àmbit universitari, soc formadora de la microcredencial <em>IA i tecnologies digitals per a l'ensenyament i l'aprenentatge de llengües</em> de la Universitat de València, col·laboradora del Màster de Professorat de Secundària de Florida Universitària i col·laboradora en projectes d'investigació de la UV sobre IA i competència comunicativa. He sigut ponent, entre altres, en les Jornades d'Innovació i Experimentació amb IA de la Universitat de València, en les Jornades sobre IA i Educació de Vila-real (UNED), en les Jornades de Directors de Secundària ADIES-PV i en el 48é Congrés de FEDADI, a més de les Jornades d'Oratòria i Lliga de Debat del CEFIRE d'Alcoi.</p>
+        <p data-i18n="traj_p1">Com a formadora del Programa d'Actualització de Formació (PAF) del CEFIRE, acompanye claustres d'Infantil, Primària i Secundària de tota la província en l'ús ètic i responsable de la IA. He impartit o tutoritzat cursos del CEFIRE com <em>Comboia't amb la IA: transforma la teua aula d'idiomes</em>, <em>IA en Educació Primària</em>, <em>IA en Educació Infantil</em> i <em>Habilitats socials a través de la IA</em>, i soc formadora de l'Observatori d'Intel·ligència Artificial (OIA) i del projecte europeu Erasmus+ PRAISE, on forme docents europeus en competència digital, IA educativa, programació i robòtica.</p>
+        <p data-i18n="traj_p2">En l'àmbit universitari, soc formadora de la microcredencial <em>IA i tecnologies digitals per a l'ensenyament i l'aprenentatge de llengües</em> de la Universitat de València, col·laboradora del Màster de Professorat de Secundària de Florida Universitària i col·laboradora en projectes d'investigació de la UV sobre IA i competència comunicativa. He sigut ponent, entre altres, en les Jornades d'Innovació i Experimentació amb IA de la Universitat de València, en les Jornades sobre IA i Educació de Vila-real (UNED), en les Jornades de Directors de Secundària ADIES-PV i en el 48é Congrés de FEDADI, a més de les Jornades d'Oratòria i Lliga de Debat del CEFIRE d'Alcoi.</p>
       </div>
       <div class="photo-wide">
         <!-- FOTO DE PONÈNCIA: posa un fitxer anomenat ponencia.jpg en la mateixa carpeta i apareixerà ací -->
@@ -572,7 +584,7 @@
       </div>
     </div>
     <div class="entitats">
-      <span class="et">On he format o he sigut ponent</span>
+      <span class="et" data-i18n="ent_label">On he format o he sigut ponent</span>
       <ul>
         <li>CEFIRE</li>
         <li>Universitat de València</li>
@@ -586,77 +598,77 @@
       </ul>
     </div>
     <div class="creds">
-      <span class="cred">Lingüista externa d'À Punt</span>
-      <span class="cred">Examinadora i formadora JQCV · CIEACOVA</span>
-      <span class="cred">Ambaixadora Brisk i Mizou</span>
-      <span class="cred">Membre de l'Observatori IA</span>
+      <span class="cred" data-i18n="cred1">Lingüista externa d'À Punt</span>
+      <span class="cred" data-i18n="cred2">Examinadora i formadora JQCV · CIEACOVA</span>
+      <span class="cred" data-i18n="cred3">Ambaixadora Brisk i Mizou</span>
+      <span class="cred" data-i18n="cred4">Membre de l'Observatori IA</span>
     </div>
   </section>
 
   <section id="prompts" class="banda">
-    <div class="sec-head"><span class="sec-num">05</span><h2>Prompts i recursos per al professorat</h2></div>
-    <p class="sec-desc">Biblioteques de prompts pensades perquè crear material didàctic amb IA coste minuts i tinga criteri pedagògic.</p>
+    <div class="sec-head"><span class="sec-num">05</span><h2 data-i18n="s05_h2">Prompts i recursos per al professorat</h2></div>
+    <p class="sec-desc" data-i18n="s05_desc">Biblioteques de prompts pensades perquè crear material didàctic amb IA coste minuts i tinga criteri pedagògic.</p>
     <div class="grid">
       <article class="card">
         <img class="mini" src="img/prompts-lectura.jpg" alt="Captura de Prompts de Lectura: índex de generadors i prompt generat" loading="lazy" width="880" height="466">
-        <span class="tag">Comprensió lectora</span>
-        <h3>Prompts de Lectura<span class="new">NOU</span></h3>
-        <p>Huit generadors basats en la ciència de la lectura, de la descodificació a l'avaluació estil PISA. Bilingüe valencià/castellà.</p>
-        <a class='go' href='/prompts-lectura'>OBRI LA FERRAMENTA →</a>
+        <span class="tag" data-i18n="pl_tag">Comprensió lectora</span>
+        <h3 data-i18n="pl_h3">Prompts de Lectura<span class="new">NOU</span></h3>
+        <p data-i18n="pl_p">Huit generadors basats en la ciència de la lectura, de la descodificació a l'avaluació estil PISA. Bilingüe valencià/castellà.</p>
+        <a class='go' href='/prompts-lectura' data-i18n="pl_go">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/prompts-aula.jpg" alt="Captura de Prompts d'Aula: apartats de la biblioteca i generador de prompts" loading="lazy" width="880" height="466">
-        <span class="tag">Biblioteca general · Accés amb codi</span>
+        <span class="tag" data-i18n="pa_tag">Biblioteca general · Accés amb codi</span>
         <h3>Prompts d'Aula</h3>
-        <p>Biblioteca bilingüe amb generador integrat: programació LOMLOE, materials, DUA, rúbriques, retroacció i tutoria.</p>
-        <a class="go" href="/prompts-aula">ACCÉS PER A PARTICIPANTS DE LES FORMACIONS →</a>
+        <p data-i18n="pa_p">Biblioteca bilingüe amb generador integrat: programació LOMLOE, materials, DUA, rúbriques, retroacció i tutoria.</p>
+        <a class="go" href="/prompts-aula" data-i18n="pa_go">ACCÉS PER A PARTICIPANTS DE LES FORMACIONS →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/bruixola.jpg" alt="Captura de La Brúixola IA: fitxes de ferramentes amb els avisos en groc" loading="lazy" width="880" height="466">
-        <span class="tag">Directori de ferramentes</span>
+        <span class="tag" data-i18n="br_tag">Directori de ferramentes</span>
         <h3>La Brúixola IA</h3>
-        <p>Directori curat de ferramentes d'IA per a l'aula. Cada fitxa porta un avís quan la ferramenta canvia de nom, de condicions o deixa de rebre manteniment.</p>
-        <a class="go" href="/bruixola">OBRI EL DIRECTORI →</a>
+        <p data-i18n="br_p">Directori curat de ferramentes d'IA per a l'aula. Cada fitxa porta un avís quan la ferramenta canvia de nom, de condicions o deixa de rebre manteniment.</p>
+        <a class="go" href="/bruixola" data-i18n="br_go">OBRI EL DIRECTORI →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/generador-fitxes.jpg" alt="Captura del Generador de fitxes gamificades: temàtiques, activitats i prompt generat" loading="lazy" width="880" height="466">
-        <span class="tag">Material d'aula · Fitxes</span>
-        <h3>Generador de fitxes<span class="new">NOU</span></h3>
-        <p>Crea prompts per a fitxes per a imprimir i colorejar amb temàtiques que motiven l'alumnat (arcade, espai, dinosaures…), adaptacions d'accessibilitat i en diverses llengües.</p>
-        <a class="go" href="https://sanforbel.github.io/generador-fitxes/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+        <span class="tag" data-i18n="gf_tag">Material d'aula · Fitxes</span>
+        <h3 data-i18n="gf_h3">Generador de fitxes<span class="new">NOU</span></h3>
+        <p data-i18n="gf_p">Crea prompts per a fitxes per a imprimir i colorejar amb temàtiques que motiven l'alumnat (arcade, espai, dinosaures…), adaptacions d'accessibilitat i en diverses llengües.</p>
+        <a class="go" href="https://sanforbel.github.io/generador-fitxes/" target="_blank" rel="noopener" data-i18n="gf_go">OBRI LA FERRAMENTA →</a>
       </article>
     </div>
   </section>
 
   <section id="debat">
-    <div class="sec-head"><span class="sec-num">06</span><h2>Debat i oratòria</h2></div>
+    <div class="sec-head"><span class="sec-num">06</span><h2 data-i18n="s06_h2">Debat i oratòria</h2></div>
     <div class="featured">
       <div>
-        <span class="tag">RECURS PROPI · EXPRESSIÓ ORAL</span>
-        <h3>Portal de Debat i Oratòria</h3>
-        <p>Recursos, activitats i materials per a treballar el debat acadèmic, l'argumentació i l'expressió oral a Secundària: perquè aprendre a expressar-se, argumentar i escoltar forma ciutadans crítics i reflexius.</p>
+        <span class="tag" data-i18n="feat_tag">RECURS PROPI · EXPRESSIÓ ORAL</span>
+        <h3 data-i18n="feat_h3">Portal de Debat i Oratòria</h3>
+        <p data-i18n="feat_p">Recursos, activitats i materials per a treballar el debat acadèmic, l'argumentació i l'expressió oral a Secundària: perquè aprendre a expressar-se, argumentar i escoltar forma ciutadans crítics i reflexius.</p>
       </div>
-      <a href="https://sites.google.com/fundacionflors.es/debat-i-oratoria/p%C3%A0gina-principal" target="_blank" rel="noopener">ENTRA AL PORTAL →</a>
+      <a href="https://sites.google.com/fundacionflors.es/debat-i-oratoria/p%C3%A0gina-principal" target="_blank" rel="noopener" data-i18n="feat_a">ENTRA AL PORTAL →</a>
     </div>
     <div class="grid g2">
       <article class="card">
         <img class="mini" src="img/entrenador-debat.jpg" alt="Captura de l'Entrenador de Debat: configuració del tema, el rol i el temps per torn" loading="lazy" width="880" height="466">
-        <span class="tag">Entrenament · Expressió oral</span>
+        <span class="tag" data-i18n="ed_tag">Entrenament · Expressió oral</span>
         <h3>Entrenador de Debat</h3>
-        <p>Practica el debat per torns: tries tema, rol i temps, parles amb el micròfon i en queda la transcripció, amb una rúbrica de 0 a 2 per criteri per a posar-te nota.</p>
-        <a class="go" href="https://sanforbel.github.io/ENTRENADORDEBATE/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+        <p data-i18n="ed_p">Practica el debat per torns: tries tema, rol i temps, parles amb el micròfon i en queda la transcripció, amb una rúbrica de 0 a 2 per criteri per a posar-te nota.</p>
+        <a class="go" href="https://sanforbel.github.io/ENTRENADORDEBATE/" target="_blank" rel="noopener" data-i18n="ed_go">OBRI LA FERRAMENTA →</a>
       </article>
       <div class="nota">
-        <span class="tag">Formació en oratòria</span>
-        <p>Entrene alumnat en debat acadèmic i he sigut ponent en les Jornades d'Oratòria i Lliga de Debat del CEFIRE d'Alcoi. Si el teu centre vol muntar un equip de debat o preparar la Lliga, ho podem treballar junts.</p>
-        <a class="go" href="#contacte">PARLEM-NE →</a>
+        <span class="tag" data-i18n="nota_tag">Formació en oratòria</span>
+        <p data-i18n="nota_p">Entrene alumnat en debat acadèmic i he sigut ponent en les Jornades d'Oratòria i Lliga de Debat del CEFIRE d'Alcoi. Si el teu centre vol muntar un equip de debat o preparar la Lliga, ho podem treballar junts.</p>
+        <a class="go" href="#contacte" data-i18n="nota_go">PARLEM-NE →</a>
       </div>
     </div>
   </section>
 
   <section id="ferramentes" class="banda">
-    <div class="sec-head"><span class="sec-num">07</span><h2>Laboratori d'IA</h2></div>
-    <p class="sec-desc">Aplicacions que he fet amb IA per a l'aula de llengua i per a avaluar. Totes són obertes, funcionen des del navegador i no recullen dades de l'alumnat.</p>
+    <div class="sec-head"><span class="sec-num">07</span><h2 data-i18n="s07_h2">Laboratori d'IA</h2></div>
+    <p class="sec-desc" data-i18n="s07_desc">Aplicacions que he fet amb IA per a l'aula de llengua i per a avaluar. Totes són obertes, funcionen des del navegador i no recullen dades de l'alumnat.</p>
     <div class="grid">
       <!-- Targeta de Conjugación Espacial amagada mentres el joc no tinga adreça
            publica. Per a recuperar-la, lleva les dos linies de comentari de baix i
@@ -671,70 +683,70 @@
       -->
       <article class="card">
         <img class="mini" src="img/generador-fitxes.jpg" alt="Captura del Generador de fitxes gamificades: temàtiques, activitats i prompt generat" loading="lazy" width="880" height="466">
-        <span class="tag">Material d'aula · Fitxes per a colorejar</span>
-        <h3>Generador de fitxes<span class="new">NOU</span></h3>
-        <p>Genera prompts per a crear fitxes per a imprimir i colorejar amb temàtiques que motiven, adaptacions per a l'alumnat (dislèxia, TDAH, TEA, baixa visió…) i en valencià, castellà, anglés i més llengües.</p>
-        <a class="go" href="https://sanforbel.github.io/generador-fitxes/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+        <span class="tag" data-i18n="gf2_tag">Material d'aula · Fitxes per a colorejar</span>
+        <h3 data-i18n="gf2_h3">Generador de fitxes<span class="new">NOU</span></h3>
+        <p data-i18n="gf2_p">Genera prompts per a crear fitxes per a imprimir i colorejar amb temàtiques que motiven, adaptacions per a l'alumnat (dislèxia, TDAH, TEA, baixa visió…) i en valencià, castellà, anglés i més llengües.</p>
+        <a class="go" href="https://sanforbel.github.io/generador-fitxes/" target="_blank" rel="noopener" data-i18n="gf2_go">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/avaluador-obert.jpg" alt="Captura de l'Avaluador de rúbriques: tria del tipus d'avaluació i identificació per número" loading="lazy" width="880" height="466">
-        <span class="tag">Avaluació · Rúbriques</span>
+        <span class="tag" data-i18n="av_tag">Avaluació · Rúbriques</span>
         <h3>Avaluador de rúbriques</h3>
-        <p>Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat només per número. Calcula la nota ponderada i deixa descarregar els resultats. Les dades no ixen del navegador.</p>
-        <a class="go" href="https://avaluador-rubriques.netlify.app/">VERSIÓ COMPLETA · RÚBRICA, ALUMNAT I INFORMES →</a>
-        <a class="go" href="https://sanforbel.github.io/avaluador-rubriques/" target="_blank" rel="noopener">VERSIÓ BREU · AVALUAR I DESCARREGAR →</a>
+        <p data-i18n="av_p">Autoavaluació, coavaluació i heteroavaluació amb l'alumnat identificat només per número. Calcula la nota ponderada i deixa descarregar els resultats. Les dades no ixen del navegador.</p>
+        <a class="go" href="https://avaluador-rubriques.netlify.app/" data-i18n="av_go1">VERSIÓ COMPLETA · RÚBRICA, ALUMNAT I INFORMES →</a>
+        <a class="go" href="https://sanforbel.github.io/avaluador-rubriques/" target="_blank" rel="noopener" data-i18n="av_go2">VERSIÓ BREU · AVALUAR I DESCARREGAR →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/tria-i-temps.jpg" alt="Captura de Tria i Temps: el número triat a l'atzar i el cronòmetre" loading="lazy" width="880" height="466">
-        <span class="tag">Gestió d'aula · Oralitat</span>
+        <span class="tag" data-i18n="tt_tag">Gestió d'aula · Oralitat</span>
         <h3>Tria i Temps</h3>
-        <p>Tria alumnat a l'atzar sense repetir i controla el temps de les intervencions orals amb un cronòmetre que avisa amb color. Va projectada, sense connexió i sense guardar cap dada.</p>
-        <a class="go" href="https://sanforbel.github.io/tria-i-temps/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+        <p data-i18n="tt_p">Tria alumnat a l'atzar sense repetir i controla el temps de les intervencions orals amb un cronòmetre que avisa amb color. Va projectada, sense connexió i sense guardar cap dada.</p>
+        <a class="go" href="https://sanforbel.github.io/tria-i-temps/" target="_blank" rel="noopener" data-i18n="tt_go">OBRI LA FERRAMENTA →</a>
       </article>
       <article class="card">
         <img class="mini" src="img/subordinades.jpg" alt="Captura de la Guía Interactiva de Oraciones Subordinadas: pestanyes i exercicis de pràctica" loading="lazy" width="880" height="466">
-        <span class="tag">Sintaxi · Castellà · 4t d'ESO</span>
+        <span class="tag" data-i18n="os_tag">Sintaxi · Castellà · 4t d'ESO</span>
         <h3>Oraciones Subordinadas</h3>
-        <p>Guia interactiva de subordinades substantives, adjectives i adverbials, amb exercicis de pràctica, joc i glossari. En castellà.</p>
-        <a class="go" href="https://sanforbel.github.io/SUBORDINADAS1/" target="_blank" rel="noopener">OBRI LA FERRAMENTA →</a>
+        <p data-i18n="os_p">Guia interactiva de subordinades substantives, adjectives i adverbials, amb exercicis de pràctica, joc i glossari. En castellà.</p>
+        <a class="go" href="https://sanforbel.github.io/SUBORDINADAS1/" target="_blank" rel="noopener" data-i18n="os_go">OBRI LA FERRAMENTA →</a>
       </article>
       <!-- Per a afegir una ferramenta nova, copia un bloc <article class="card"> sencer ací -->
     </div>
   </section>
 
   <section id="recerca">
-    <div class="sec-head"><span class="sec-num">08</span><h2>Recerca i reflexió</h2></div>
-    <p class="sec-desc">M'interessa investigar la intersecció entre la tecnologia i l'aprenentatge de les llengües, amb tres línies de treball:</p>
+    <div class="sec-head"><span class="sec-num">08</span><h2 data-i18n="s08_h2">Recerca i reflexió</h2></div>
+    <p class="sec-desc" data-i18n="s08_desc">M'interessa investigar la intersecció entre la tecnologia i l'aprenentatge de les llengües, amb tres línies de treball:</p>
     <div class="linies">
       <div class="linia">
-        <span class="n">LÍNIA 01</span>
+        <span class="n" data-i18n="r1_n">LÍNIA 01</span>
         <div>
-          <h3>IA i competència lingüística</h3>
-          <p>Com poden els models de llenguatge millorar la comprensió lectora i l'expressió escrita sense substituir el processament profund que constitueix l'aprenentatge.</p>
+          <h3 data-i18n="r1_h3">IA i competència lingüística</h3>
+          <p data-i18n="r1_p">Com poden els models de llenguatge millorar la comprensió lectora i l'expressió escrita sense substituir el processament profund que constitueix l'aprenentatge.</p>
         </div>
       </div>
       <div class="linia">
-        <span class="n">LÍNIA 02</span>
+        <span class="n" data-i18n="r2_n">LÍNIA 02</span>
         <div>
-          <h3>IA, oratòria i pensament crític</h3>
-          <p>El paper de la IA en el desenvolupament de l'argumentació, el debat acadèmic i la capacitat de l'alumnat per a avaluar críticament la informació.</p>
+          <h3 data-i18n="r2_h3">IA, oratòria i pensament crític</h3>
+          <p data-i18n="r2_p">El paper de la IA en el desenvolupament de l'argumentació, el debat acadèmic i la capacitat de l'alumnat per a avaluar críticament la informació.</p>
         </div>
       </div>
       <div class="linia">
-        <span class="n">LÍNIA 03</span>
+        <span class="n" data-i18n="r3_n">LÍNIA 03</span>
         <div>
-          <h3>Tecnologia i humanisme educatiu</h3>
-          <p>Com integrar la innovació tecnològica des d'una mirada profundament humana, on la ferramenta amplifica la relació educativa en lloc de reemplaçar-la.</p>
+          <h3 data-i18n="r3_h3">Tecnologia i humanisme educatiu</h3>
+          <p data-i18n="r3_p">Com integrar la innovació tecnològica des d'una mirada profundament humana, on la ferramenta amplifica la relació educativa en lloc de reemplaçar-la.</p>
         </div>
       </div>
     </div>
   </section>
 
   <section id="contacte">
-    <div class="sec-head"><span class="sec-num">09</span><h2>Contacte</h2></div>
+    <div class="sec-head"><span class="sec-num">09</span><h2 data-i18n="s09_h2">Contacte</h2></div>
     <div class="contact-grid">
       <div>
-        <p>Vols una formació al teu centre, tens dubtes sobre alguna ferramenta o simplement vols compartir idees i experiències? Escriu-me i en parlem.</p>
+        <p data-i18n="c_intro">Vols una formació al teu centre, tens dubtes sobre alguna ferramenta o simplement vols compartir idees i experiències? Escriu-me i en parlem.</p>
         <p style="margin-top:14px"><a class="mail" href="mailto:sandra@fundacionflors.es">sandra@fundacionflors.es</a></p>
         <p class="xarxes">
           <a href="https://www.linkedin.com/in/sandra-fortanet-3409a9327" target="_blank" rel="noopener">LINKEDIN</a>
@@ -747,22 +759,22 @@
         <input type="hidden" name="form-name" value="contacte">
         <p hidden><label>No òmpligues això: <input name="bot-field"></label></p>
         <div>
-          <label for="f-nom">Nom i cognoms</label>
+          <label for="f-nom" data-i18n="c_lbl_nom">Nom i cognoms</label>
           <input id="f-nom" name="nom" type="text" required autocomplete="name">
         </div>
         <div>
-          <label for="f-correu">Correu electrònic</label>
+          <label for="f-correu" data-i18n="c_lbl_correu">Correu electrònic</label>
           <input id="f-correu" name="correu" type="email" required autocomplete="email">
         </div>
         <div>
-          <label for="f-centre">Centre o institució (optatiu)</label>
+          <label for="f-centre" data-i18n="c_lbl_centre">Centre o institució (optatiu)</label>
           <input id="f-centre" name="centre" type="text" autocomplete="organization">
         </div>
         <div>
-          <label for="f-missatge">En què et puc ajudar?</label>
+          <label for="f-missatge" data-i18n="c_lbl_missatge">En què et puc ajudar?</label>
           <textarea id="f-missatge" name="missatge" required></textarea>
         </div>
-        <button class="btn" type="submit">ENVIA EL MISSATGE</button>
+        <button class="btn" type="submit" data-i18n="c_btn">ENVIA EL MISSATGE</button>
       </form>
     </div>
   </section>
@@ -770,18 +782,173 @@
 
 <div class="filosofia">
   <div class="wrap">
-    <span class="tag">LA MEUA FILOSOFIA EDUCATIVA</span>
-    <p>Crec en una educació que combina paraules i tecnologia, rigor i creativitat, innovació i humanitat. Perquè educar és ajudar les persones a trobar la seua veu i oferir-los les eines per a <span class="hl">transformar el món</span>.</p>
+    <span class="tag" data-i18n="fil_tag">LA MEUA FILOSOFIA EDUCATIVA</span>
+    <p data-i18n="fil_p">Crec en una educació que combina paraules i tecnologia, rigor i creativitat, innovació i humanitat. Perquè educar és ajudar les persones a trobar la seua veu i oferir-los les eines per a <span class="hl">transformar el món</span>.</p>
   </div>
 </div>
 
 <footer>
   <div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <!-- EDITA'M: nom i any -->
-    <span>SANDRA FORTANET · LLENGUA, LECTURA I IA · 2026</span>
-    <span>ÚLTIMA ACTUALITZACIÓ: 11/08/2026 · FET AMB IA, REVISAT AMB CRITERI</span>
+    <span data-i18n="foot_a">SANDRA FORTANET · LLENGUA, LECTURA I IA · 2026</span>
+    <span data-i18n="foot_b">ÚLTIMA ACTUALITZACIÓ: 11/08/2026 · FET AMB IA, REVISAT AMB CRITERI</span>
   </div>
 </footer>
+
+<script>
+/* ============================================================
+   Selector d'idioma VAL/CAST. Per defecte, valencià.
+   Per a canviar una traducció, edita el valor dins d'ES.
+   ============================================================ */
+const ES = {
+  nav_sobremi:`SOBRE MÍ`, nav_formacions:`FORMACIONES`, nav_centres:`CENTROS`,
+  nav_trajectoria:`TRAYECTORIA`, nav_prompts:`PROMPTS`, nav_debat:`DEBATE`,
+  nav_laboratori:`LABORATORIO`, nav_recerca:`INVESTIGACIÓN`, nav_contacte:`CONTACTO`,
+
+  hero_h1:`Hola, soy <span class="hl">Sandra Fortanet</span>`,
+  hero_claim:`Formo profesorado en <span class="hl">inteligencia artificial educativa</span> y en didáctica de las lenguas, y creo herramientas abiertas para el aula.`,
+  hero_cta1:`¿QUIERES UNA FORMACIÓN EN TU CENTRO?`,
+  hero_cta2:`MIRA LAS HERRAMIENTAS`,
+  hero_bio:`Soy profesora de Educación Secundaria Obligatoria, especializada en la enseñanza de la lengua y la literatura, tanto en valenciano como en castellano. Entiendo la educación como una oportunidad para despertar la curiosidad, desarrollar el pensamiento crítico y ayudar a cada alumno a descubrir su propia voz.`,
+  hero_role1:`PROFESORA DE ESO`, hero_role2:`FORMADORA EN IA`, hero_role3:`VALENCIANO NORMATIVO AVL`,
+
+  quote_main:`«La inteligencia artificial no sustituye al docente; <span class="hl">amplifica</span> su capacidad para inspirar, crear y transformar el aprendizaje.»`,
+
+  xifra1:`Docentes formados`,
+  xifra2:`Centros acompañados (PAF · CEFIRE y FECEVAL)`,
+  xifra3:`Cursos CEFIRE impartidos o tutorizados`,
+  xifra4:`Ponencias en jornadas y congresos`,
+
+  s01_h2:`Sobre mí`,
+  about_p1:`A lo largo de mi trayectoria profesional he combinado mi pasión por las lenguas con un firme compromiso con la innovación educativa. Diseño situaciones de aprendizaje creativas, proyectos interdisciplinares y experiencias que sitúan al alumnado en el centro del proceso educativo, haciéndolo protagonista de su aprendizaje.`,
+  about_p2:`Me apasiona especialmente la didáctica de la oratoria y el debate académico, ya que estoy convencida de que aprender a expresarse, argumentar y escuchar es esencial para formar ciudadanos críticos, reflexivos y comprometidos con la sociedad.`,
+  about_p3:`Además, soy formadora de profesorado en el ámbito de la inteligencia artificial aplicada a la educación. Investigo y comparto maneras de integrar la tecnología de forma ética, creativa y significativa para enriquecer los procesos de enseñanza y aprendizaje.`,
+  about_p4:`Este espacio nace con la voluntad de compartir recursos, ideas y experiencias que inspiren a otros docentes y que demuestren que es posible construir una educación innovadora, humana y transformadora. Porque educar no es solo transmitir conocimientos: es <span class="hl">acompañar, inspirar y ayudar a crecer</span>.`,
+
+  s02_h2:`Formaciones`,
+  s02_desc:`Mis principales líneas de formación son:`,
+  f1_h3:`Inteligencia Artificial aplicada a la educación`,
+  f1_p:`Herramientas, prompting, creación de materiales, personalización del aprendizaje, ética y uso responsable de la IA.`,
+  f2_h3:`Didáctica de las lenguas`,
+  f2_p:`Metodologías activas para la enseñanza del valenciano y del castellano, desarrollo de la competencia comunicativa y diseño de situaciones de aprendizaje.`,
+  f3_h3:`Oratoria y debate académico`,
+  f3_p:`Estrategias para potenciar la expresión oral, la argumentación, el pensamiento crítico y las habilidades comunicativas del alumnado.`,
+  f4_h3:`Innovación educativa y competencia digital docente`,
+  f4_p:`Aprendizaje basado en proyectos, gamificación, herramientas digitales y diseño de experiencias de aprendizaje motivadoras.`,
+  f5_h3:`Creación de recursos educativos digitales`,
+  f5_p:`Uso de plataformas y aplicaciones para elaborar materiales interactivos, actividades competenciales y propuestas de evaluación.`,
+  f_close:`Mis formaciones se caracterizan por combinar fundamentación pedagógica, ejemplos reales y recursos prácticos que permiten al profesorado transformar sus aulas de forma <span class="hl">creativa, inclusiva y significativa</span>.`,
+
+  s03_h2:`Consultoría para centros`,
+  s03_desc:`Si tu centro quiere pasar de las pruebas sueltas a un plan de verdad, esto es lo que hacemos: diagnóstico, plan y acompañamiento durante el curso.`,
+  con_tag:`CON ERNESTO BOIXADER`,
+  con_h3:`Plan de Implantación de la IA`,
+  con_p:`Acompañamiento integral para centros educativos: diagnóstico inicial gratuito, plan de implantación y formación continua con visitas presenciales mensuales.`,
+  con_btn:`PIDE INFORMACIÓN`,
+  pas1_b:`Diagnóstico inicial`, pas1_d:`Gratuito. Dónde estáis, qué usáis ya y qué necesitáis de verdad.`,
+  pas2_b:`Plan de implantación`, pas2_d:`Por etapas, con criterios de uso ético y responsable acordados con el claustro.`,
+  pas3_b:`Formación continua`, pas3_d:`Visitas presenciales mensuales y acompañamiento a lo largo del curso.`,
+  far_tag:`Con quién trabajo`,
+  far_p:`De Ernesto he aprendido buena parte de lo que sé sobre inteligencia artificial aplicada a la educación, y con él acompaño a los centros en la implantación. Es mi <span class="hl">faro</span> en este camino: quien me ha enseñado que la innovación educativa solo tiene sentido cuando nace de la generosidad y la colaboración.`,
+
+  s04_h2:`Formadora y ponente`,
+  s04_desc:`Formo profesorado en inteligencia artificial educativa para el CEFIRE, universidades, patronales educativas y proyectos europeos, siempre desde el uso ético, responsable y con sentido pedagógico.`,
+  traj_p1:`Como formadora del Programa de Actualización de Formación (PAF) del CEFIRE, acompaño a claustros de Infantil, Primaria y Secundaria de toda la provincia en el uso ético y responsable de la IA. He impartido o tutorizado cursos del CEFIRE como <em>Comboia't amb la IA: transforma la teua aula d'idiomes</em>, <em>IA en Educación Primaria</em>, <em>IA en Educación Infantil</em> y <em>Habilidades sociales a través de la IA</em>, y soy formadora del Observatorio de Inteligencia Artificial (OIA) y del proyecto europeo Erasmus+ PRAISE, donde formo a docentes europeos en competencia digital, IA educativa, programación y robótica.`,
+  traj_p2:`En el ámbito universitario, soy formadora de la microcredencial <em>IA y tecnologías digitales para la enseñanza y el aprendizaje de lenguas</em> de la Universitat de València, colaboradora del Máster de Profesorado de Secundaria de Florida Universitària y colaboradora en proyectos de investigación de la UV sobre IA y competencia comunicativa. He sido ponente, entre otros, en las Jornadas de Innovación y Experimentación con IA de la Universitat de València, en las Jornadas sobre IA y Educación de Vila-real (UNED), en las Jornadas de Directores de Secundaria ADIES-PV y en el 48º Congreso de FEDADI, además de las Jornadas de Oratoria y Liga de Debate del CEFIRE de Alcoi.`,
+  ent_label:`Dónde he formado o he sido ponente`,
+  cred1:`Lingüista externa de À Punt`, cred2:`Examinadora y formadora JQCV · CIEACOVA`,
+  cred3:`Embajadora Brisk y Mizou`, cred4:`Miembro del Observatorio IA`,
+
+  s05_h2:`Prompts y recursos para el profesorado`,
+  s05_desc:`Bibliotecas de prompts pensadas para que crear material didáctico con IA cueste minutos y tenga criterio pedagógico.`,
+  pl_tag:`Comprensión lectora`,
+  pl_h3:`Prompts de Lectura<span class="new">NUEVO</span>`,
+  pl_p:`Ocho generadores basados en la ciencia de la lectura, de la descodificación a la evaluación estilo PISA. Bilingüe valenciano/castellano.`,
+  pl_go:`ABRE LA HERRAMIENTA →`,
+  pa_tag:`Biblioteca general · Acceso con código`,
+  pa_p:`Biblioteca bilingüe con generador integrado: programación LOMLOE, materiales, DUA, rúbricas, retroalimentación y tutoría.`,
+  pa_go:`ACCESO PARA PARTICIPANTES DE LAS FORMACIONES →`,
+  br_tag:`Directorio de herramientas`,
+  br_p:`Directorio curado de herramientas de IA para el aula. Cada ficha lleva un aviso cuando la herramienta cambia de nombre, de condiciones o deja de recibir mantenimiento.`,
+  br_go:`ABRE EL DIRECTORIO →`,
+  gf_tag:`Material de aula · Fichas`,
+  gf_h3:`Generador de fichas<span class="new">NUEVO</span>`,
+  gf_p:`Crea prompts para fichas para imprimir y colorear con temáticas que motivan al alumnado (arcade, espacio, dinosaurios…), adaptaciones de accesibilidad y en varios idiomas.`,
+  gf_go:`ABRE LA HERRAMIENTA →`,
+
+  s06_h2:`Debate y oratoria`,
+  feat_tag:`RECURSO PROPIO · EXPRESIÓN ORAL`,
+  feat_h3:`Portal de Debate y Oratoria`,
+  feat_p:`Recursos, actividades y materiales para trabajar el debate académico, la argumentación y la expresión oral en Secundaria: porque aprender a expresarse, argumentar y escuchar forma ciudadanos críticos y reflexivos.`,
+  feat_a:`ENTRA AL PORTAL →`,
+  ed_tag:`Entrenamiento · Expresión oral`,
+  ed_p:`Practica el debate por turnos: eliges tema, rol y tiempo, hablas con el micrófono y queda la transcripción, con una rúbrica de 0 a 2 por criterio para ponerte nota.`,
+  ed_go:`ABRE LA HERRAMIENTA →`,
+  nota_tag:`Formación en oratoria`,
+  nota_p:`Entreno a alumnado en debate académico y he sido ponente en las Jornadas de Oratoria y Liga de Debate del CEFIRE de Alcoi. Si tu centro quiere montar un equipo de debate o preparar la Liga, podemos trabajarlo juntos.`,
+  nota_go:`HABLEMOS →`,
+
+  s07_h2:`Laboratorio de IA`,
+  s07_desc:`Aplicaciones que he hecho con IA para el aula de lengua y para evaluar. Todas son abiertas, funcionan desde el navegador y no recogen datos del alumnado.`,
+  gf2_tag:`Material de aula · Fichas para colorear`,
+  gf2_h3:`Generador de fichas<span class="new">NUEVO</span>`,
+  gf2_p:`Genera prompts para crear fichas para imprimir y colorear con temáticas que motivan, adaptaciones para el alumnado (dislexia, TDAH, TEA, baja visión…) y en valenciano, castellano, inglés y más idiomas.`,
+  gf2_go:`ABRE LA HERRAMIENTA →`,
+  av_tag:`Evaluación · Rúbricas`,
+  av_p:`Autoevaluación, coevaluación y heteroevaluación con el alumnado identificado solo por número. Calcula la nota ponderada y permite descargar los resultados. Los datos no salen del navegador.`,
+  av_go1:`VERSIÓN COMPLETA · RÚBRICA, ALUMNADO E INFORMES →`,
+  av_go2:`VERSIÓN BREVE · EVALUAR Y DESCARGAR →`,
+  tt_tag:`Gestión de aula · Oralidad`,
+  tt_p:`Elige alumnado al azar sin repetir y controla el tiempo de las intervenciones orales con un cronómetro que avisa con color. Va proyectada, sin conexión y sin guardar ningún dato.`,
+  tt_go:`ABRE LA HERRAMIENTA →`,
+  os_tag:`Sintaxis · Castellano · 4º de ESO`,
+  os_p:`Guía interactiva de subordinadas sustantivas, adjetivas y adverbiales, con ejercicios de práctica, juego y glosario. En castellano.`,
+  os_go:`ABRE LA HERRAMIENTA →`,
+
+  s08_h2:`Investigación y reflexión`,
+  s08_desc:`Me interesa investigar la intersección entre la tecnología y el aprendizaje de las lenguas, con tres líneas de trabajo:`,
+  r1_n:`LÍNEA 01`, r1_h3:`IA y competencia lingüística`,
+  r1_p:`Cómo pueden los modelos de lenguaje mejorar la comprensión lectora y la expresión escrita sin sustituir el procesamiento profundo que constituye el aprendizaje.`,
+  r2_n:`LÍNEA 02`, r2_h3:`IA, oratoria y pensamiento crítico`,
+  r2_p:`El papel de la IA en el desarrollo de la argumentación, el debate académico y la capacidad del alumnado para evaluar críticamente la información.`,
+  r3_n:`LÍNEA 03`, r3_h3:`Tecnología y humanismo educativo`,
+  r3_p:`Cómo integrar la innovación tecnológica desde una mirada profundamente humana, donde la herramienta amplifica la relación educativa en lugar de reemplazarla.`,
+
+  s09_h2:`Contacto`,
+  c_intro:`¿Quieres una formación en tu centro, tienes dudas sobre alguna herramienta o simplemente quieres compartir ideas y experiencias? Escríbeme y hablamos.`,
+  c_lbl_nom:`Nombre y apellidos`, c_lbl_correu:`Correo electrónico`,
+  c_lbl_centre:`Centro o institución (opcional)`, c_lbl_missatge:`¿En qué te puedo ayudar?`,
+  c_btn:`ENVÍA EL MENSAJE`,
+
+  fil_tag:`MI FILOSOFÍA EDUCATIVA`,
+  fil_p:`Creo en una educación que combina palabras y tecnología, rigor y creatividad, innovación y humanidad. Porque educar es ayudar a las personas a encontrar su voz y ofrecerles las herramientas para <span class="hl">transformar el mundo</span>.`,
+
+  foot_a:`SANDRA FORTANET · LENGUA, LECTURA E IA · 2026`,
+  foot_b:`ÚLTIMA ACTUALIZACIÓN: 11/08/2026 · HECHO CON IA, REVISADO CON CRITERIO`
+};
+
+(function(){
+  // Guarda el text original (valencià) de cada element traduïble
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    el.setAttribute('data-va', el.innerHTML);
+  });
+  window.setLang = function(l){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      if(l === 'es' && ES[k] !== undefined){ el.innerHTML = ES[k]; }
+      else { el.innerHTML = el.getAttribute('data-va'); }
+    });
+    document.documentElement.lang = (l === 'es') ? 'es' : 'ca';
+    document.querySelectorAll('.langsw button').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('data-lang') === l);
+    });
+    try{ localStorage.setItem('sf_lang', l); }catch(e){}
+  };
+  var saved = 'ca';
+  try{ saved = localStorage.getItem('sf_lang') || 'ca'; }catch(e){}
+  setLang(saved);
+})();
+</script>
 
 </body>
 </html>
