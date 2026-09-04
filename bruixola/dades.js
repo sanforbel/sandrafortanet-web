@@ -3,7 +3,7 @@
    Els avisos són el que fa útil el directori: diuen què ha canviat i què cal
    saber abans de recomanar-la a l'aula. */
 window.BRUIXOLA = {
-  revisio: "2026-08-07",
+  revisio: "2026-09-01",
   categories: [
     {id:"estrella", ca:"Ferramenta estrella", es:"Herramienta estrella", en:"Standout tool", fr:"Outil vedette"},
     {id:"debat",    ca:"Debat i oratòria", es:"Debate y oratoria", en:"Debate & public speaking", fr:"Débat et art oratoire"},
@@ -73,7 +73,7 @@ window.BRUIXOLA = {
      avis:"«Red Panda» era el nom en clau de Recraft V3 durant unes proves anònimes; l'eina real és Recraft."},
     {c:"imatges", n:"ChatGPT Images", alies:"DALL·E 3", u:"https://chatgpt.com",
      d:"Generador d'imatges d'OpenAI amb una comprensió excepcional del llenguatge.",
-     avis:"DALL·E 3 es retira de ChatGPT el 30 d'agost de 2026. Descarrega les imatges guardades abans d'eixa data."},
+     avis:"DALL·E 3 es va retirar de ChatGPT el 30 d'agost de 2026. El generador actual és ChatGPT Images 2.0, disponible en tots els plans."},
     {c:"imatges", n:"Midjourney", u:"https://www.midjourney.com/",
      d:"El referent absolut en qualitat artística i realisme visual.",
      avis:"No té pla gratuït: des de 10 $ al mes. Pensa-t'ho abans de recomanar-la a l'alumnat."},
@@ -195,7 +195,7 @@ window.BRUIXOLA = {
      avis:"El pla gratuït dona 500 crèdits d'IA, que són una dotació puntual i no mensual. La generació d'imatges i les locucions són de pagament."},
     {c:"agents", n:"Manus", u:"https://manus.ai/",
      d:"Agent d'IA autònom per a tasques complexes.",
-     avis:"Any moguts en la propietat de l'empresa: la compra per part de Meta es va donar per acabada el juny de 2026."},
+     avis:"La compra per part de Meta es va desfer després que el regulador xinés la bloquejara. Des de l'11 d'agost de 2026 Manus torna a operar pel seu compte, i la separació va comportar l'esborrament de dades d'una part dels usuaris."},
     {c:"agents", n:"Atlas", u:"https://atlas.nomic.ai/",
      d:"Plataforma per a connectar dades i agents d'IA."}
   ]
