@@ -96,6 +96,7 @@ textarea{width:100%;min-height:120px;background:var(--surface);border:1px solid 
 .reading.clickable .w{cursor:pointer}
 .reading.clickable .w:hover{outline:1px dashed var(--muted)}
 .w.reached{background:var(--accent-soft)}
+.w.current{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 3px var(--accent);border-radius:3px}
 .w.speaking{background:var(--speak);box-shadow:0 0 0 2px var(--speak)}
 .w.sub{background:var(--sub-soft);text-decoration:underline wavy var(--sub);text-underline-offset:5px;text-decoration-thickness:1.5px}
 .w.om{background:var(--om-soft);text-decoration:line-through var(--om);text-decoration-thickness:2px}
@@ -677,7 +678,23 @@ function norm(w){
   return VARIANTS[s]||s;
 }
 function tokenize(t){return String(t).trim().split(/\s+/).filter(Boolean);}
+/* Alinea el que s'ha dit amb el TROS de text llegit fins ara (no amb el text sencer):
+   el final de la lectura és la posició i on el cost és mínim (en cas d'empat, la més avançada). */
 function align(ref,hyp){
+  const n0=ref.length,m=hyp.length;
+  const D=Array.from({length:n0+1},()=>new Uint16Array(m+1));
+  for(let i=0;i<=n0;i++)D[i][0]=i;for(let j=0;j<=m;j++)D[0][j]=j;
+  for(let i=1;i<=n0;i++)for(let j=1;j<=m;j++){const c=ref[i-1]===hyp[j-1]?0:1;D[i][j]=Math.min(D[i-1][j-1]+c,D[i-1][j]+1,D[i][j-1]+1);}
+  let n=0;for(let i=0;i<=n0;i++)if(D[i][m]<=D[n][m])n=i;
+  const ops=[];let i=n,j=m;
+  while(i>0||j>0){
+    if(i>0&&j>0&&D[i][j]===D[i-1][j-1]+(ref[i-1]===hyp[j-1]?0:1)){ops.push({t:ref[i-1]===hyp[j-1]?'ok':'sub',i:i-1,j:j-1});i--;j--;}
+    else if(i>0&&D[i][j]===D[i-1][j]+1){ops.push({t:'om',i:i-1});i--;}
+    else{ops.push({t:'ins',j:j-1,after:i-1});j--;}
+  }
+  ops.reverse();ops.end=n;return ops;
+}
+function alignFull(ref,hyp){
   const n=ref.length,m=hyp.length;
   const D=Array.from({length:n+1},()=>new Uint16Array(m+1));
   for(let i=0;i<=n;i++)D[i][0]=i;for(let j=0;j<=m;j++)D[0][j]=j;
@@ -697,6 +714,7 @@ function align(ref,hyp){
 let S={};
 let timerId=null,t0=0,running=false;
 function blankState(t){
+  livePos=-1;
   const words=tokenize(t.body);
   return {text:t,words,norms:words.map(norm),states:words.map(()=>'plain'),heard:words.map(()=>''),heardT:words.map(()=>null),ins:[],secs:0,done:false,example:false,answers:{},pros:{},course:$('course').value,pickLast:false,tts:null,recUrl:null,saved:false};
 }
@@ -833,10 +851,19 @@ function analyse(tokens,times){
   for(let i=last+1;i<S.states.length;i++)S.states[i]='nr';
   S.ins=S.ins.filter(x=>x.after<=last);
 }
+let livePos=-1;
 function liveHighlight(text){
   const hyp=tokenize(text).map(norm).filter(Boolean);if(!hyp.length)return;
-  const ops=align(S.norms,hyp);let last=-1;ops.forEach(o=>{if(o.t==='ok')last=Math.max(last,o.i);});
-  document.querySelectorAll('#reading .w').forEach((el,i)=>el.classList.toggle('reached',i<=last));
+  const ops=align(S.norms,hyp);
+  let cur=-1;ops.forEach(o=>{if(o.t==='ok'||o.t==='sub')cur=o.i;});
+  /* Estabilitat: no retrocedix (el reconeixement corregix paraules provisionals)
+     i no salta més de 12 paraules d'una vegada. */
+  if(cur<livePos)cur=livePos;
+  if(livePos>=0&&cur>livePos+12)cur=livePos+12;
+  livePos=cur;
+  document.querySelectorAll('#reading .w').forEach((el,i)=>{el.classList.toggle('reached',i<cur);el.classList.toggle('current',i===cur);});
+  const el=document.querySelector(`#reading .w[data-i="${cur}"]`);
+  if(el){const r=el.getBoundingClientRect();if(r.bottom>innerHeight-80||r.top<60)el.scrollIntoView({block:'center',behavior:'smooth'});}
 }
 
 /* =========================================================
@@ -907,9 +934,9 @@ function releaseMic(){stopMeter();if(MIC.stream){MIC.stream.getTracks().forEach(
 
 /* Reconeixement del navegador (en directe) */
 let REC={r:null,on:false,committed:'',fin:'',interim:'',endRes:null};
-function startBrowserSR(lang){
+function startBrowserSR(lang,trackOnly){
   const r=new SR();r.lang=lang==='ca'?'ca-ES':'es-ES';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
-  REC={r,on:true,committed:'',fin:'',interim:'',endRes:null};
+  REC={r,on:true,committed:'',fin:'',interim:'',endRes:null,trackOnly:!!trackOnly};
   r.onresult=e=>{
     const finals=[];let interim='';
     for(let k=0;k<e.results.length;k++){const t=e.results[k][0].transcript.trim();if(e.results[k].isFinal)finals.push(t);else interim+=' '+t;}
@@ -920,6 +947,7 @@ function startBrowserSR(lang){
   };
   r.onerror=e=>{
     if(e.error==='no-speech'||e.error==='aborted')return;
+    if(REC.trackOnly){REC.on=false;return;}
     if(REC.on){REC.on=false;abortReading(micError(e.error));}
   };
   r.onend=()=>{
@@ -983,7 +1011,10 @@ async function startReading(){
   if(engine==='browser'){
     try{startBrowserSR(S.text.lang);}catch(e){releaseMic();notice(micError('nosr'));return;}
     $('live').textContent='Escoltant… Comença a llegir quan vulgues.';
-  }else $('live').textContent="Gravant… En acabar, ElevenLabs transcriurà la lectura.";
+  }else{
+    $('live').textContent="Gravant… En acabar, ElevenLabs transcriurà la lectura.";
+    if(SR&&!isAndroid){try{startBrowserSR(S.text.lang,true);}catch(e){}}
+  }
   setRunning(true);startTimer();
 }
 async function stopReading(){
@@ -996,7 +1027,7 @@ async function stopReading(){
   }
   $('live').textContent='Analitzant la lectura…';
   const engine=CFG.asr;
-  if(engine==='browser')await stopBrowserSR();
+  if(REC.r&&(REC.on||engine==='browser'))await stopBrowserSR();
   const blob=await stopRecorder();releaseMic();
   if(blob&&blob.size)S.recUrl=URL.createObjectURL(blob);
   if(engine==='scribe'){
