@@ -1,0 +1,10 @@
+{
+  "name": "Ressò · Tutor de lectura en veu alta",
+  "short_name": "Ressò",
+  "lang": "ca",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#EEF2F0",
+  "theme_color": "#0B7A67",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ressò</title>
+<meta name="description" content="Ressò: tutor de lectura en veu alta per a Primària i ESO, en valencià i castellà. App cocreada per Sandra Fortanet i Claude. Inspirada en Amira Learning.">
+<meta name="theme-color" content="#0B7A67">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,500&family=Andika:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#EEF2F0; --surface:#FFFFFF; --surface-2:#E3E9E6; --ink:#15262B; --muted:#56686C; --line:#C9D3CF;
+  --accent:#0B7A67; --accent-ink:#FFFFFF; --accent-soft:#D5EDE7;
+  --om:#A86B12; --om-soft:#F6E7CC; --sub:#B8372B; --sub-soft:#F7DAD6; --ins:#2F5FB3; --ins-soft:#DCE5F7; --nr:#8A9A97;
+  --speak:#FFE9A8;
+  --f-ui:"Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-read:"Literata", Georgia, "Times New Roman", serif;
+  --f-kid:"Andika", "Comic Neue", "Trebuchet MS", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px; --rs:1.28rem;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F1719; --surface:#172225; --surface-2:#1F2D30; --ink:#E2EBE8; --muted:#93A5A1; --line:#2C3D40;
+    --accent:#3CC4A7; --accent-ink:#06201A; --accent-soft:#173A33;
+    --om:#E3A948; --om-soft:#3A2E17; --sub:#EE6B5E; --sub-soft:#3D1E1B; --ins:#7BA3F0; --ins-soft:#1C2A45; --nr:#6B7C79; --speak:#5A4A12;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F1719; --surface:#172225; --surface-2:#1F2D30; --ink:#E2EBE8; --muted:#93A5A1; --line:#2C3D40;
+  --accent:#3CC4A7; --accent-ink:#06201A; --accent-soft:#173A33;
+  --om:#E3A948; --om-soft:#3A2E17; --sub:#EE6B5E; --sub-soft:#3D1E1B; --ins:#7BA3F0; --ins-soft:#1C2A45; --nr:#6B7C79; --speak:#5A4A12;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5;margin:0}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px;padding-block:0 40px}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+
+/* capçalera */
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:24px 18px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.brand h1{margin:0;font-size:2.6rem;font-weight:700;letter-spacing:-.02em;line-height:1;padding-right:14px;
+  text-shadow:6px 0 0 color-mix(in srgb,var(--accent) 38%,transparent),12px 0 0 color-mix(in srgb,var(--accent) 16%,transparent)}
+.brand p{margin:0;color:var(--muted);font-size:.95rem;max-width:36ch}
+nav.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:999px;flex-wrap:wrap}
+nav.tabs button{border:0;background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
+
+/* formularis */
+.panel{padding-top:24px}
+.setup{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.field select,.field input,.inp{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;max-width:100%}
+.field input[type=number]{width:90px}
+textarea{width:100%;min-height:120px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;font-family:var(--f-read)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;margin-top:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+.btn{border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.rec{background:var(--sub);border-color:var(--sub);color:#fff}
+.btn.on{background:var(--accent-soft);border-color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:5px 10px;font-size:.85rem;font-weight:500}
+.btn svg{width:16px;height:16px;flex:none}
+
+/* full de lectura */
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px 30px 26px}
+@media (max-width:520px){.sheet{padding:18px 16px}}
+.sheet-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline;margin-bottom:10px}
+.sheet-head h2{margin:0;font-family:var(--f-read);font-weight:500;font-size:1.5rem;text-wrap:balance}
+.meta{font-size:.8rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:600;background:var(--surface-2);color:var(--muted);letter-spacing:.02em}
+.chip.ex{background:var(--ins-soft);color:var(--ins)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:10px;margin-bottom:12px;border-block:1px dashed var(--line)}
+.toolbar select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:.85rem}
+.toolbar .sep{flex:1}
+.reading-wrap{position:relative}
+#ruler{position:absolute;left:-10px;right:-10px;pointer-events:none;background:color-mix(in srgb,var(--accent) 12%,transparent);border-block:1px solid color-mix(in srgb,var(--accent) 45%,transparent);border-radius:4px}
+.reading{font-family:var(--f-read);font-size:var(--rs);line-height:2.05;max-width:62ch;position:relative}
+.reading.f-andika{font-family:var(--f-kid);letter-spacing:.02em;word-spacing:.12em}
+.reading.f-upper{font-family:var(--f-kid);text-transform:uppercase;letter-spacing:.05em;word-spacing:.15em}
+.w{border-radius:4px;padding:1px 1px;transition:background .15s}
+.reading.clickable .w{cursor:pointer}
+.reading.clickable .w:hover{outline:1px dashed var(--muted)}
+.w.reached{background:var(--accent-soft)}
+.w.speaking{background:var(--speak);box-shadow:0 0 0 2px var(--speak)}
+.w.sub{background:var(--sub-soft);text-decoration:underline wavy var(--sub);text-underline-offset:5px;text-decoration-thickness:1.5px}
+.w.om{background:var(--om-soft);text-decoration:line-through var(--om);text-decoration-thickness:2px}
+.w.nr{color:var(--nr)}
+.ins{font-family:var(--f-ui);font-size:.72rem;color:var(--ins);background:var(--ins-soft);border-radius:4px;padding:0 4px;vertical-align:super;margin-inline:2px;cursor:pointer;text-transform:none;letter-spacing:0}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.timer{font-family:var(--f-mono);font-size:1.3rem;margin-left:auto;font-variant-numeric:tabular-nums}
+#meter{width:120px;height:32px;display:block}
+.live{margin-top:12px;font-size:.88rem;color:var(--muted);min-height:1.4em;font-style:italic}
+.dot{width:10px;height:10px;border-radius:50%;background:#fff;display:inline-block;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}.w{transition:none}}
+.notice{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--om-soft);color:var(--ink);font-size:.9rem;border-left:3px solid var(--om)}
+.notice.ok{background:var(--accent-soft);border-left-color:var(--accent)}
+.banner{margin-bottom:12px;padding:8px 12px;border-radius:8px;background:var(--ins-soft);font-size:.85rem;color:var(--ink)}
+#printHead{display:none}
+
+/* lateral */
+aside{display:flex;flex-direction:column;gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.box h3{margin:0 0 12px;font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.gauge{display:flex;align-items:baseline;gap:8px}
+.gauge .n{font-family:var(--f-mono);font-size:3rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--accent)}
+.gauge .u{color:var(--muted);font-size:.85rem}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:14px}
+.stat .k{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat .v{font-family:var(--f-mono);font-size:1.15rem;font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden;display:flex;margin-top:14px}
+.bar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.level{margin-top:14px;padding:10px 12px;border-radius:8px;font-weight:600;font-size:.9rem}
+.lv-0{background:var(--sub-soft);color:var(--sub)}
+.lv-1{background:var(--om-soft);color:var(--om)}
+.lv-2{background:var(--accent-soft);color:var(--accent)}
+.cheer{margin-top:10px;font-size:.9rem}
+.hint{font-size:.82rem;color:var(--muted);margin:10px 0 0}
+.stack{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.stack .btn{justify-content:center}
+.pros-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:.88rem}
+.pros-row:first-of-type{border-top:0}
+.scale{display:flex;gap:4px}
+.scale button{width:30px;height:30px;border-radius:6px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--f-mono);font-size:.85rem}
+.scale button.sel{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* tutor */
+section.after{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:900px){section.after{grid-template-columns:1fr}}
+.after h3{margin:0 0 4px;font-size:1.15rem}
+.after .sub-h{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+.err{display:grid;grid-template-columns:4px 1fr;gap:0 12px;padding:12px 0;border-top:1px solid var(--line)}
+.err .stripe{border-radius:2px}
+.err .word{font-family:var(--f-read);font-size:1.15rem}
+.err .msg{font-size:.9rem;color:var(--muted);margin:2px 0 8px}
+.err .acts{display:flex;gap:8px;flex-wrap:wrap}
+.fb{font-size:.85rem;font-weight:600;margin-top:6px}
+.q{padding:14px 0;border-top:1px solid var(--line)}
+.q .tipus{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--accent);font-weight:700}
+.q p{margin:4px 0 10px;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--surface);padding:8px 12px;border-radius:8px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{border-color:var(--accent);background:var(--accent-soft)}
+.opt.wrong{border-color:var(--sub);background:var(--sub-soft)}
+.empty{color:var(--muted);font-size:.9rem;padding:12px 0;border-top:1px solid var(--line)}
+
+/* aula */
+.aula-head{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end}
+.aula-head h2,.sec-h{margin:0;font-size:1.6rem}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
+@media (max-width:900px){.groups{grid-template-columns:1fr}}
+.group{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px;border-top:4px solid var(--c)}
+.group h3{margin:0;font-size:1.05rem;display:flex;justify-content:space-between;align-items:baseline}
+.group h3 span{font-family:var(--f-mono);color:var(--c)}
+.group .who{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-family:var(--f-mono);font-size:.8rem;padding:2px 8px;border-radius:999px;background:var(--surface-2)}
+.group p{margin:0;font-size:.88rem;color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-top:20px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.chart svg{width:100%;height:auto;display:block}
+.words{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.words span{font-family:var(--f-read);padding:3px 9px;border-radius:6px;background:var(--sub-soft)}
+.words span b{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);margin-left:5px;font-weight:500}
+.tbl-wrap{overflow-x:auto;margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:820px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;background:var(--surface-2)}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+th.num{text-align:right}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:10;max-width:90vw}
+
+/* biblioteca i ajustos */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:10px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px}
+.tcard h4{margin:0;font-family:var(--f-read);font-weight:500;font-size:1.05rem}
+.tcard p{margin:0;font-size:.85rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tcard .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.cicle-h{margin:24px 0 0;font-size:.8rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.form{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.form .row{display:flex;flex-wrap:wrap;gap:12px}
+.form .row .field{flex:1 1 180px}
+.qedit{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:6px}
+.qedit .opt-row{display:flex;gap:8px;align-items:center}
+.qedit .opt-row input[type=text]{flex:1}
+.settings-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:18px}
+.settings-sec h3{margin:0 0 4px;font-size:1.1rem}
+.settings-sec > p{margin:0 0 14px;color:var(--muted);font-size:.9rem;max-width:75ch}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:8px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg label{padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.9rem}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--surface);box-shadow:0 1px 2px rgb(0 0 0 / .12);font-weight:600}
+.vgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:700px){.vgrid{grid-template-columns:1fr}}
+.vgrid .field select{width:100%}
+.warn{font-size:.85rem;padding:10px 12px;background:var(--om-soft);border-radius:8px;border-left:3px solid var(--om);margin-top:12px}
+.diag{list-style:none;padding:0;margin:0;display:grid;gap:6px;font-size:.9rem}
+.diag li{display:flex;gap:8px;align-items:baseline}
+.diag b{font-family:var(--f-mono);font-size:.8rem;padding:1px 7px;border-radius:999px}
+.diag .y{background:var(--accent-soft);color:var(--accent)}
+.diag .n{background:var(--sub-soft);color:var(--sub)}
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.thgrid .cell{background:var(--surface-2);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:.85rem}
+.thgrid .cell div{display:flex;gap:6px;align-items:center}
+.thgrid input{width:64px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+
+/* sobre */
+.about{max-width:70ch}
+.about h2{font-size:1.6rem;margin:0 0 8px}
+.about h3{margin:26px 0 6px;font-size:1.1rem}
+.about .credit{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r);padding:16px 18px;margin:16px 0}
+footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+
+@media print{
+  body{background:#fff;color:#000}
+  nav.tabs,.setup,#customWrap,.toolbar,.controls,.acts,#micNotice,.hint,#exBanner,.stack,.live,.brand p,#ruler{display:none!important}
+  .grid,section.after{display:block}
+  .sheet,.box{border:1px solid #999;break-inside:avoid;margin-bottom:12px}
+  #printHead{display:block;margin-bottom:10px;font-size:.95rem}
+  .opt{border:1px solid #bbb}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Ressò</h1>
+      <p>Tutor de lectura en veu alta per a Primària i ESO, en valencià i en castellà.</p>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" id="tab-llig" aria-selected="true" data-tab="llig">Lectura</button>
+      <button role="tab" id="tab-aula" aria-selected="false" data-tab="aula">Aula</button>
+      <button role="tab" id="tab-bib" aria-selected="false" data-tab="bib">Biblioteca</button>
+      <button role="tab" id="tab-aj" aria-selected="false" data-tab="aj">Ajustos</button>
+      <button role="tab" id="tab-sobre" aria-selected="false" data-tab="sobre">Sobre Ressò</button>
+    </nav>
+  </header>
+
+  <!-- ============ LECTURA ============ -->
+  <section class="panel" id="p-llig">
+    <div class="setup">
+      <div class="field"><label for="student">Alumne/a núm.</label><input id="student" type="number" min="1" max="99" value="7"></div>
+      <div class="field"><label for="course">Curs</label><select id="course"></select></div>
+      <div class="field" style="flex:1 1 260px"><label for="textSel">Text</label><select id="textSel"></select></div>
+      <div class="field"><label for="modeSel">Mode</label>
+        <select id="modeSel">
+          <option value="mic">Micròfon</option>
+          <option value="manual">Marcatge manual del docent</option>
+          <option value="sim">Simulació de demostració</option>
+        </select>
+      </div>
+      <div class="field"><label for="durSel">Durada</label>
+        <select id="durSel"><option value="all">Text sencer</option><option value="60">1 minut</option></select>
+      </div>
+    </div>
+    <div id="customWrap" hidden style="margin-top:14px">
+      <div class="field"><label for="customText">Text ràpid</label></div>
+      <textarea id="customText" placeholder="Enganxa ací el text que llegirà l'alumnat…"></textarea>
+      <div class="field" style="margin-top:8px;max-width:220px"><label for="customLang">Llengua del text</label>
+        <select id="customLang"><option value="ca">Valencià</option><option value="es">Castellà</option></select></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <article class="sheet">
+          <div id="printHead"></div>
+          <div id="exBanner" class="banner" hidden>Exemple de lectura simulada perquè veges com funciona. Prem «Nova lectura» per a començar.</div>
+          <div class="sheet-head">
+            <h2 id="tTitle"></h2>
+            <div class="meta"><span class="chip" id="tLang"></span><span class="chip" id="tWords"></span></div>
+          </div>
+          <div class="toolbar">
+            <button class="btn sm" id="bModel"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3Zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4Z"/></svg><span>Escolta el model</span></button>
+            <span class="sep"></span>
+            <label class="lbl" for="fontSel" style="margin:0">Lletra</label>
+            <select id="fontSel"><option value="literata">Literata</option><option value="andika">Andika (primers lectors)</option><option value="upper">MAJÚSCULES</option></select>
+            <button class="btn sm" id="bSmaller" aria-label="Lletra més xicoteta">A−</button>
+            <button class="btn sm" id="bBigger" aria-label="Lletra més gran">A+</button>
+            <button class="btn sm" id="bRuler" aria-pressed="false">Regle</button>
+          </div>
+          <div class="reading-wrap" id="readingWrap">
+            <div id="ruler" hidden></div>
+            <div class="reading" id="reading"></div>
+          </div>
+          <div class="live" id="live"></div>
+          <div class="controls">
+            <button class="btn primary" id="bStart"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"/></svg><span>Comença a llegir</span></button>
+            <button class="btn rec" id="bStop" hidden><span class="dot" aria-hidden="true"></span><span>He acabat</span></button>
+            <canvas id="meter" width="240" height="64" hidden aria-hidden="true"></canvas>
+            <button class="btn" id="bReset">Nova lectura</button>
+            <span class="timer" id="timer">0:00</span>
+          </div>
+          <div class="notice" id="micNotice" hidden></div>
+        </article>
+      </div>
+
+      <aside>
+        <div class="box">
+          <h3>Fluïdesa</h3>
+          <div class="gauge"><span class="n" id="mPcpm">–</span><span class="u">paraules correctes per minut</span></div>
+          <div class="stats">
+            <div class="stat"><div class="k">Precisió</div><div class="v" id="mAcc">–</div></div>
+            <div class="stat"><div class="k">Temps</div><div class="v" id="mTime">–</div></div>
+            <div class="stat"><div class="k">Paraules llegides</div><div class="v" id="mRead">–</div></div>
+            <div class="stat"><div class="k">Errors</div><div class="v" id="mErr">–</div></div>
+          </div>
+          <div class="bar" id="mBar" aria-hidden="true"></div>
+          <div class="legend">
+            <span><i style="background:var(--sub)"></i>Substitució <b id="cSub">0</b></span>
+            <span><i style="background:var(--om)"></i>Omissió <b id="cOm">0</b></span>
+            <span><i style="background:var(--ins)"></i>Inserció <b id="cIns">0</b></span>
+          </div>
+          <div class="level" id="mLevel" hidden></div>
+          <div class="cheer" id="cheer" hidden></div>
+          <p class="hint">Clica una paraula per a corregir-ne la marca: correcta → substituïda → omesa → no arribada. Clica una inserció per a llevar-la.</p>
+          <div class="stack">
+            <button class="btn" id="bPickLast" disabled>Marca l'última paraula llegida</button>
+            <button class="btn" id="bRecPlay" hidden>Escolta la gravació</button>
+            <button class="btn primary" id="bSave" disabled>Desa a l'aula</button>
+            <button class="btn" id="bPrint" disabled>Imprimeix l'informe</button>
+          </div>
+        </div>
+        <div class="box" id="prosBox" hidden>
+          <h3>Prosòdia (valoració del docent)</h3>
+          <div id="pros"></div>
+          <p class="hint" id="prosTotal">1 = inicial · 4 = consolidat. Total orientatiu: 10 o més indica un progrés adequat.</p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="after" id="after" hidden>
+      <div>
+        <h3>Tutor: microintervencions</h3>
+        <p class="sub-h">Retroacció immediata sobre cada error, amb model sonor i pràctica.</p>
+        <div id="tutor"></div>
+      </div>
+      <div>
+        <h3>Comprensió</h3>
+        <p class="sub-h">Preguntes de nivell literal, inferencial i crític.</p>
+        <div id="quiz"></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ============ AULA ============ -->
+  <section class="panel" id="p-aula" hidden>
+    <div class="aula-head">
+      <div>
+        <h2>Grups de domini</h2>
+        <p style="margin:4px 0 0;color:var(--muted);max-width:60ch">Cada alumne/a se situa segons la seua darrera lectura desada i els llindars del seu curs. L'alumnat s'identifica només per número.</p>
+      </div>
+      <div class="row-actions">
+        <div class="field"><label for="aulaCourse">Curs</label><select id="aulaCourse"></select></div>
+        <button class="btn sm" id="bCopy">Copia CSV</button>
+        <button class="btn sm" id="bCsv">Descarrega CSV</button>
+        <button class="btn sm" id="bClearEx">Esborra els exemples</button>
+      </div>
+    </div>
+
+    <div class="groups" id="groups"></div>
+
+    <div class="two">
+      <div class="box chart">
+        <h3>Evolució de la fluïdesa</h3>
+        <div class="field" style="max-width:260px;margin-bottom:10px"><label for="aulaStudent">Alumne/a</label><select id="aulaStudent"></select></div>
+        <div id="chart"></div>
+      </div>
+      <div class="box">
+        <h3>Paraules a practicar</h3>
+        <p class="hint" style="margin:0 0 6px">Paraules que l'alumne/a seleccionat ha llegit malament, de més a menys freqüents.</p>
+        <div class="words" id="practiceWords"></div>
+        <button class="btn sm" id="bPractice" style="margin-top:14px">Crea una llista de lectura amb estes paraules</button>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Curs</th><th>Alumne/a</th><th>Text</th><th>Llengua</th><th class="num">Temps</th><th class="num">PCPM</th><th class="num">Precisió</th><th class="num">Sub.</th><th class="num">Om.</th><th class="num">Ins.</th><th class="num">Prosòdia</th><th class="num">Compr.</th><th>Grup</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="hint">Les dades es guarden només en este navegador. Per a passar-les a un altre ordinador, fes una còpia de seguretat des d'«Ajustos».</p>
+  </section>
+
+  <!-- ============ BIBLIOTECA ============ -->
+  <section class="panel" id="p-bib" hidden>
+    <div class="aula-head">
+      <div>
+        <h2 class="sec-h">Biblioteca de textos</h2>
+        <p style="margin:4px 0 0;color:var(--muted);max-width:62ch">Textos originals per cicles, amb preguntes de comprensió. Pots afegir-hi els teus i quedaran guardats en este navegador.</p>
+      </div>
+      <button class="btn primary" id="bNewText">Afig un text</button>
+    </div>
+    <form class="form" id="textForm" hidden>
+      <div class="row">
+        <div class="field"><label for="nfTitle">Títol</label><input id="nfTitle" class="inp" required></div>
+        <div class="field"><label for="nfLang">Llengua</label><select id="nfLang"><option value="ca">Valencià</option><option value="es">Castellà</option></select></div>
+        <div class="field"><label for="nfCicle">Nivell</label><select id="nfCicle"></select></div>
+      </div>
+      <div class="field"><label for="nfBody">Text</label><textarea id="nfBody" required></textarea></div>
+      <div id="nfQs"></div>
+      <div class="row-actions"><button class="btn primary" type="submit">Desa el text</button><button class="btn" type="button" id="bCancelText">Cancel·la</button></div>
+    </form>
+    <div id="library"></div>
+  </section>
+
+  <!-- ============ AJUSTOS ============ -->
+  <section class="panel" id="p-aj" hidden>
+    <h2 class="sec-h">Ajustos</h2>
+
+    <div class="settings-sec">
+      <h3>Veu del model lector</h3>
+      <p>És la veu que llig el text com a model i que pronuncia les paraules en el tutor. Les veus del navegador són gratuïtes; ElevenLabs dona una veu molt més natural en valencià.</p>
+      <div class="seg" role="radiogroup" aria-label="Motor de veu">
+        <label><input type="radio" name="ttsEngine" value="browser" id="ttsBrowser">Veus del navegador (gratuïtes)</label>
+        <label><input type="radio" name="ttsEngine" value="eleven" id="ttsEleven">ElevenLabs</label>
+      </div>
+
+      <div id="browserVoiceBox">
+        <div class="vgrid">
+          <div class="field"><label for="bvCa">Veu per al valencià</label><select id="bvCa"></select><button class="btn sm" data-test="ca" style="margin-top:6px;align-self:flex-start">Prova la veu</button></div>
+          <div class="field"><label for="bvEs">Veu per al castellà</label><select id="bvEs"></select><button class="btn sm" data-test="es" style="margin-top:6px;align-self:flex-start">Prova la veu</button></div>
+        </div>
+        <p class="hint" id="edgeHint">Obri Ressò en Microsoft Edge: hi trobaràs les veus naturals «Joana» i «Enric» per al català, gratuïtes i de bona qualitat. Ressò les tria soles; si vols l'altra, canvia-la ací.</p>
+      </div>
+
+      <div id="elevenBox" hidden>
+        <div class="vgrid">
+          <div class="field" style="grid-column:1/-1"><label for="elKey">Clau de l'API d'ElevenLabs</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="elKey" class="inp" type="password" autocomplete="off" placeholder="sk_…" style="flex:1 1 260px"><button class="btn" id="bElConnect">Connecta i carrega les veus</button></div>
+          </div>
+          <div class="field"><label for="elCa">Veu per al valencià</label><select id="elCa"></select>
+            <label for="elModelCa" style="margin-top:6px">Model</label><select id="elModelCa"><option value="eleven_v3">Eleven v3 (admet el català)</option><option value="eleven_multilingual_v2">Multilingual v2</option></select>
+            <button class="btn sm" data-eltest="ca" style="margin-top:6px;align-self:flex-start">Prova la veu</button></div>
+          <div class="field"><label for="elEs">Veu per al castellà</label><select id="elEs"></select>
+            <label for="elModelEs" style="margin-top:6px">Model</label><select id="elModelEs"><option value="eleven_v3">Eleven v3</option><option value="eleven_multilingual_v2">Multilingual v2 (molt estable en castellà)</option><option value="eleven_flash_v2_5">Flash v2.5 (més ràpid i barat)</option></select>
+            <button class="btn sm" data-eltest="es" style="margin-top:6px;align-self:flex-start">Prova la veu</button></div>
+        </div>
+        <div class="notice" id="elStatus" hidden></div>
+        <div class="warn">La clau es guarda només en este navegador. Crea en ElevenLabs una clau exclusiva per a Ressò, amb permisos només de «Text to Speech», «Speech to Text» i «Voices» (lectura), i posa-li un límit de crèdits. Cada text es genera una sola vegada: l'àudio queda guardat en el navegador i no torna a gastar crèdits.</div>
+        <button class="btn sm" id="bClearCache" style="margin-top:12px">Esborra l'àudio guardat</button>
+      </div>
+
+      <div class="field" style="margin-top:16px;max-width:360px"><label for="rate">Velocitat del model: <span id="rateVal"></span></label><input id="rate" type="range" min="0.6" max="1.2" step="0.05"></div>
+    </div>
+
+    <div class="settings-sec">
+      <h3>Reconeixement de la veu de l'alumnat</h3>
+      <p>El reconeixement del navegador funciona en directe i és gratuït (Chrome i Edge; Safari en iPad). ElevenLabs Scribe transcriu la gravació en acabar, és més precís en valencià i funciona en qualsevol navegador.</p>
+      <div class="seg" role="radiogroup" aria-label="Motor de reconeixement">
+        <label><input type="radio" name="asr" value="browser" id="asrBrowser">Navegador (en directe)</label>
+        <label><input type="radio" name="asr" value="scribe" id="asrScribe">ElevenLabs Scribe</label>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="saveAudio"> Grava la lectura per a poder escoltar-la després (no es desa: s'esborra en començar una lectura nova)</label>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" id="bMicTest">Prova el micròfon</button><span id="micTestOut" class="hint" style="margin:0"></span></div>
+      <div class="warn">Protecció de dades: el reconeixement de Chrome envia l'àudio als servidors de Google, i Scribe, als d'ElevenLabs. Identifica l'alumnat només amb números, consulta la política de protecció de dades del centre i informa les famílies abans d'usar el micròfon amb menors.</div>
+    </div>
+
+    <div class="settings-sec">
+      <h3>Llindars de fluïdesa per curs</h3>
+      <p>Paraules correctes per minut (PCPM) per davall de les quals es proposa suport intensiu, i a partir de les quals es proposa autonomia. Són orientatius: ajusta'ls al teu alumnat.</p>
+      <div class="thgrid" id="thGrid"></div>
+      <button class="btn sm" id="bThReset" style="margin-top:12px">Restaura els valors per defecte</button>
+    </div>
+
+    <div class="settings-sec">
+      <h3>Còpia de seguretat</h3>
+      <p>Descarrega totes les lectures, els teus textos i els ajustos (sense la clau d'ElevenLabs) en un fitxer. Després el pots carregar en un altre ordinador.</p>
+      <div class="row-actions"><button class="btn" id="bBackup">Descarrega la còpia</button><label class="btn" for="restoreFile">Carrega una còpia</label><input type="file" id="restoreFile" accept="application/json,.json" hidden></div>
+    </div>
+
+    <div class="settings-sec">
+      <h3>Comprovació del navegador</h3>
+      <ul class="diag" id="diag"></ul>
+    </div>
+  </section>
+
+  <!-- ============ SOBRE ============ -->
+  <section class="panel" id="p-sobre" hidden>
+    <div class="about">
+      <h2>Sobre Ressò</h2>
+      <div class="credit">
+        <p style="margin:0 0 8px"><strong>Ressò és una app cocreada per Sandra Fortanet i Claude</strong>, la intel·ligència artificial d'Anthropic. Sandra, professora de Valencià i Castellà i formadora en IA i educació, n'ha plantejat la idea, les necessitats didàctiques i les millores; Claude n'ha escrit el codi i els textos; i Sandra n'ha revisat el resultat.</p>
+        <p style="margin:0"><strong>Font d'inspiració:</strong> Amira Learning i la seua Amira Reading Suite (<a href="https://amiralearning.com" target="_blank" rel="noopener">amiralearning.com</a>), tutora digital d'alfabetització basada en la ciència de la lectura. Ressò no té cap relació amb Amira Learning: n'adapta la idea de fons (escoltar, avaluar i acompanyar la lectura en veu alta) a les aules valencianes de Primària i ESO.</p>
+      </div>
+
+      <h3>Com funciona</h3>
+      <ul>
+        <li><strong>Avalua.</strong> L'alumne/a llig en veu alta. Ressò transcriu la lectura i l'alinea paraula per paraula amb el text original per a detectar substitucions, omissions i insercions. Calcula les paraules correctes per minut (PCPM) i la precisió. El docent hi afig la valoració de la prosòdia.</li>
+        <li><strong>Acompanya.</strong> Cada error genera una microintervenció: la paraula es pot escoltar, sola o dins de la frase, i l'alumne/a la pot tornar a llegir fins que ix bé. Abans de llegir, pot escoltar el text sencer com a model, amb les paraules ressaltades. Després, tres preguntes treballen la comprensió.</li>
+        <li><strong>Organitza.</strong> El panell «Aula» agrupa l'alumnat en tres grups de domini segons el curs, mostra l'evolució de cada alumne/a i recull les paraules que més li costen.</li>
+      </ul>
+
+      <h3>Per a Primària</h3>
+      <ul>
+        <li>Textos curts per al primer cicle i més llargs per al segon i el tercer.</li>
+        <li>Lletra Andika, dissenyada per a primers lectors, o tot en majúscules.</li>
+        <li>Regle de lectura que acompanya la línia i mida de lletra ajustable.</li>
+        <li>Lectura model amb ressaltat paraula per paraula, a la velocitat que tries.</li>
+        <li>Prova d'un minut, la manera habitual de mesurar la fluïdesa.</li>
+      </ul>
+
+      <h3>Requisits per al micròfon</h3>
+      <ul>
+        <li>L'app ha d'estar publicada en una adreça https (Netlify ho fa sol) i el navegador ha de tindre permís per a usar el micròfon.</li>
+        <li>Per a les veus gratuïtes Joana i Enric: Microsoft Edge, amb connexió a internet.</li>
+        <li>Amb el reconeixement del navegador: Google Chrome o Microsoft Edge en ordinador, Chrome en Android, Safari en iPad. Cal connexió a internet.</li>
+        <li>Amb ElevenLabs Scribe: qualsevol navegador modern i una clau d'ElevenLabs.</li>
+        <li>Dins de la vista prèvia de Claude, el micròfon i les connexions externes estan bloquejats. Allà només funcionen el marcatge manual i la simulació.</li>
+      </ul>
+
+      <h3>Fonamentació</h3>
+      <p>Ressò parteix dels principis de la ciència de la lectura: la fluïdesa lectora (exactitud, velocitat i prosòdia) fa de pont entre la descodificació i la comprensió, tal com recull l'Active View of Reading (Duke i Cartwright, 2021). Els criteris de precisió (95 %, 90 %) són els clàssics dels registres de lectura en veu alta, i la prosòdia es valora amb les quatre dimensions de l'escala multidimensional de fluïdesa de Zutell i Rasinski (1991).</p>
+
+      <h3>Límits que cal conéixer</h3>
+      <ul>
+        <li>El reconeixement del navegador pot canviar formes valencianes per les centrals (per exemple, «este» per «aquest»). Ressò accepta les variants més habituals com a correctes, i el docent sempre pot corregir qualsevol marca clicant la paraula.</li>
+        <li>Els llindars de PCPM són orientatius. No hi ha barems publicats per al valencià: el criteri del docent té l'última paraula.</li>
+        <li>Ressò no diagnostica la dislèxia ni cap altra dificultat. Si un alumne/a mostra dificultats persistents, cal derivar-lo a l'orientació del centre.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="credit-line">
+    <span>Ressò · App cocreada per Sandra Fortanet i Claude (Anthropic), i revisada per Sandra Fortanet.</span>
+    <span>Inspirada en <a href="https://amiralearning.com" target="_blank" rel="noopener">Amira Learning</a>.</span>
+  </footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+<audio id="player" preload="auto" hidden></audio>
+
+<script>
+/* =========================================================
+   Dades: cursos, cicles i textos
+   ========================================================= */
+const COURSES=[
+ {id:'1P',label:'1r de Primària',short:'1r EP',cicle:'C1',lo:30,hi:55},
+ {id:'2P',label:'2n de Primària',short:'2n EP',cicle:'C1',lo:50,hi:75},
+ {id:'3P',label:'3r de Primària',short:'3r EP',cicle:'C2',lo:65,hi:90},
+ {id:'4P',label:'4t de Primària',short:'4t EP',cicle:'C2',lo:80,hi:105},
+ {id:'5P',label:'5é de Primària',short:'5é EP',cicle:'C3',lo:90,hi:115},
+ {id:'6P',label:'6é de Primària',short:'6é EP',cicle:'C3',lo:100,hi:125},
+ {id:'1E',label:"1r d'ESO",short:'1r ESO',cicle:'ESO',lo:105,hi:130},
+ {id:'2E',label:"2n d'ESO",short:'2n ESO',cicle:'ESO',lo:110,hi:135},
+ {id:'3E',label:"3r d'ESO",short:'3r ESO',cicle:'ESO',lo:115,hi:140},
+ {id:'4E',label:"4t d'ESO",short:'4t ESO',cicle:'ESO',lo:120,hi:145}
+];
+const CICLES={C1:'Primària · 1r cicle (1r i 2n)',C2:'Primària · 2n cicle (3r i 4t)',C3:'Primària · 3r cicle (5é i 6é)',ESO:'ESO'};
+const courseById=id=>COURSES.find(c=>c.id===id)||COURSES[6];
+
+const TEXTS=[
+ {id:'tortuga',lang:'ca',cicle:'C1',title:'La tortuga Tina',
+  body:"La tortuga Tina viu al jardí de l'escola. És xicoteta i té la closca verda. Cada matí, els xiquets li porten fulles d'enciam. Tina menja a poc a poc. Quan fa fred, s'amaga davall de la terra i dorm fins a la primavera. Tots la cuiden molt.",
+  qs:[{t:'Literal',q:'Què li porten els xiquets a Tina?',o:["Fulles d'enciam",'Trossos de pa','Pomes'],a:0},
+      {t:'Inferencial',q:"Per què s'amaga Tina davall de la terra quan fa fred?",o:['Perquè està enfadada','Per a protegir-se del fred mentre dorm','Perquè vol jugar a amagar-se'],a:1},
+      {t:'Crítica',q:'Com creus que se senten els xiquets amb Tina?',o:['Li tenen por','Estan avorrits','Estan contents de cuidar-la'],a:2}]},
+ {id:'globo',lang:'es',cicle:'C1',title:'El globo rojo',
+  body:"Lucas tiene un globo rojo. Sale al parque con su abuela. De pronto, sopla un viento fuerte y el globo se escapa. Sube y sube hasta las nubes. Lucas está triste. Su abuela le da la mano y le dice: «Mira, ahora el globo viaja por el cielo». Lucas sonríe.",
+  qs:[{t:'Literal',q:'¿De qué color es el globo de Lucas?',o:['Azul','Rojo','Amarillo'],a:1},
+      {t:'Inferencial',q:'¿Por qué sonríe Lucas al final?',o:['Porque recupera el globo','Porque su abuela le ayuda a verlo de otra manera','Porque le compran otro globo'],a:1},
+      {t:'Crítica',q:'¿Cómo es la abuela de Lucas?',o:['Cariñosa','Despistada','Enfadada'],a:0}]},
+ {id:'orenetes',lang:'ca',cicle:'C2',title:'Les orenetes',
+  body:"Cada primavera, les orenetes tornen al nostre poble. Han passat l'hivern a l'Àfrica, on fa calor i hi ha molts insectes per a menjar. El viatge és molt llarg: travessen la mar i el desert volant durant setmanes. Quan arriben, busquen el niu de l'any passat, fet de fang i palla, davall de les teulades. Si està trencat, l'arreglen amb paciència. Després ponen els ous i, al cap d'unes setmanes, naixen els pollets, que obrin el bec cada vegada que els pares s'acosten.",
+  qs:[{t:'Literal',q:"On passen l'hivern les orenetes?",o:["A l'Àfrica",'Al nostre poble','Al desert'],a:0},
+      {t:'Inferencial',q:"Per què se'n van a l'Àfrica a l'hivern?",o:['Perquè no els agrada el poble','Perquè allà troben calor i menjar','Per a fer nius nous'],a:1},
+      {t:'Crítica',q:'Quin altre títol li aniria bé al text?',o:["Un viatge d'anada i tornada",'La mar blava',"Els insectes d'Àfrica"],a:0}]},
+ {id:'dientes',lang:'es',cicle:'C2',title:'Los dientes de leche',
+  body:"Los niños tienen veinte dientes de leche. Empiezan a salir cuando son bebés y, hacia los seis años, comienzan a caerse uno a uno. No es nada malo: debajo de cada diente de leche espera un diente nuevo, más grande y más fuerte. Estos dientes definitivos deben durar toda la vida, por eso hay que cuidarlos. Lo mejor es cepillarlos después de cada comida, comer pocos dulces y visitar al dentista una vez al año.",
+  qs:[{t:'Literal',q:'¿Cuántos dientes de leche tienen los niños?',o:['Veinte','Treinta y dos','Diez'],a:0},
+      {t:'Inferencial',q:'¿Por qué hay que cuidar tanto los dientes definitivos?',o:['Porque son más blancos','Porque ya no se vuelven a cambiar','Porque duelen más'],a:1},
+      {t:'Crítica',q:'¿Qué pretende el texto?',o:['Contar una historia','Informar y dar consejos','Hacer reír'],a:1}]},
+ {id:'paraules',lang:'ca',cicle:'C3',title:'Les paraules que viatgen',
+  body:"Moltes paraules que fem servir cada dia han vingut de molt lluny. «Sucre», «arròs» i «taronja» ens van arribar de l'àrab fa més de mil anys, quan els andalusins conreaven estes terres i hi van portar noves plantes i tècniques de reg. «Xocolate» i «tomaca» van vindre d'Amèrica, amb els productes que arribaven en vaixell. I paraules més noves, com «futbol» o «esport», les hem agafades de l'anglés. Les llengües són com persones que viatgen: canvien, aprenen i es barregen amb les altres. Per això, quan busquem l'origen d'una paraula, descobrim també una part de la història.",
+  qs:[{t:'Literal',q:"D'on ens va arribar la paraula «arròs»?",o:["De l'anglés","De l'àrab","D'Amèrica"],a:1},
+      {t:'Inferencial',q:'Per què «xocolate» i «tomaca» van arribar amb els vaixells?',o:["Perquè arribaven alhora que els productes d'Amèrica",'Perquè eren paraules de mariners','Perquè es van inventar al port'],a:0},
+      {t:'Crítica',q:'Què vol dir que «les llengües són com persones que viatgen»?',o:['Que només es parlen de viatge','Que canvien i es barregen amb el contacte','Que cada llengua té un país'],a:1}]},
+ {id:'cielo',lang:'es',cicle:'C3',title:'¿Por qué el cielo es azul?',
+  body:"La luz del sol parece blanca, pero en realidad está formada por todos los colores del arcoíris. Cuando atraviesa el aire, choca con partículas diminutas que la desvían en todas direcciones. La luz azul se dispersa mucho más que la roja o la amarilla, por eso llega a nuestros ojos desde todas partes y vemos el cielo de ese color. Al atardecer, la luz tiene que recorrer un camino mucho más largo por la atmósfera. Por el camino, casi todo el azul se pierde y solo nos llegan los tonos naranjas y rojos.",
+  qs:[{t:'Literal',q:'¿De qué está formada la luz del sol?',o:['Solo de luz blanca','De todos los colores del arcoíris','De luz azul'],a:1},
+      {t:'Inferencial',q:'¿Por qué el cielo se ve rojizo al atardecer?',o:['Porque el sol se enfría','Porque la luz recorre más atmósfera y pierde el azul','Porque hay más nubes'],a:1},
+      {t:'Crítica',q:'¿Qué tipo de texto es?',o:['Un texto explicativo','Un cuento','Un poema'],a:0}]},
+ {id:'columbretes',lang:'ca',cicle:'ESO',title:'El far de les Columbretes',
+  body:"A més de cinquanta quilòmetres de la costa de Castelló, enmig de la mar, s'alcen les illes Columbretes. Són les restes d'un volcà antic que fa milers d'anys que dorm. Durant molt de temps, els mariners temien estes aigües, perquè les roques amagades trencaven els vaixells a la nit. Per això, a mitjan segle XIX es va construir un far a l'illa Grossa. Els farers hi vivien amb les seues famílies, lluny de tot, i rebien provisions només quan el temps ho permetia. Hui el far funciona de manera automàtica i les illes són una reserva natural protegida. Només es pot desembarcar-hi amb autorització. Allà nien gavines i falcons, i viu una sargantana que no es troba en cap altre lloc del món.",
+  qs:[{t:'Literal',q:'Què són, en realitat, les illes Columbretes?',o:["Les restes d'un volcà antic",'Un escull de corall',"Trossos que s'han separat de la costa"],a:0},
+      {t:'Inferencial',q:'Per què els farers rebien provisions només quan el temps ho permetia?',o:['Perquè no tenien diners per a comprar-ne',"Perquè amb mala mar els vaixells no podien arribar a l'illa",'Perquè el far ja funcionava sol'],a:1},
+      {t:'Crítica',q:'Quin és el propòsit principal del text?',o:['Convéncer el lector de visitar les illes','Narrar una aventura de mariners','Informar sobre un lloc i la seua història'],a:2}]},
+ {id:'badall',lang:'ca',cicle:'ESO',title:'Per què badallem?',
+  body:"Badallar és un gest que fem tots, però la ciència encara no sap del cert per a què servix. Durant anys es va pensar que badallàvem perquè al cos li faltava oxigen, però diversos experiments han descartat esta idea. Una altra hipòtesi proposa que el badall ajuda a refredar el cervell quan s'escalfa massa. El que sí que sabem és que badallar s'encomana. Si veus algú que badalla, és molt probable que tu també ho faces al cap de pocs segons. Fins i tot pot passar si només llegixes la paraula badall. Alguns investigadors relacionen este contagi amb l'empatia, la capacitat de posar-nos en el lloc dels altres. Per això, diuen, badallem més quan qui badalla és un amic o un familiar.",
+  qs:[{t:'Literal',q:'Quina idea sobre el badall han descartat els experiments?',o:['Que servix per a refredar el cervell','Que servix per a obtindre més oxigen',"Que s'encomana"],a:1},
+      {t:'Inferencial',q:'Què vol mostrar el text quan diu que pot passar «si només llegixes la paraula badall»?',o:['Que el contagi no depén només de veure algú','Que la paraula és difícil de llegir','Que llegir produïx cansament'],a:0},
+      {t:'Crítica',q:"Quina relació estableix el text entre el badall i l'empatia?",o:['Les persones empàtiques no badallen mai','Badallem més quan qui badalla és una persona pròxima',"L'empatia provoca son"],a:1}]},
+ {id:'pulpo',lang:'es',cicle:'ESO',title:'El pulpo',
+  body:"El pulpo es uno de los animales más sorprendentes del océano. Tiene ocho brazos llenos de ventosas y con cada uno de ellos puede tocar y saborear lo que encuentra. Además, una gran parte de sus neuronas no está en la cabeza, sino repartida por los brazos, de modo que estos pueden actuar con cierta independencia. Los pulpos cambian de color y de textura en menos de un segundo para esconderse de sus enemigos o para sorprender a sus presas. En los acuarios, algunos han aprendido a abrir frascos con tapa de rosca y a escaparse de sus tanques durante la noche. A pesar de su inteligencia, viven muy poco: la mayoría de las especies no supera los dos años de vida.",
+  qs:[{t:'Literal',q:'¿Dónde se encuentra gran parte de las neuronas del pulpo?',o:['En la cabeza','Repartida por los brazos','En la piel'],a:1},
+      {t:'Inferencial',q:'¿Qué demuestra que algunos pulpos abran frascos con tapa de rosca?',o:['Que pueden aprender a resolver problemas','Que tienen mucha hambre','Que son animales agresivos'],a:0},
+      {t:'Crítica',q:'¿Qué contraste plantea la última oración?',o:['Entre el mar y los acuarios','Entre su gran inteligencia y su vida corta','Entre sus colores y su textura'],a:1}]},
+ {id:'abejas',lang:'es',cicle:'ESO',title:'El baile de las abejas',
+  body:"Cuando una abeja exploradora encuentra un campo lleno de flores, vuelve a la colmena y avisa a sus compañeras con un baile. Si las flores están cerca, da vueltas en círculo. Si están lejos, dibuja una especie de ocho y, en el tramo central, mueve el abdomen de un lado a otro. La dirección de ese tramo indica hacia dónde hay que volar, con el sol como referencia. La duración del movimiento señala la distancia: cuanto más largo es, más lejos está el alimento. Este lenguaje lo descifró el científico austriaco Karl von Frisch, que recibió el Premio Nobel en 1973. Gracias a él sabemos que los insectos también pueden compartir información precisa.",
+  qs:[{t:'Literal',q:'¿Qué indica la duración del movimiento central?',o:['La dirección del vuelo','La cantidad de flores','La distancia hasta el alimento'],a:2},
+      {t:'Inferencial',q:'Si una abeja baila dando vueltas en círculo, ¿qué entienden sus compañeras?',o:['Que las flores están cerca','Que hay peligro','Que las flores están lejos'],a:0},
+      {t:'Crítica',q:'¿Por qué crees que el texto menciona el Premio Nobel?',o:['Para contar la vida del científico','Para destacar la importancia del descubrimiento','Para explicar qué es un premio'],a:1}]}
+];
+
+const MSG={
+ ca:{sub:(h,w)=>`Has llegit «${h}» en lloc de «${w}». Escolta-la i fixa't en com s'escriu.`,om:()=>"T'has saltat esta paraula. Torna a llegir la frase seguint-la amb el dit.",ins:h=>`Has afegit «${h}», que no és al text. Llig amb calma, sense avançar-te.`,good:'Molt bé! Ara sí.',again:'Encara no. Escolta-la i torna-ho a provar.',listen:'Escoltant…',sample:"Hola! Sóc la veu que t'acompanyarà en la lectura."},
+ es:{sub:(h,w)=>`Has leído «${h}» en lugar de «${w}». Escúchala y fíjate en cómo se escribe.`,om:()=>'Te has saltado esta palabra. Vuelve a leer la frase siguiéndola con el dedo.',ins:h=>`Has añadido «${h}», que no está en el texto. Lee con calma, sin adelantarte.`,good:'¡Muy bien! Ahora sí.',again:'Todavía no. Escúchala y vuelve a intentarlo.',listen:'Escuchando…',sample:'¡Hola! Soy la voz que te acompañará en la lectura.'}
+};
+const PROS=[
+ {k:'e',n:'Expressió i volum',d:['Llig amb veu baixa i sense expressió, com si recitara paraules soltes','Comença a donar expressió, però poc constant','Expressió i volum adequats en la major part del text','Expressió i volum variats i adequats al sentit del text']},
+ {k:'f',n:'Fraseig',d:['Llig paraula per paraula','Grups de dues o tres paraules; ignora sovint la puntuació','Fraseig raonable, amb algunes pauses inadequades','Respecta frases, puntuació i entonació']},
+ {k:'s',n:'Continuïtat',d:['Pauses llargues, vacil·lacions i repeticions freqüents','Diverses interrupcions en passatges difícils','Alguna interrupció, que resol de pressa','Llig de manera contínua i s\'autocorregix sense trencar el ritme']},
+ {k:'r',n:'Ritme',d:['Lent i esforçat','Moderadament lent','Irregular: combina moments ràpids i lents','Ritme constant i conversacional']}
+];
+
+/* =========================================================
+   Utilitats
+   ========================================================= */
+const $=id=>document.getElementById(id);
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function toast(t,ms=2800){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,ms);}
+function fmtTime(s){s=Math.round(s||0);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36);}
+function downloadFile(name,content,type){
+  const blob=content instanceof Blob?content:new Blob([content],{type});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+const isAndroid=/Android/i.test(navigator.userAgent);
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+/* configuració */
+const DEF_CFG={tts:'browser',bv:{ca:'',es:''},elKey:'',elVoices:[],elVoice:{ca:'',es:''},elModel:{ca:'eleven_v3',es:'eleven_multilingual_v2'},rate:0.9,asr:'browser',saveAudio:true,font:'literata',size:1.28,ruler:false,th:{}};
+let CFG=Object.assign({},DEF_CFG,store.get('resso.cfg',{}));
+function saveCfg(){store.set('resso.cfg',CFG);}
+
+/* IndexedDB per a l'àudio de la veu */
+const idb={
+  db:null,
+  open(){return new Promise(res=>{try{const r=indexedDB.open('resso',1);r.onupgradeneeded=()=>r.result.createObjectStore('tts');r.onsuccess=()=>{this.db=r.result;res(this.db);};r.onerror=()=>res(null);}catch(e){res(null);}});},
+  async get(k){const db=this.db||await this.open();if(!db)return null;return new Promise(res=>{try{const q=db.transaction('tts').objectStore('tts').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);}catch(e){res(null);}});},
+  async set(k,v){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});},
+  async clear(){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').clear();tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
+};
+
+/* =========================================================
+   Normalització i alineació
+   ========================================================= */
+const VARIANTS={aquest:'este',aquesta:'esta',aquests:'estos',aquestes:'estes',aqueix:'eixe',aqueixa:'eixa',avui:'hui',meva:'meua',meves:'meues',teva:'teua',teves:'teues',seva:'seua',seves:'seues',serveix:'servix',llegeixes:'llegixes',llegeix:'llig',sortir:'eixir',surt:'ix',produeix:'produix',petita:'xicoteta',petit:'xicotet',nens:'xiquets',nen:'xiquet',nena:'xiqueta',tomaquet:'tomaca',obren:'obrin',neixen:'naixen',sota:'davall'};
+const NUMS={ca:{'1973':'mil nou-cents setanta-tres',xix:'dinou'},es:{'1973':'mil novecientos setenta y tres',xix:'diecinueve'}};
+function norm(w){
+  let s=String(w).toLowerCase().replace(/[’`´]/g,"'").normalize('NFD').replace(/[̀-ͯ]/g,'');
+  s=s.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'').replace(/['·\-]/g,'');
+  return VARIANTS[s]||s;
+}
+function tokenize(t){return String(t).trim().split(/\s+/).filter(Boolean);}
+function align(ref,hyp){
+  const n=ref.length,m=hyp.length;
+  const D=Array.from({length:n+1},()=>new Uint16Array(m+1));
+  for(let i=0;i<=n;i++)D[i][0]=i;for(let j=0;j<=m;j++)D[0][j]=j;
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++){const c=ref[i-1]===hyp[j-1]?0:1;D[i][j]=Math.min(D[i-1][j-1]+c,D[i-1][j]+1,D[i][j-1]+1);}
+  const ops=[];let i=n,j=m;
+  while(i>0||j>0){
+    if(i>0&&j>0&&D[i][j]===D[i-1][j-1]+(ref[i-1]===hyp[j-1]?0:1)){ops.push({t:ref[i-1]===hyp[j-1]?'ok':'sub',i:i-1,j:j-1});i--;j--;}
+    else if(i>0&&D[i][j]===D[i-1][j]+1){ops.push({t:'om',i:i-1});i--;}
+    else{ops.push({t:'ins',j:j-1,after:i-1});j--;}
+  }
+  return ops.reverse();
+}
+
+/* =========================================================
+   Estat
+   ========================================================= */
+let S={};
+let timerId=null,t0=0,running=false;
+function blankState(t){
+  const words=tokenize(t.body);
+  return {text:t,words,norms:words.map(norm),states:words.map(()=>'plain'),heard:words.map(()=>''),heardT:words.map(()=>null),ins:[],secs:0,done:false,example:false,answers:{},pros:{},course:$('course').value,pickLast:false,tts:null,recUrl:null,saved:false};
+}
+function allTexts(){return TEXTS.concat(store.get('resso.library',[]));}
+function currentText(){
+  const id=$('textSel').value;
+  if(id==='quick')return {id:'quick',lang:$('customLang').value,cicle:'',title:'Text ràpid',body:$('customText').value.trim(),qs:[]};
+  return allTexts().find(x=>x.id===id)||TEXTS[0];
+}
+
+/* =========================================================
+   Selectors de curs i text
+   ========================================================= */
+function fillCourseSelects(){
+  $('course').innerHTML=COURSES.map(c=>`<option value="${c.id}">${esc(c.label)}</option>`).join('');
+  $('aulaCourse').innerHTML='<option value="">Tots els cursos</option>'+COURSES.map(c=>`<option value="${c.id}">${esc(c.label)}</option>`).join('');
+  $('nfCicle').innerHTML=Object.entries(CICLES).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('');
+}
+function fillTextSelect(keep){
+  const lib=store.get('resso.library',[]);
+  let h='';
+  Object.entries(CICLES).forEach(([k,v])=>{
+    const ts=TEXTS.filter(t=>t.cicle===k);
+    h+=`<optgroup label="${esc(v)}">`+ts.map(t=>`<option value="${t.id}">${esc(t.title)} · ${t.lang==='ca'?'valencià':'castellà'}</option>`).join('')+'</optgroup>';
+  });
+  if(lib.length)h+='<optgroup label="Els meus textos">'+lib.map(t=>`<option value="${t.id}">${esc(t.title)} · ${t.lang==='ca'?'valencià':'castellà'}</option>`).join('')+'</optgroup>';
+  h+='<optgroup label="Altres"><option value="quick">Text ràpid (enganxa\'l)</option></optgroup>';
+  $('textSel').innerHTML=h;
+  if(keep&&[...$('textSel').options].some(o=>o.value===keep))$('textSel').value=keep;
+}
+function pickTextForCourse(){
+  const c=courseById($('course').value);const cur=currentText();
+  if(cur.id==='quick'||cur.cicle===c.cicle||cur.own)return;
+  const cand=allTexts().filter(t=>t.cicle===c.cicle);
+  const same=cand.find(t=>t.lang===cur.lang)||cand[0];
+  if(same)$('textSel').value=same.id;
+}
+
+/* =========================================================
+   Pintat del text
+   ========================================================= */
+function applyReadingLook(){
+  const r=$('reading');
+  r.classList.toggle('f-andika',CFG.font==='andika');r.classList.toggle('f-upper',CFG.font==='upper');
+  document.documentElement.style.setProperty('--rs',CFG.size+'rem');
+  $('fontSel').value=CFG.font;
+  $('ruler').hidden=!CFG.ruler;$('bRuler').classList.toggle('on',CFG.ruler);$('bRuler').setAttribute('aria-pressed',CFG.ruler);
+}
+function loadText(){
+  stopModel();
+  const t=currentText();S=blankState(t);
+  $('customWrap').hidden=t.id!=='quick';
+  $('tTitle').textContent=t.title;
+  $('tLang').textContent=t.lang==='ca'?'Valencià':'Castellà';
+  $('tWords').textContent=S.words.length+' paraules'+(t.cicle?' · '+(t.cicle==='ESO'?'ESO':CICLES[t.cicle].split('· ')[1]):'');
+  $('exBanner').hidden=true;$('live').textContent='';$('timer').textContent='0:00';
+  $('after').hidden=true;$('micNotice').hidden=true;$('prosBox').hidden=true;$('cheer').hidden=true;$('bRecPlay').hidden=true;
+  ['bSave','bPrint','bPickLast'].forEach(id=>$(id).disabled=true);
+  renderReading();renderMetrics();
+}
+function renderReading(){
+  const box=$('reading');box.innerHTML='';
+  box.classList.toggle('clickable',S.done||($('modeSel').value==='manual'&&running));
+  const frag=document.createDocumentFragment();
+  const addIns=x=>{const m=document.createElement('span');m.className='ins';m.textContent='+'+x.w;m.title='Inserció: clica per a llevar-la';m.dataset.ins=S.ins.indexOf(x);frag.append(m,' ');};
+  S.ins.filter(x=>x.after===-1).forEach(addIns);
+  S.words.forEach((w,i)=>{
+    const sp=document.createElement('span');sp.className='w '+S.states[i];sp.textContent=w;sp.dataset.i=i;
+    if(S.states[i]==='sub')sp.title='Ha llegit: '+(S.heard[i]||'?');
+    if(S.states[i]==='om')sp.title='Omesa';if(S.states[i]==='nr')sp.title='No arribada';
+    frag.append(sp,' ');
+    S.ins.filter(x=>x.after===i).forEach(addIns);
+  });
+  box.appendChild(frag);
+}
+
+/* =========================================================
+   Mètriques i nivells
+   ========================================================= */
+function thFor(course){const c=courseById(course);const o=CFG.th[course]||{};return {lo:o.lo??c.lo,hi:o.hi??c.hi};}
+function levelOf(pcpm,acc,course){const t=thFor(course);const a=acc<90?0:acc<95?1:2;const p=pcpm<t.lo?0:pcpm<t.hi?1:2;return Math.min(a,p);}
+const LEVELS=['Suport intensiu','Pràctica guiada','Autonomia'];
+const LV_COL=['var(--sub)','var(--om)','var(--accent)'];
+function metrics(){
+  const c={ok:0,sub:0,om:0,nr:0};S.states.forEach(s=>{if(c[s]!==undefined)c[s]++;});
+  const attempted=S.words.length-c.nr,ins=S.ins.length,errors=c.sub+c.om+ins,correct=Math.max(0,attempted-errors),mins=S.secs/60;
+  return {c,attempted,ins,errors,correct,pcpm:mins>0?Math.round(correct/mins):0,acc:attempted>0?Math.max(0,Math.round(1000*(attempted-errors)/attempted)/10):0};
+}
+function prosTotal(){const v=PROS.map(p=>S.pros[p.k]||0);return v.every(x=>x)?v.reduce((a,b)=>a+b,0):null;}
+function renderMetrics(){
+  if(!S.done){['mPcpm','mAcc','mTime','mRead','mErr'].forEach(id=>$(id).textContent='–');$('mBar').innerHTML='';$('mLevel').hidden=true;['cSub','cOm','cIns'].forEach(id=>$(id).textContent='0');return;}
+  const m=metrics();
+  $('mPcpm').textContent=m.pcpm;$('mAcc').textContent=m.acc.toLocaleString('ca')+' %';
+  $('mTime').textContent=fmtTime(S.secs);$('mRead').textContent=m.attempted+'/'+S.words.length;$('mErr').textContent=m.errors;
+  $('cSub').textContent=m.c.sub;$('cOm').textContent=m.c.om;$('cIns').textContent=m.ins;
+  const tot=Math.max(1,m.attempted+m.ins);
+  $('mBar').innerHTML=`<span style="width:${100*m.correct/tot}%;background:var(--accent)"></span><span style="width:${100*m.c.sub/tot}%;background:var(--sub)"></span><span style="width:${100*m.c.om/tot}%;background:var(--om)"></span><span style="width:${100*m.ins/tot}%;background:var(--ins)"></span>`;
+  const lv=levelOf(m.pcpm,m.acc,S.course);const L=$('mLevel');L.hidden=false;L.className='level lv-'+lv;L.textContent='Grup suggerit: '+LEVELS[lv]+' ('+courseById(S.course).short+')';
+  renderCheer(m);
+}
+function renderCheer(m){
+  const el=$('cheer');if(S.example){el.hidden=true;return;}
+  const n=+$('student').value;const prev=(sessions()||[]).filter(s=>s.student===n&&s.course===S.course&&!s.example).sort((a,b)=>b.date.localeCompare(a.date))[0];
+  el.hidden=false;
+  if(!prev){el.textContent='Primera lectura registrada per a este alumne/a en este curs.';return;}
+  const d=m.pcpm-prev.pcpm;
+  el.innerHTML=d>0?`<strong style="color:var(--accent)">+${d} PCPM</strong> respecte de l'última lectura (${prev.pcpm}). Bona feina!`
+    :d===0?`Igual que l'última lectura (${prev.pcpm} PCPM).`
+    :`<strong style="color:var(--om)">${d} PCPM</strong> respecte de l'última lectura (${prev.pcpm}). Potser el text era més difícil.`;
+}
+
+/* =========================================================
+   Anàlisi
+   ========================================================= */
+function analyse(tokens,times){
+  const keep=[];tokens.forEach((w,k)=>{if(norm(w))keep.push(k);});
+  const hyp=keep.map(k=>norm(tokens[k])),show=keep.map(k=>tokens[k]),tt=keep.map(k=>times?times[k]:null);
+  const ops=align(S.norms,hyp);
+  S.states=S.words.map(()=>'om');S.heard=S.words.map(()=>'');S.heardT=S.words.map(()=>null);S.ins=[];
+  ops.forEach(o=>{
+    if(o.t==='ok'){S.states[o.i]='ok';S.heardT[o.i]=tt[o.j];}
+    else if(o.t==='sub'){S.states[o.i]='sub';S.heard[o.i]=show[o.j];S.heardT[o.i]=tt[o.j];}
+    else if(o.t==='ins')S.ins.push({after:o.after,w:show[o.j],t:tt[o.j]});
+  });
+  /* Si l'alumne/a no ha acabat el text, les paraules soltes que l'alineació ha casat
+     molt més enllà de l'última paraula correcta són soroll: es tracten com a insercions. */
+  let lastOk=-1;S.states.forEach((s,i)=>{if(s==='ok')lastOk=i;});
+  let gap=0;
+  for(let i=lastOk+1;i<S.states.length;i++){
+    if(S.states[i]==='om')gap++;
+    else if(S.states[i]==='sub'&&gap>=2){S.ins.push({after:lastOk,w:S.heard[i],t:S.heardT[i]});S.states[i]='om';S.heard[i]='';S.heardT[i]=null;}
+  }
+  let last=-1;S.states.forEach((s,i)=>{if(s==='ok'||s==='sub')last=i;});
+  for(let i=last+1;i<S.states.length;i++)S.states[i]='nr';
+  S.ins=S.ins.filter(x=>x.after<=last);
+}
+function liveHighlight(text){
+  const hyp=tokenize(text).map(norm).filter(Boolean);if(!hyp.length)return;
+  const ops=align(S.norms,hyp);let last=-1;ops.forEach(o=>{if(o.t==='ok')last=Math.max(last,o.i);});
+  document.querySelectorAll('#reading .w').forEach((el,i)=>el.classList.toggle('reached',i<=last));
+}
+
+/* =========================================================
+   Temporitzador
+   ========================================================= */
+function startTimer(){
+  t0=performance.now();
+  timerId=setInterval(()=>{const s=(performance.now()-t0)/1000;$('timer').textContent=fmtTime(s);if($('durSel').value==='60'&&s>=60)stopReading();},200);
+}
+function stopTimer(){if(!timerId)return;clearInterval(timerId);timerId=null;S.secs=Math.min((performance.now()-t0)/1000,$('durSel').value==='60'?60:Infinity);$('timer').textContent=fmtTime(S.secs);}
+function setRunning(on){running=on;$('bStart').hidden=on;$('bStop').hidden=!on;['textSel','modeSel','durSel','course'].forEach(id=>$(id).disabled=on);}
+function notice(msg,ok){const n=$('micNotice');n.hidden=false;n.className='notice'+(ok?' ok':'');n.textContent=msg;}
+
+/* =========================================================
+   Micròfon: permisos, errors, mesurador i gravació
+   ========================================================= */
+function micError(code){
+  const map={
+    insecure:"El micròfon només funciona en una adreça segura (https). Netlify ja ho és: comprova que l'adreça comença per https://.",
+    NotAllowedError:"El navegador no té permís per a usar el micròfon. Clica el cadenat de la barra d'adreces, permet el micròfon per a este web i torna-ho a provar. Dins de la vista prèvia de Claude el micròfon sempre està bloquejat: obri l'app des de Netlify.",
+    'not-allowed':"El navegador no té permís per a usar el micròfon. Clica el cadenat de la barra d'adreces, permet el micròfon per a este web i torna-ho a provar.",
+    'service-not-allowed':"El navegador no permet el reconeixement de veu en esta pàgina. Prova-ho en Google Chrome o tria ElevenLabs Scribe en «Ajustos».",
+    NotFoundError:"No s'ha trobat cap micròfon. Connecta'n un o revisa la configuració de so de l'ordinador.",
+    'audio-capture':"No s'ha trobat cap micròfon. Connecta'n un o revisa la configuració de so de l'ordinador.",
+    NotReadableError:"Un altre programa està fent servir el micròfon. Tanca'l (videotrucades, gravadores…) i torna-ho a provar.",
+    network:"El reconeixement de veu del navegador necessita connexió a internet. Revisa la connexió i torna-ho a provar.",
+    'language-not-supported':"Este navegador no reconeix la veu en esta llengua. Fes servir Google Chrome o tria ElevenLabs Scribe en «Ajustos».",
+    nosr:"Este navegador no té reconeixement de veu. Fes servir Google Chrome o Microsoft Edge, o tria ElevenLabs Scribe en «Ajustos».",
+    nokey:"Per a usar ElevenLabs Scribe cal posar la clau d'ElevenLabs en «Ajustos»."
+  };
+  return map[code]||`No s'ha pogut fer servir el micròfon (${code}). Prova-ho en Google Chrome.`;
+}
+async function getMic(){
+  if(!window.isSecureContext)throw {name:'insecure'};
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw {name:'nosr'};
+  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+}
+let MIC={stream:null,recorder:null,chunks:[],ctx:null,raf:0};
+function startMeter(stream){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaStreamSource(stream);const an=ctx.createAnalyser();an.fftSize=256;src.connect(an);
+    MIC.ctx=ctx;const data=new Uint8Array(an.frequencyBinCount);const cv=$('meter');cv.hidden=false;const g=cv.getContext('2d');
+    const col=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#0B7A67';
+    const hist=new Array(24).fill(0);
+    const draw=()=>{an.getByteTimeDomainData(data);let peak=0;for(const v of data)peak=Math.max(peak,Math.abs(v-128));hist.push(peak/128);hist.shift();
+      g.clearRect(0,0,cv.width,cv.height);g.fillStyle=col;const bw=cv.width/hist.length;
+      hist.forEach((v,k)=>{const h=Math.max(3,v*cv.height*1.6);g.globalAlpha=.35+.65*(k/hist.length);g.fillRect(k*bw+2,(cv.height-h)/2,bw-4,Math.min(h,cv.height));});
+      MIC.raf=requestAnimationFrame(draw);};
+    draw();
+  }catch(e){}
+}
+function stopMeter(){cancelAnimationFrame(MIC.raf);try{MIC.ctx&&MIC.ctx.close();}catch(e){}MIC.ctx=null;$('meter').hidden=true;}
+function startRecorder(stream){
+  if(!window.MediaRecorder)return;
+  const types=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
+  const mt=types.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  try{MIC.recorder=new MediaRecorder(stream,mt?{mimeType:mt}:undefined);}catch(e){MIC.recorder=null;return;}
+  MIC.chunks=[];MIC.recorder.ondataavailable=e=>{if(e.data&&e.data.size)MIC.chunks.push(e.data);};MIC.recorder.start(1000);
+}
+function stopRecorder(){
+  return new Promise(res=>{
+    const r=MIC.recorder;if(!r||r.state==='inactive'){res(null);return;}
+    r.onstop=()=>res(new Blob(MIC.chunks,{type:r.mimeType||'audio/webm'}));
+    try{r.stop();}catch(e){res(null);}
+  });
+}
+function releaseMic(){stopMeter();if(MIC.stream){MIC.stream.getTracks().forEach(t=>t.stop());MIC.stream=null;}MIC.recorder=null;}
+
+/* Reconeixement del navegador (en directe) */
+let REC={r:null,on:false,committed:'',fin:'',interim:'',endRes:null};
+function startBrowserSR(lang){
+  const r=new SR();r.lang=lang==='ca'?'ca-ES':'es-ES';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
+  REC={r,on:true,committed:'',fin:'',interim:'',endRes:null};
+  r.onresult=e=>{
+    const finals=[];let interim='';
+    for(let k=0;k<e.results.length;k++){const t=e.results[k][0].transcript.trim();if(e.results[k].isFinal)finals.push(t);else interim+=' '+t;}
+    const dd=[];finals.forEach(t=>{const p=dd[dd.length-1];if(p&&t.toLowerCase().startsWith(p.toLowerCase()))dd[dd.length-1]=t;else dd.push(t);});
+    REC.fin=dd.join(' ');REC.interim=interim.trim();
+    const all=(REC.committed+' '+REC.fin+' '+REC.interim).trim();
+    $('live').textContent='«…'+all.slice(-120)+'»';liveHighlight(all);
+  };
+  r.onerror=e=>{
+    if(e.error==='no-speech'||e.error==='aborted')return;
+    if(REC.on){REC.on=false;abortReading(micError(e.error));}
+  };
+  r.onend=()=>{
+    if(REC.on){REC.committed+=' '+REC.fin;REC.fin='';REC.interim='';try{r.start();}catch(err){}}
+    else if(REC.endRes){REC.endRes();REC.endRes=null;}
+  };
+  r.start();
+}
+function stopBrowserSR(){
+  return new Promise(res=>{
+    if(!REC.r){res();return;}
+    REC.on=false;REC.endRes=res;try{REC.r.stop();}catch(e){res();}
+    setTimeout(res,1800);
+  });
+}
+
+/* ElevenLabs */
+async function elError(r){
+  let d='';try{const j=await r.json();d=(j.detail&&(j.detail.message||j.detail.status||JSON.stringify(j.detail)))||'';}catch(e){}
+  if(r.status===401)return "La clau d'ElevenLabs no és vàlida o no té permís per a esta funció. "+d;
+  if(r.status===402||r.status===429||/quota|credit/i.test(d))return "ElevenLabs diu que no queden crèdits o que s'ha superat el límit. "+d;
+  return `ElevenLabs ha tornat un error (${r.status}). ${d}`;
+}
+function netError(){return "No s'ha pogut connectar amb ElevenLabs. Comprova la connexió a internet. Dins de la vista prèvia de Claude les connexions externes estan bloquejades: fes-ho des de Netlify.";}
+async function elFetch(path,opts){
+  try{return await fetch('https://api.elevenlabs.io'+path,Object.assign({},opts,{headers:Object.assign({'xi-api-key':CFG.elKey},opts&&opts.headers||{})}));}
+  catch(e){throw new Error(netError());}
+}
+async function transcribeScribe(blob,lang){
+  const send=async model=>{
+    const fd=new FormData();fd.append('model_id',model);fd.append('file',blob,'lectura.'+(blob.type.includes('mp4')?'m4a':'webm'));
+    fd.append('language_code',lang);fd.append('timestamps_granularity','word');fd.append('tag_audio_events','false');
+    return elFetch('/v1/speech-to-text',{method:'POST',body:fd});
+  };
+  let r=await send('scribe_v2');
+  if(!r.ok&&(r.status===400||r.status===422))r=await send('scribe_v1');
+  if(!r.ok)throw new Error(await elError(r));
+  const j=await r.json();const ws=(j.words||[]).filter(w=>w.type==='word'||!w.type);
+  return {tokens:ws.map(w=>w.text),times:ws.map(w=>[w.start,w.end])};
+}
+
+/* =========================================================
+   Flux de lectura
+   ========================================================= */
+async function startReading(){
+  loadText();
+  if(!S.words.length){notice('Enganxa primer un text per a llegir.');return;}
+  const mode=$('modeSel').value;
+  if(mode==='sim'){runSimulation(false);return;}
+  if(mode==='manual'){
+    S.states=S.words.map(()=>'ok');setRunning(true);startTimer();renderReading();
+    $('live').textContent="Marca les paraules errònies mentre l'alumne/a llig. Prem «He acabat» en acabar.";return;
+  }
+  const engine=CFG.asr;
+  if(engine==='scribe'&&!CFG.elKey){notice(micError('nokey'));return;}
+  if(engine==='browser'&&!SR){notice(micError('nosr'));return;}
+  let stream;
+  try{stream=await getMic();}catch(e){notice(micError(e.name||String(e)));return;}
+  const keep=engine==='scribe'||(CFG.saveAudio&&!isAndroid);
+  if(keep){MIC.stream=stream;startRecorder(stream);startMeter(stream);}else stream.getTracks().forEach(t=>t.stop());
+  if(engine==='browser'){
+    try{startBrowserSR(S.text.lang);}catch(e){releaseMic();notice(micError('nosr'));return;}
+    $('live').textContent='Escoltant… Comença a llegir quan vulgues.';
+  }else $('live').textContent="Gravant… En acabar, ElevenLabs transcriurà la lectura.";
+  setRunning(true);startTimer();
+}
+async function stopReading(){
+  if(!running)return;
+  const mode=$('modeSel').value;stopTimer();setRunning(false);
+  if(mode==='manual'){
+    finish();
+    if($('durSel').value==='60'){S.pickLast=true;$('bPickLast').classList.add('on');$('live').textContent="Clica l'última paraula que ha llegit en el minut.";}
+    return;
+  }
+  $('live').textContent='Analitzant la lectura…';
+  const engine=CFG.asr;
+  if(engine==='browser')await stopBrowserSR();
+  const blob=await stopRecorder();releaseMic();
+  if(blob&&blob.size)S.recUrl=URL.createObjectURL(blob);
+  if(engine==='scribe'){
+    if(!blob||!blob.size){abortReading("No s'ha pogut gravar l'àudio.");return;}
+    $('live').textContent='Transcrivint amb ElevenLabs…';
+    try{const r=await transcribeScribe(blob,S.text.lang);analyse(r.tokens,r.times);}
+    catch(e){S.states=S.words.map(()=>'ok');finish();notice(e.message+" Pots marcar els errors a mà clicant les paraules, i escoltar la gravació.");$('live').textContent='';return;}
+  }else{
+    analyse(tokenize((REC.committed+' '+REC.fin+' '+REC.interim).trim()),null);
+  }
+  $('live').textContent='';finish();
+  if(metrics().attempted===0)notice("No s'ha reconegut cap paraula del text. Comprova el micròfon amb «Prova el micròfon» (en «Ajustos») o marca la lectura a mà.");
+}
+function abortReading(msg){
+  REC.on=false;try{REC.r&&REC.r.abort();}catch(e){}
+  stopRecorder().then(()=>releaseMic());
+  if(timerId){clearInterval(timerId);timerId=null;}
+  setRunning(false);notice(msg);$('live').textContent='';
+}
+function finish(){
+  S.done=true;renderReading();renderMetrics();renderAfter();renderPros();
+  $('bSave').disabled=S.example||S.saved;$('bPrint').disabled=false;$('bPickLast').disabled=false;
+  $('bRecPlay').hidden=!S.recUrl;$('prosBox').hidden=false;
+}
+
+/* Simulació */
+function mutate(w){
+  const c=[...w.replace(/[^\p{L}]/gu,'')];
+  for(let k=0;k<6&&c.length>=4;k++){const p=1+Math.floor(Math.random()*(c.length-2));const d=[...c];if(Math.random()<.5)d.splice(p,1);else[d[p],d[p+1]]=[d[p+1],d[p]];const o=d.join('');if(norm(o)!==norm(c.join('')))return o;}
+  return c.join('')+'s';
+}
+function runSimulation(example){
+  const t=thFor(S.course);const wpm=Math.max(20,t.lo-10+Math.random()*(t.hi-t.lo+30));
+  let words=S.words;const one=$('durSel').value==='60';
+  if(one&&words.length>wpm)words=words.slice(0,Math.round(wpm));
+  const fill=S.text.lang==='ca'?['eh','i','el']:['eh','y','el'];const out=[];
+  words.forEach(w=>{const r=Math.random();if(r<.03)return;if(r<.075){out.push(mutate(w));return;}out.push(w);if(Math.random()<.02)out.push(fill[Math.floor(Math.random()*3)]);});
+  analyse(out,null);
+  S.secs=one&&S.words.length>wpm?60:words.length/wpm*60;$('timer').textContent=fmtTime(S.secs);
+  S.example=!!example;$('exBanner').hidden=!example;finish();
+}
+
+/* Clics sobre el text */
+$('reading').addEventListener('click',e=>{
+  const insEl=e.target.closest('.ins');
+  if(insEl&&S.done){S.ins.splice(+insEl.dataset.ins,1);refreshAfterEdit();return;}
+  const el=e.target.closest('.w');if(!el)return;
+  const i=+el.dataset.i;
+  if(S.pickLast&&S.done){
+    S.states=S.states.map((s,k)=>k>i?'nr':(s==='nr'?'ok':s));S.ins=S.ins.filter(x=>x.after<=i);
+    S.pickLast=false;$('bPickLast').classList.remove('on');$('live').textContent='';refreshAfterEdit();return;
+  }
+  if(!S.done&&!($('modeSel').value==='manual'&&running))return;
+  const cyc={ok:'sub',sub:'om',om:'nr',nr:'ok',plain:'sub'};
+  S.states[i]=cyc[S.states[i]];if(S.states[i]==='sub'&&!S.heard[i])S.heard[i]='?';
+  if(S.done)refreshAfterEdit();else renderReading();
+});
+function refreshAfterEdit(){renderReading();renderMetrics();renderAfter();}
+
+/* Regle de lectura */
+$('readingWrap').addEventListener('pointermove',e=>{
+  if(!CFG.ruler)return;const rect=$('readingWrap').getBoundingClientRect();
+  const lh=parseFloat(getComputedStyle($('reading')).lineHeight)||40;
+  const y=e.clientY-rect.top;const line=Math.floor(y/lh);
+  const r=$('ruler');r.style.top=(line*lh)+'px';r.style.height=lh+'px';
+});
+
+/* =========================================================
+   Veu: navegador i ElevenLabs
+   ========================================================= */
+function voicesFor(lang){
+  if(!('speechSynthesis' in window))return [];
+  return speechSynthesis.getVoices().filter(v=>(v.lang||'').toLowerCase().replace('_','-').startsWith(lang));
+}
+function bestVoice(lang){
+  const vs=voicesFor(lang);const chosen=vs.find(v=>v.voiceURI===CFG.bv[lang]);if(chosen)return chosen;
+  const prefs=lang==='ca'?[/joana/i,/enric/i]:[/elvira/i,/alvaro|álvaro/i,/ximena/i];
+  for(const re of prefs){const v=vs.find(v=>re.test(v.name)&&/natural|online/i.test(v.name));if(v)return v;}
+  return vs.find(v=>/natural|online|neural|premium|enhanced/i.test(v.name))||vs[0]||null;
+}
+const isEdge=/Edg\//.test(navigator.userAgent)||!!(navigator.userAgentData&&navigator.userAgentData.brands&&navigator.userAgentData.brands.some(b=>/Edge/i.test(b.brand)));
+function browserSpeak(text,lang,onBoundary,onEnd){
+  if(!('speechSynthesis' in window)){toast('Este navegador no pot llegir en veu alta.');onEnd&&onEnd();return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang=lang==='ca'?'ca-ES':'es-ES';u.rate=CFG.rate;
+  const v=bestVoice(lang);if(v){try{u.voice=v;}catch(e){}}else if(lang==='ca')toast("Este navegador no té veu en català. Obri Ressò en Microsoft Edge per a tindre les veus Joana i Enric.",5000);
+  if(onBoundary)u.onboundary=onBoundary;u.onend=()=>onEnd&&onEnd();u.onerror=()=>onEnd&&onEnd();
+  speechSynthesis.speak(u);
+}
+function useEleven(lang){return CFG.tts==='eleven'&&CFG.elKey&&CFG.elVoice[lang];}
+function wordTimes(text,words,al,duration){
+  const offs=[];let p=0;words.forEach(w=>{offs.push(p);p+=w.length+1;});
+  if(al&&al.characters&&al.characters.length){
+    const n=al.characters.length,sc=n/text.length,st=al.character_start_times_seconds,en=al.character_end_times_seconds;
+    return {starts:words.map((w,i)=>st[Math.min(n-1,Math.round(offs[i]*sc))]),ends:words.map((w,i)=>en[Math.min(n-1,Math.round((offs[i]+w.length-1)*sc))])};
+  }
+  const per=duration/text.length;
+  return {starts:offs.map(o=>o*per),ends:words.map((w,i)=>(offs[i]+w.length)*per)};
+}
+function audioDuration(url){return new Promise(res=>{const a=new Audio();a.preload='metadata';a.onloadedmetadata=()=>res(a.duration||0);a.onerror=()=>res(0);a.src=url;});}
+function b64ToBlob(b64,type){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type});}
+async function elevenTTS(text,words,lang){
+  const voice=CFG.elVoice[lang],model=CFG.elModel[lang]||'eleven_v3';
+  const key=[voice,model,lang,hash(text)].join('|');
+  const cached=await idb.get(key);
+  if(cached&&cached.blob)return {url:URL.createObjectURL(cached.blob),starts:cached.starts,ends:cached.ends};
+  const body=l=>JSON.stringify(Object.assign({text,model_id:model},l?{language_code:lang}:{}));
+  const post=(path,l)=>elFetch(path,{method:'POST',headers:{'Content-Type':'application/json',Accept:path.endsWith('timestamps')?'application/json':'audio/mpeg'},body:body(l)});
+  let blob=null,al=null;
+  let r=await post(`/v1/text-to-speech/${voice}/with-timestamps`,true);
+  if(!r.ok&&(r.status===400||r.status===422))r=await post(`/v1/text-to-speech/${voice}/with-timestamps`,false);
+  if(r.ok){const j=await r.json();blob=b64ToBlob(j.audio_base64,'audio/mpeg');al=j.alignment||j.normalized_alignment;}
+  else{
+    if(r.status===401||r.status===402||r.status===429)throw new Error(await elError(r));
+    let r2=await post(`/v1/text-to-speech/${voice}`,true);
+    if(!r2.ok&&(r2.status===400||r2.status===422))r2=await post(`/v1/text-to-speech/${voice}`,false);
+    if(!r2.ok)throw new Error(await elError(r2));
+    blob=await r2.blob();
+  }
+  const url=URL.createObjectURL(blob);const dur=al?0:await audioDuration(url);
+  const wt=wordTimes(text,words,al,dur);
+  await idb.set(key,{blob,starts:wt.starts,ends:wt.ends});
+  return {url,starts:wt.starts,ends:wt.ends};
+}
+async function ensureTTS(){
+  if(S.tts)return S.tts;
+  const lang=S.text.lang;toast('Generant la veu amb ElevenLabs…',6000);
+  S.tts=await elevenTTS(S.words.join(' '),S.words,lang);$('toast').hidden=true;return S.tts;
+}
+const player=$('player');let segStop=null,modelRaf=0,modelOn=false;
+function playSegment(url,from,to,rate){
+  cancelAnimationFrame(segStop);player.pause();
+  if(player.src!==url)player.src=url;
+  player.playbackRate=rate||1;
+  const go=()=>{player.currentTime=Math.max(0,from);player.play().catch(()=>{});
+    const chk=()=>{if(to!=null&&player.currentTime>=to){player.pause();return;}if(!player.paused)segStop=requestAnimationFrame(chk);};segStop=requestAnimationFrame(chk);};
+  if(player.readyState>=1)go();else player.addEventListener('loadedmetadata',go,{once:true});
+}
+async function speakWords(i,j,fallbackText){
+  const lang=S.text.lang;
+  if(useEleven(lang)&&i!=null){
+    try{const t=await ensureTTS();playSegment(t.url,t.starts[i]-0.05,t.ends[j]+0.12,Math.min(1,CFG.rate));return;}
+    catch(e){toast(e.message,5000);}
+  }
+  browserSpeak(fallbackText,lang);
+}
+function clearSpeaking(){document.querySelectorAll('#reading .w.speaking').forEach(el=>el.classList.remove('speaking'));}
+function markSpeaking(i){clearSpeaking();const el=document.querySelector(`#reading .w[data-i="${i}"]`);if(el)el.classList.add('speaking');}
+function stopModel(){
+  modelOn=false;cancelAnimationFrame(modelRaf);cancelAnimationFrame(segStop);
+  try{player.pause();}catch(e){}if('speechSynthesis' in window)speechSynthesis.cancel();
+  clearSpeaking();const b=$('bModel');if(b){b.classList.remove('on');b.querySelector('span').textContent='Escolta el model';}
+}
+async function playModel(){
+  if(modelOn){stopModel();return;}
+  if(!S.words.length)return;
+  const lang=S.text.lang;const b=$('bModel');
+  modelOn=true;b.classList.add('on');b.querySelector('span').textContent='Atura el model';
+  if(useEleven(lang)){
+    try{
+      const t=await ensureTTS();if(!modelOn)return;
+      player.src=t.url;player.playbackRate=CFG.rate;player.currentTime=0;await player.play();
+      const tick=()=>{if(!modelOn)return;const ct=player.currentTime;let k=-1;for(let x=0;x<t.starts.length;x++){if(t.starts[x]<=ct)k=x;else break;}if(k>=0)markSpeaking(k);
+        if(player.ended||player.paused){stopModel();return;}modelRaf=requestAnimationFrame(tick);};
+      tick();return;
+    }catch(e){toast(e.message,6000);stopModel();return;}
+  }
+  /* Es llig frase a frase: així la veu no es talla en els textos llargs i el ressaltat va sincronitzat. */
+  const chunks=[];let a=0;while(a<S.words.length){const r=sentenceRange(a);chunks.push(r);a=r[1]+1;}
+  const speakChunk=k=>{
+    if(!modelOn)return;if(k>=chunks.length){stopModel();return;}
+    const [c0,c1]=chunks[k];const ws=S.words.slice(c0,c1+1);const offs=[];let p=0;ws.forEach(w=>{offs.push(p);p+=w.length+1;});
+    markSpeaking(c0);
+    browserSpeak(ws.join(' '),lang,ev=>{if(ev.name&&ev.name!=='word')return;let j=0;while(j+1<offs.length&&offs[j+1]<=ev.charIndex)j++;markSpeaking(c0+j);},()=>{if(modelOn)setTimeout(()=>speakChunk(k+1),120);});
+  };
+  speakChunk(0);
+}
+
+/* =========================================================
+   Tutor, comprensió i prosòdia
+   ========================================================= */
+function sentenceRange(i){
+  let a=i;while(a>0&&!/[.!?:»]$/.test(S.words[a-1]))a--;
+  let b=i;while(b<S.words.length-1&&!/[.!?:]$/.test(S.words[b]))b++;
+  return [a,b];
+}
+function practise(target,fbEl){
+  const M=MSG[S.text.lang];
+  if(!SR){fbEl.textContent=CFG.asr==='scribe'?'La pràctica en directe necessita Chrome o Edge.':micError('nosr');fbEl.style.color='var(--sub)';return;}
+  const r=new SR();r.lang=S.text.lang==='ca'?'ca-ES':'es-ES';r.interimResults=false;r.maxAlternatives=5;
+  fbEl.textContent=M.listen;fbEl.style.color='var(--muted)';
+  r.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript);const t=norm(target);
+    const ok=alts.some(a=>tokenize(a).map(norm).includes(t));
+    fbEl.textContent=ok?M.good:M.again+' («'+alts[0]+'»)';fbEl.style.color=ok?'var(--accent)':'var(--sub)';};
+  r.onerror=e=>{fbEl.textContent=e.error==='no-speech'?M.again:micError(e.error);fbEl.style.color='var(--sub)';};
+  try{r.start();}catch(e){}
+}
+const ICON_EAR='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3Zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4Z"/></svg>';
+function btn(html,fn){const b=document.createElement('button');b.className='btn sm';b.innerHTML=html;b.onclick=fn;return b;}
+function cleanWord(w){return w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');}
+function renderAfter(){
+  $('after').hidden=false;const M=MSG[S.text.lang];const box=$('tutor');box.innerHTML='';
+  const items=[];S.states.forEach((s,i)=>{if(s==='sub'||s==='om')items.push({i,s});});
+  S.ins.forEach(x=>items.push({s:'ins',w:x.w,after:x.after,t:x.t}));
+  items.sort((a,b)=>(a.i??a.after+.5)-(b.i??b.after+.5));
+  if(!items.length)box.innerHTML='<div class="empty">Cap error: lectura exacta. Proposa una relectura expressiva, atenent la puntuació.</div>';
+  items.slice(0,15).forEach(it=>{
+    const col=it.s==='sub'?'var(--sub)':it.s==='om'?'var(--om)':'var(--ins)';
+    const d=document.createElement('div');d.className='err';
+    const w=it.s==='ins'?it.w:cleanWord(S.words[it.i]);
+    const msg=it.s==='sub'?M.sub(S.heard[it.i],w):it.s==='om'?M.om():M.ins(it.w);
+    const tipus=it.s==='sub'?'Substitució':it.s==='om'?'Omissió':'Inserció';
+    d.innerHTML=`<div class="stripe" style="background:${col}"></div><div><div class="word">${esc(w)} <span class="chip">${tipus}</span></div><p class="msg">${esc(msg)}</p><div class="acts"></div><div class="fb"></div></div>`;
+    const acts=d.querySelector('.acts'),fb=d.querySelector('.fb');
+    if(it.s!=='ins'){
+      const [a,b]=sentenceRange(it.i);
+      acts.append(btn(ICON_EAR+'Escolta la paraula',()=>speakWords(it.i,it.i,w)),btn(ICON_EAR+'Escolta la frase',()=>speakWords(a,b,S.words.slice(a,b+1).join(' '))));
+      const ht=S.heardT[it.i];if(S.recUrl&&ht)acts.append(btn('Com ho ha llegit',()=>playSegment(S.recUrl,ht[0]-0.1,ht[1]+0.15,1)));
+      acts.append(btn('Practica-la',()=>practise(w,fb)));
+    }else{
+      const [a,b]=sentenceRange(Math.max(0,it.after));
+      acts.append(btn(ICON_EAR+'Escolta la frase correcta',()=>speakWords(a,b,S.words.slice(a,b+1).join(' '))));
+      if(S.recUrl&&it.t)acts.append(btn('Com ho ha llegit',()=>playSegment(S.recUrl,it.t[0]-0.3,it.t[1]+0.3,1)));
+    }
+    box.appendChild(d);
+  });
+  if(items.length>15){const p=document.createElement('div');p.className='empty';const n=items.length-15;p.textContent=`${n===1?'Queda 1 error més':'Queden '+n+' errors més'}. Amb tants errors, el text pot ser massa difícil ara mateix: prova'n un de més curt.`;box.appendChild(p);}
+  renderQuiz();
+}
+function renderQuiz(){
+  const q=$('quiz');q.innerHTML='';
+  if(!S.text.qs||!S.text.qs.length){q.innerHTML='<div class="empty">Este text no porta preguntes. Pots fer-les oralment o afegir-les des de la «Biblioteca».</div>';return;}
+  S.text.qs.forEach((it,k)=>{
+    const d=document.createElement('div');d.className='q';
+    d.innerHTML=`<div class="tipus">${esc(it.t)}</div><p>${esc(it.q)}</p><div class="opts"></div>`;
+    const o=d.querySelector('.opts');
+    it.o.forEach((txt,n)=>{const b=document.createElement('button');b.className='opt';b.id=`q${k}o${n}`;b.textContent=txt;
+      if(S.answers[k]!==undefined){if(n===it.a)b.classList.add('right');else if(n===S.answers[k])b.classList.add('wrong');b.disabled=true;}
+      b.onclick=()=>{S.answers[k]=n;renderQuiz();};o.appendChild(b);});
+    q.appendChild(d);
+  });
+}
+function renderPros(){
+  $('pros').innerHTML=PROS.map(p=>`<div class="pros-row"><span>${esc(p.n)}</span><div class="scale">${[1,2,3,4].map(v=>`<button type="button" data-p="${p.k}" data-v="${v}" title="${esc(p.d[v-1])}" class="${S.pros[p.k]===v?'sel':''}">${v}</button>`).join('')}</div></div>`).join('');
+  const t=prosTotal();$('prosTotal').textContent=t?`Total: ${t}/16. ${t>=10?'Progrés adequat.':'Cal treballar la prosòdia.'} (10 o més indica un progrés adequat.)`:'1 = inicial · 4 = consolidat. Passa el ratolí per damunt de cada número per a veure el descriptor.';
+}
+$('pros').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;S.pros[b.dataset.p]=+b.dataset.v;renderPros();});
+
+/* =========================================================
+   Aula
+   ========================================================= */
+function sessions(){return store.get('resso.sessions',null);}
+function saveSessions(l){store.set('resso.sessions',l);}
+function skey(s){return s.course+'#'+s.student;}
+function slabel(s,withCourse){return (withCourse?courseById(s.course).short+' · ':'')+'núm. '+s.student;}
+function seedIfEmpty(){
+  const cur=sessions();
+  if(cur!==null){let ch=false;cur.forEach(s=>{if(!s.course){s.course='1E';ch=true;}if(!s.errs){s.errs=[];ch=true;}});if(ch)saveSessions(cur);return;}
+  const now=Date.now(),day=86400000,list=[];
+  const add=(course,student,daysAgo,textId,pcpm,acc,sub,om,ins,comp,pros,errs)=>{const t=TEXTS.find(x=>x.id===textId);const words=tokenize(t.body).length;
+    list.push({id:'ex'+list.length,date:new Date(now-day*daysAgo).toISOString(),course,student,textId,title:t.title,lang:t.lang,secs:Math.round(words/(pcpm/60)),pcpm,acc,sub,om,ins,comp,pros,errs,example:true});};
+  add('1E',1,2,'columbretes',138,97.2,2,1,0,'3/3',14,['sargantana','desembarcar-hi']);
+  add('1E',2,30,'badall',72,86.1,7,4,2,'1/3',7,['badallàvem','hipòtesi','encomana','empatia','refredar']);
+  add('1E',2,16,'columbretes',79,88.9,6,3,1,'2/3',8,['sargantana','provisions','desembarcar-hi','automàtica']);
+  add('1E',2,2,'badall',84,90.4,5,2,1,'2/3',9,['badallàvem','hipòtesi','empatia']);
+  add('1E',3,3,'columbretes',112,94.1,4,2,1,'2/3',11,['provisions','Columbretes']);
+  add('1E',4,2,'badall',126,96.3,2,1,1,'3/3',13,['hipòtesi']);
+  add('1E',5,3,'columbretes',97,91.8,5,2,0,'2/3',10,['automàtica','provisions','desembarcar-hi']);
+  add('1E',6,2,'badall',146,98.6,1,0,0,'3/3',15,[]);
+  add('3P',1,4,'orenetes',58,92.5,3,2,1,'2/3',9,['travessen','teulades','paciència']);
+  add('3P',2,4,'orenetes',94,97.0,1,1,0,'3/3',13,['teulades']);
+  add('3P',3,28,'orenetes',41,85.0,6,4,2,'1/3',6,['orenetes','travessen','paciència','insectes']);
+  add('3P',3,14,'dientes',50,88.2,5,3,1,'2/3',7,['definitivos','cepillarlos']);
+  add('3P',3,3,'orenetes',62,91.0,4,2,1,'2/3',9,['travessen','paciència']);
+  add('3P',4,4,'dientes',76,93.3,3,1,1,'3/3',11,['definitivos']);
+  saveSessions(list);
+}
+function renderAula(){
+  const f=$('aulaCourse').value;const list=(sessions()||[]).filter(s=>!f||s.course===f);
+  const latest={};list.forEach(s=>{const k=skey(s);if(!latest[k]||latest[k].date<s.date)latest[k]=s;});
+  const G=[[],[],[]];Object.values(latest).forEach(s=>G[levelOf(s.pcpm,s.acc,s.course)].push(s));
+  const tips=['Lectura repetida del mateix text (3 o 4 vegades) amb model previ del docent. Treball de descodificació de les paraules fallades i textos més curts.',
+              'Lectura en parella o en eco. Atenció a la puntuació i al fraseig, i revisió de les paraules substituïdes abans de rellegir.',
+              'Lectura expressiva i teatre llegit. Textos més llargs i complexos, amb èmfasi en la comprensió inferencial i crítica.'];
+  $('groups').innerHTML=G.map((g,k)=>`<div class="group" style="--c:${LV_COL[k]}"><h3>${LEVELS[k]} <span>${g.length}</span></h3><div class="who">${g.sort((a,b)=>a.course.localeCompare(b.course)||a.student-b.student).map(s=>`<span class="pill">${esc(slabel(s,!f))}</span>`).join('')||'<span style="color:var(--muted);font-size:.85rem">Ningú de moment</span>'}</div><p>${tips[k]}</p></div>`).join('');
+  // alumnat per al gràfic
+  const keys=[...new Set(list.map(skey))];
+  const counts={};list.forEach(s=>counts[skey(s)]=(counts[skey(s)]||0)+1);
+  const prevSel=$('aulaStudent').value;
+  keys.sort((a,b)=>{const[ca,na]=a.split('#'),[cb,nb]=b.split('#');return ca.localeCompare(cb)||na-nb;});
+  $('aulaStudent').innerHTML=keys.map(k=>{const[c,n]=k.split('#');return `<option value="${k}">${esc(courseById(c).short)} · núm. ${n} (${counts[k]} ${counts[k]===1?'lectura':'lectures'})</option>`;}).join('')||'<option value="">Sense lectures</option>';
+  if(keys.includes(prevSel))$('aulaStudent').value=prevSel;else if(keys.length)$('aulaStudent').value=keys.reduce((a,b)=>counts[b]>counts[a]?b:a);
+  renderStudent();
+  const rows=[...list].sort((a,b)=>b.date.localeCompare(a.date));
+  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
+    :'<tr><td colspan="15" style="color:var(--muted)">Encara no hi ha lectures desades.</td></tr>';
+}
+function renderStudent(){
+  const k=$('aulaStudent').value;const list=(sessions()||[]).filter(s=>skey(s)===k).sort((a,b)=>a.date.localeCompare(b.date));
+  const box=$('chart');
+  if(!list.length){box.innerHTML='<p class="hint">Encara no hi ha lectures.</p>';$('practiceWords').innerHTML='';return;}
+  const course=list[list.length-1].course,t=thFor(course);
+  const W=640,H=240,L=44,R=96,T=18,B=34;
+  const maxY=Math.ceil(Math.max(t.hi+20,...list.map(s=>s.pcpm+15))/20)*20;
+  const x=i=>list.length===1?L+(W-L-R)/2:L+i*(W-L-R)/(list.length-1);
+  const y=v=>T+(H-T-B)*(1-v/maxY);
+  let g='';
+  g+=`<rect x="${L}" y="${y(t.lo)}" width="${W-L-16}" height="${y(0)-y(t.lo)}" style="fill:var(--sub-soft)"/>`;
+  g+=`<rect x="${L}" y="${y(t.hi)}" width="${W-L-16}" height="${y(t.lo)-y(t.hi)}" style="fill:var(--om-soft)"/>`;
+  g+=`<rect x="${L}" y="${y(maxY)}" width="${W-L-16}" height="${y(t.hi)-y(maxY)}" style="fill:var(--accent-soft)"/>`;
+  for(let v=0;v<=maxY;v+=20){g+=`<line x1="${L}" x2="${W-16}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)" stroke-width="1"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted);font-family:var(--f-mono)">${v}</text>`;}
+  g+=`<text x="${W-20}" y="${y(t.hi)-5}" text-anchor="end" font-size="11" style="fill:var(--accent)">autonomia ≥ ${t.hi}</text><text x="${W-20}" y="${y(t.lo)+14}" text-anchor="end" font-size="11" style="fill:var(--sub)">suport &lt; ${t.lo}</text>`;
+  const pts=list.map((s,i)=>`${x(i)},${y(s.pcpm)}`).join(' ');
+  if(list.length>1)g+=`<polyline points="${pts}" fill="none" style="stroke:var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  list.forEach((s,i)=>{const last=i===list.length-1;g+=`<circle cx="${x(i)}" cy="${y(s.pcpm)}" r="${last?6:4}" style="fill:var(--accent);stroke:var(--surface)" stroke-width="2"/><text x="${x(i)}" y="${y(s.pcpm)-11}" text-anchor="middle" font-size="12" font-weight="${last?700:500}" style="fill:var(--ink);font-family:var(--f-mono)">${s.pcpm}</text><text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${new Date(s.date).toLocaleDateString('ca-ES',{day:'numeric',month:'numeric'})}</text>`;});
+  box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolució de les paraules correctes per minut">${g}</svg>`;
+  const freq={};list.forEach(s=>(s.errs||[]).forEach(w=>{const c=cleanWord(w);if(c)freq[c]=(freq[c]||0)+1;}));
+  const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,18);
+  $('practiceWords').innerHTML=top.length?top.map(([w,n])=>`<span>${esc(w)}${n>1?`<b>×${n}</b>`:''}</span>`).join(''):'<p class="hint" style="margin:0">Cap paraula registrada.</p>';
+  $('bPractice').disabled=!top.length;$('bPractice').dataset.words=top.map(x=>x[0]).join(' ');
+  $('bPractice').dataset.lang=list[list.length-1].lang;$('bPractice').dataset.key=k;
+}
+$('aulaCourse').onchange=renderAula;$('aulaStudent').onchange=renderStudent;
+$('rows').addEventListener('click',e=>{const id=e.target.dataset.del;if(!id)return;saveSessions((sessions()||[]).filter(s=>s.id!==id));renderAula();});
+$('bClearEx').onclick=()=>{saveSessions((sessions()||[]).filter(s=>!s.example));renderAula();toast('Exemples esborrats');};
+$('bPractice').onclick=()=>{
+  const b=$('bPractice');const[c,n]=(b.dataset.key||'').split('#');
+  $('textSel').value='quick';$('customText').value=b.dataset.words||'';$('customLang').value=b.dataset.lang||'ca';
+  if(c)$('course').value=c;if(n)$('student').value=n;
+  showTab('llig');loadText();toast('Llista de paraules preparada per a llegir');
+};
+$('bSave').onclick=()=>{
+  const m=metrics();const n=+$('student').value||0;
+  if(!n){toast("Indica el número de l'alumne/a.");return;}
+  const ans=Object.keys(S.answers);const comp=S.text.qs&&S.text.qs.length&&ans.length?ans.filter(k=>S.answers[k]===S.text.qs[k].a).length+'/'+S.text.qs.length:'';
+  const errs=[];S.states.forEach((s,i)=>{if(s==='sub'||s==='om')errs.push(cleanWord(S.words[i]));});
+  const list=sessions()||[];
+  list.push({id:'s'+Date.now(),date:new Date().toISOString(),course:S.course,student:n,textId:S.text.id,title:S.text.title,lang:S.text.lang,secs:Math.round(S.secs),pcpm:m.pcpm,acc:m.acc,sub:m.c.sub,om:m.c.om,ins:m.ins,comp,pros:prosTotal(),errs,example:false});
+  saveSessions(list);S.saved=true;$('bSave').disabled=true;toast(`Lectura desada a l'aula (${courseById(S.course).short}, núm. ${n})`);
+};
+function csv(){
+  const list=sessions()||[];const h=['data','curs','alumne','text','llengua','segons','PCPM','precisio','substitucions','omissions','insercions','prosodia','comprensio','grup','paraules_errades'];
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  return [h.join(';')].concat(list.map(s=>[s.date.slice(0,10),courseById(s.course).short,s.student,q(s.title),s.lang,s.secs,s.pcpm,String(s.acc).replace('.',','),s.sub,s.om,s.ins,s.pros||'',s.comp||'',LEVELS[levelOf(s.pcpm,s.acc,s.course)],q((s.errs||[]).join(', '))].join(';'))).join('\r\n');
+}
+$('bCopy').onclick=()=>{const t=csv();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast("CSV copiat: enganxa'l en un full de càlcul"),()=>toast("No s'ha pogut copiar. Fes servir «Descarrega CSV»."));}else toast("No s'ha pogut copiar. Fes servir «Descarrega CSV».");};
+$('bCsv').onclick=()=>{downloadFile('resso-lectures-'+new Date().toISOString().slice(0,10)+'.csv','﻿'+csv(),'text/csv;charset=utf-8');toast('CSV descarregat');};
+
+/* Informe imprimible */
+$('bPrint').onclick=()=>{
+  const m=metrics();
+  $('printHead').innerHTML=`<strong>Informe de lectura en veu alta · Ressò</strong><br>Alumne/a núm. ${esc($('student').value)} · ${esc(courseById(S.course).label)} · ${new Date().toLocaleDateString('ca-ES')} · ${m.pcpm} PCPM · precisió ${m.acc.toLocaleString('ca')} %${prosTotal()?' · prosòdia '+prosTotal()+'/16':''}`;
+  window.print();
+};
+
+/* =========================================================
+   Biblioteca
+   ========================================================= */
+function renderLibrary(){
+  const lib=store.get('resso.library',[]);let h='';
+  const card=(t,own)=>`<div class="tcard"><h4>${esc(t.title)}</h4><div class="meta"><span class="chip">${t.lang==='ca'?'Valencià':'Castellà'}</span><span class="chip">${tokenize(t.body).length} paraules</span>${own?'<span class="chip ex">meu</span>':''}</div><p>${esc(t.body)}</p><div class="acts"><button class="btn sm primary" data-read="${t.id}">Llig-lo</button><button class="btn sm" data-listen="${t.id}">Escolta'l</button>${own?`<button class="btn sm" data-deltext="${t.id}">Esborra</button>`:''}</div></div>`;
+  Object.entries(CICLES).forEach(([k,v])=>{
+    const ts=TEXTS.filter(t=>t.cicle===k).map(t=>card(t,false)).concat(lib.filter(t=>t.cicle===k).map(t=>card(t,true)));
+    h+=`<h3 class="cicle-h">${esc(v)}</h3><div class="cards">${ts.join('')}</div>`;
+  });
+  $('library').innerHTML=h;
+}
+$('library').addEventListener('click',e=>{
+  const r=e.target.closest('[data-read]'),l=e.target.closest('[data-listen]'),d=e.target.closest('[data-deltext]');
+  if(r||l){$('textSel').value=(r||l).dataset.read||(r||l).dataset.listen;const t=currentText();const c=COURSES.find(c=>c.cicle===t.cicle);if(c&&courseById($('course').value).cicle!==t.cicle)$('course').value=c.id;showTab('llig');loadText();if(l)playModel();}
+  if(d){store.set('resso.library',store.get('resso.library',[]).filter(t=>t.id!==d.dataset.deltext));fillTextSelect($('textSel').value);renderLibrary();toast('Text esborrat');}
+});
+function renderQForm(){
+  $('nfQs').innerHTML=['Literal','Inferencial','Crítica'].map((t,k)=>`<div class="qedit"><label class="lbl" for="nq${k}">Pregunta ${t.toLowerCase()} (opcional)</label><input id="nq${k}" class="inp" type="text">${[0,1,2].map(n=>`<div class="opt-row"><input type="radio" name="na${k}" id="na${k}_${n}" value="${n}" ${n===0?'checked':''} aria-label="Resposta correcta"><input type="text" class="inp" id="no${k}_${n}" placeholder="Opció ${n+1}${n===0?' (marca la correcta)':''}"></div>`).join('')}</div>`).join('');
+}
+$('bNewText').onclick=()=>{$('textForm').hidden=false;renderQForm();$('nfTitle').focus();};
+$('bCancelText').onclick=()=>{$('textForm').hidden=true;$('textForm').reset();};
+$('textForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const qs=[];['Literal','Inferencial','Crítica'].forEach((t,k)=>{const q=$('nq'+k).value.trim();const o=[0,1,2].map(n=>$('no'+k+'_'+n).value.trim());
+    if(q&&o.every(Boolean)){const a=+document.querySelector(`input[name="na${k}"]:checked`).value;qs.push({t,q,o,a});}});
+  const t={id:'u'+Date.now(),own:true,title:$('nfTitle').value.trim(),lang:$('nfLang').value,cicle:$('nfCicle').value,body:$('nfBody').value.trim().replace(/\s+/g,' '),qs};
+  const lib=store.get('resso.library',[]);lib.push(t);store.set('resso.library',lib);
+  $('textForm').hidden=true;$('textForm').reset();fillTextSelect($('textSel').value);renderLibrary();toast('Text desat a la biblioteca');
+});
+
+/* =========================================================
+   Ajustos
+   ========================================================= */
+function fillBrowserVoices(){
+  ['ca','es'].forEach(l=>{
+    const sel=$(l==='ca'?'bvCa':'bvEs');const vs=voicesFor(l);
+    sel.innerHTML=vs.length?vs.map(v=>`<option value="${esc(v.voiceURI)}">${esc(v.name)} (${esc(v.lang)})</option>`).join(''):'<option value="">No hi ha veus en este navegador</option>';
+    const b=bestVoice(l);if(b)sel.value=b.voiceURI;
+  });
+  if(isEdge&&!voicesFor('ca').some(v=>/natural|online/i.test(v.name)))$('edgeHint').textContent="Estàs en Edge, però encara no apareixen les veus naturals en català. Comprova la connexió a internet i torna a carregar la pàgina.";
+  renderDiag();
+}
+function fillElevenVoices(){
+  const opts=CFG.elVoices.length?CFG.elVoices.map(v=>`<option value="${esc(v.id)}">${esc(v.name)}${v.cat?' · '+esc(v.cat):''}</option>`).join(''):'<option value="">Connecta primer la clau</option>';
+  $('elCa').innerHTML=opts;$('elEs').innerHTML=opts;
+  if(CFG.elVoice.ca)$('elCa').value=CFG.elVoice.ca;if(CFG.elVoice.es)$('elEs').value=CFG.elVoice.es;
+  $('elModelCa').value=CFG.elModel.ca||'eleven_v3';$('elModelEs').value=CFG.elModel.es||'eleven_multilingual_v2';
+}
+function renderSettings(){
+  $('ttsBrowser').checked=CFG.tts==='browser';$('ttsEleven').checked=CFG.tts==='eleven';
+  $('browserVoiceBox').hidden=CFG.tts!=='browser';$('elevenBox').hidden=CFG.tts!=='eleven';
+  $('elKey').value=CFG.elKey;$('rate').value=CFG.rate;$('rateVal').textContent=Math.round(CFG.rate*100)+' %';
+  $('asrBrowser').checked=CFG.asr==='browser';$('asrScribe').checked=CFG.asr==='scribe';$('saveAudio').checked=CFG.saveAudio;
+  fillElevenVoices();renderTh();renderDiag();
+}
+document.querySelectorAll('input[name=ttsEngine]').forEach(r=>r.onchange=()=>{CFG.tts=r.value;saveCfg();renderSettings();S.tts=null;});
+document.querySelectorAll('input[name=asr]').forEach(r=>r.onchange=()=>{CFG.asr=r.value;saveCfg();if(r.value==='scribe'&&!CFG.elKey)toast("Recorda posar la clau d'ElevenLabs en «Veu del model lector».",4000);});
+$('saveAudio').onchange=()=>{CFG.saveAudio=$('saveAudio').checked;saveCfg();};
+$('bvCa').onchange=()=>{CFG.bv.ca=$('bvCa').value;saveCfg();};$('bvEs').onchange=()=>{CFG.bv.es=$('bvEs').value;saveCfg();};
+$('rate').oninput=()=>{CFG.rate=+$('rate').value;$('rateVal').textContent=Math.round(CFG.rate*100)+' %';saveCfg();};
+$('elKey').onchange=()=>{CFG.elKey=$('elKey').value.trim();saveCfg();};
+['elCa','elEs'].forEach(id=>$(id).onchange=()=>{CFG.elVoice[id==='elCa'?'ca':'es']=$(id).value;saveCfg();S.tts=null;});
+['elModelCa','elModelEs'].forEach(id=>$(id).onchange=()=>{CFG.elModel[id==='elModelCa'?'ca':'es']=$(id).value;saveCfg();S.tts=null;});
+function elStatus(msg,ok){const n=$('elStatus');n.hidden=false;n.className='notice'+(ok?' ok':'');n.textContent=msg;}
+$('bElConnect').onclick=async()=>{
+  CFG.elKey=$('elKey').value.trim();saveCfg();
+  if(!CFG.elKey){elStatus('Escriu primer la clau.');return;}
+  elStatus('Connectant…',true);
+  try{
+    const r=await elFetch('/v1/voices',{method:'GET'});
+    if(!r.ok)throw new Error(await elError(r));
+    const j=await r.json();
+    const catName={cloned:'clonada',generated:'generada',premade:'predefinida',professional:'professional'};
+    CFG.elVoices=(j.voices||[]).map(v=>({id:v.voice_id,name:v.name,cat:catName[v.category]||v.category||''})).sort((a,b)=>(a.cat==='clonada'?-1:0)-(b.cat==='clonada'?-1:0)||a.name.localeCompare(b.name));
+    if(!CFG.elVoice.ca&&CFG.elVoices[0])CFG.elVoice.ca=CFG.elVoices[0].id;
+    if(!CFG.elVoice.es&&CFG.elVoices[0])CFG.elVoice.es=CFG.elVoices[0].id;
+    saveCfg();fillElevenVoices();elStatus(`Connectat. ${CFG.elVoices.length} veus disponibles. Tria'n una per llengua i prova-la.`,true);
+  }catch(e){elStatus(e.message);}
+};
+document.querySelectorAll('[data-test]').forEach(b=>b.onclick=()=>browserSpeak(MSG[b.dataset.test].sample,b.dataset.test));
+document.querySelectorAll('[data-eltest]').forEach(b=>b.onclick=async()=>{
+  const l=b.dataset.eltest;if(!CFG.elKey||!CFG.elVoice[l]){elStatus('Connecta la clau i tria una veu.');return;}
+  b.disabled=true;
+  try{const words=tokenize(MSG[l].sample);const t=await elevenTTS(MSG[l].sample,words,l);playSegment(t.url,0,null,1);}
+  catch(e){elStatus(e.message);}
+  b.disabled=false;
+});
+$('bClearCache').onclick=async()=>{await idb.clear();S.tts=null;toast("Àudio guardat esborrat");};
+function renderTh(){
+  $('thGrid').innerHTML=COURSES.map(c=>{const t=thFor(c.id);return `<div class="cell"><strong>${esc(c.label)}</strong><div><label for="thlo${c.id}">Suport &lt;</label><input type="number" id="thlo${c.id}" data-c="${c.id}" data-k="lo" value="${t.lo}" min="5" max="250"></div><div><label for="thhi${c.id}">Autonomia ≥</label><input type="number" id="thhi${c.id}" data-c="${c.id}" data-k="hi" value="${t.hi}" min="5" max="250"></div></div>`;}).join('');
+}
+$('thGrid').addEventListener('change',e=>{const i=e.target;if(!i.dataset.c)return;CFG.th[i.dataset.c]=Object.assign({},CFG.th[i.dataset.c],{[i.dataset.k]:+i.value});saveCfg();if(S.done)renderMetrics();});
+$('bThReset').onclick=()=>{CFG.th={};saveCfg();renderTh();toast('Llindars restaurats');};
+$('bBackup').onclick=()=>{
+  const cfg=Object.assign({},CFG,{elKey:''});
+  downloadFile('resso-copia-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({app:'Ressò',version:2,date:new Date().toISOString(),sessions:sessions()||[],library:store.get('resso.library',[]),cfg},null,1),'application/json');
+  toast('Còpia descarregada');
+};
+$('restoreFile').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    const j=JSON.parse(await f.text());if(!j||!Array.isArray(j.sessions))throw 0;
+    const cur=sessions()||[];const ids=new Set(cur.map(s=>s.id));j.sessions.forEach(s=>{if(!ids.has(s.id))cur.push(s);});saveSessions(cur);
+    const lib=store.get('resso.library',[]);const lids=new Set(lib.map(t=>t.id));(j.library||[]).forEach(t=>{if(!lids.has(t.id))lib.push(t);});store.set('resso.library',lib);
+    if(j.cfg){const key=CFG.elKey;CFG=Object.assign({},DEF_CFG,j.cfg,{elKey:key});saveCfg();}
+    fillTextSelect($('textSel').value);renderLibrary();renderSettings();applyReadingLook();toast(`Còpia carregada: ${j.sessions.length} lectures`);
+  }catch(err){toast("El fitxer no és una còpia de Ressò vàlida.");}
+  e.target.value='';
+};
+$('bMicTest').onclick=async()=>{
+  const out=$('micTestOut');out.style.color='var(--muted)';out.textContent='Demanant permís…';
+  let stream;try{stream=await getMic();}catch(e){out.textContent=micError(e.name||String(e));out.style.color='var(--sub)';return;}
+  if(!SR){stream.getTracks().forEach(t=>t.stop());out.textContent=CFG.asr==='scribe'?'El micròfon funciona. Amb Scribe, la transcripció es fa en acabar la lectura.':'El micròfon funciona, però este navegador no té reconeixement de veu. Usa Chrome o tria Scribe.';out.style.color=CFG.asr==='scribe'?'var(--accent)':'var(--om)';return;}
+  stream.getTracks().forEach(t=>t.stop());
+  const r=new SR();r.lang=$('customLang').value==='es'?'es-ES':'ca-ES';r.interimResults=false;
+  out.textContent='Digues una frase en veu alta…';
+  r.onresult=e=>{out.textContent='He sentit: «'+e.results[0][0].transcript+'». El micròfon funciona.';out.style.color='var(--accent)';};
+  r.onerror=e=>{out.textContent=e.error==='no-speech'?"No he sentit res. Acosta't al micròfon i torna-ho a provar.":micError(e.error);out.style.color='var(--sub)';};
+  try{r.start();setTimeout(()=>{try{r.stop();}catch(e){}},7000);}catch(e){}
+};
+function renderDiag(){
+  const it=(ok,txt)=>`<li><b class="${ok?'y':'n'}">${ok?'sí':'no'}</b>${txt}</li>`;
+  const vca=voicesFor('ca').length,ves=voicesFor('es').length;
+  $('diag').innerHTML=[
+    it(isEdge,'Navegador Microsoft Edge (veus gratuïtes Joana i Enric)'),
+    it(window.isSecureContext,'Adreça segura (https), necessària per al micròfon'),
+    it(!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia),'Accés al micròfon'),
+    it(!!SR,'Reconeixement de veu del navegador'),
+    it(!!window.MediaRecorder,"Gravació d'àudio (necessària per a Scribe)"),
+    it(vca>0,`Veus del navegador en català: ${vca}${bestVoice('ca')?' (ara: '+esc(bestVoice('ca').name)+')':''}`),
+    it(ves>0,`Veus del navegador en castellà: ${ves}${bestVoice('es')?' (ara: '+esc(bestVoice('es').name)+')':''}`),
+    it(!!CFG.elKey,"Clau d'ElevenLabs configurada")
+  ].join('');
+}
+
+/* =========================================================
+   Pestanyes i esdeveniments generals
+   ========================================================= */
+function showTab(k){
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',x.dataset.tab===k));
+  ['llig','aula','bib','aj','sobre'].forEach(t=>$('p-'+t).hidden=t!==k);
+  if(k==='aula')renderAula();if(k==='bib')renderLibrary();if(k==='aj')renderSettings();
+  if(k!=='llig')stopModel();
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$('bStart').onclick=startReading;
+$('bStop').onclick=stopReading;
+$('bReset').onclick=()=>{if(running){if(REC.on){REC.on=false;try{REC.r.abort();}catch(e){}}stopRecorder().then(releaseMic);if(timerId){clearInterval(timerId);timerId=null;}setRunning(false);}loadText();};
+$('bModel').onclick=playModel;
+$('bRecPlay').onclick=()=>{if(!S.recUrl)return;if(!player.paused&&player.src===S.recUrl){player.pause();return;}playSegment(S.recUrl,0,null,1);};
+$('bPickLast').onclick=()=>{S.pickLast=!S.pickLast;$('bPickLast').classList.toggle('on',S.pickLast);$('live').textContent=S.pickLast?"Clica l'última paraula que ha llegit l'alumne/a.":'';};
+$('textSel').onchange=()=>{const t=currentText();const c=COURSES.find(c=>c.cicle===t.cicle);if(c&&courseById($('course').value).cicle!==t.cicle)$('course').value=c.id;loadText();};
+$('course').onchange=()=>{pickTextForCourse();loadText();store.set('resso.lastCourse',$('course').value);};
+$('customLang').onchange=loadText;
+$('customText').oninput=()=>{if(!running)loadText();};
+$('modeSel').onchange=()=>{$('micNotice').hidden=true;};
+$('fontSel').onchange=()=>{CFG.font=$('fontSel').value;saveCfg();applyReadingLook();};
+$('bSmaller').onclick=()=>{CFG.size=Math.max(1,+(CFG.size-0.12).toFixed(2));saveCfg();applyReadingLook();};
+$('bBigger').onclick=()=>{CFG.size=Math.min(2.4,+(CFG.size+0.12).toFixed(2));saveCfg();applyReadingLook();};
+$('bRuler').onclick=()=>{CFG.ruler=!CFG.ruler;saveCfg();applyReadingLook();};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')stopModel();});
+
+/* =========================================================
+   Inici
+   ========================================================= */
+fillCourseSelects();
+fillTextSelect();
+$('course').value=store.get('resso.lastCourse','1E');
+pickTextForCourse();
+if(!SR&&CFG.asr==='browser')$('modeSel').value='manual';
+seedIfEmpty();
+applyReadingLook();
+loadText();
+runSimulation(true);
+if('speechSynthesis' in window){fillBrowserVoices();speechSynthesis.onvoiceschanged=fillBrowserVoices;}
+renderDiag();
+</script>
+
+</body>
+</html>

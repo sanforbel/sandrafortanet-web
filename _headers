@@ -1,0 +1,2 @@
+/resso/*
+  Permissions-Policy: microphone=(self), autoplay=(self)
