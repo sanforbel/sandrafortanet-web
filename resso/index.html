@@ -111,6 +111,11 @@ textarea{width:100%;min-height:120px;background:var(--surface);border:1px solid 
 @media (prefers-reduced-motion:reduce){.dot{animation:none}.w{transition:none}}
 .notice{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--om-soft);color:var(--ink);font-size:.9rem;border-left:3px solid var(--om)}
 .notice.ok{background:var(--accent-soft);border-left-color:var(--accent)}
+.myvoice{margin:4px 0 12px;padding:10px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--surface-2);display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.85rem}
+.myvoice p{margin:0;flex-basis:100%;color:var(--muted)}
+.myvoice .st{flex-basis:100%;color:var(--ink);font-weight:500;min-height:1.2em}
+.btn.rec-on{background:var(--sub);color:#fff;border-color:var(--sub)}
+#bMyVoice.has{border-color:var(--accent);color:var(--accent)}
 .banner{margin-bottom:12px;padding:8px 12px;border-radius:8px;background:var(--ins-soft);font-size:.85rem;color:var(--ink)}
 #printHead{display:none}
 
@@ -292,12 +297,20 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
           </div>
           <div class="toolbar">
             <button class="btn sm" id="bModel"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3Zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4Z"/></svg><span>Escolta el model</span></button>
+            <button class="btn sm" id="bMyVoice" aria-expanded="false" aria-controls="myVoice"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg><span>Veu gravada</span></button>
             <span class="sep"></span>
             <label class="lbl" for="fontSel" style="margin:0">Lletra</label>
             <select id="fontSel"><option value="literata">Literata</option><option value="andika">Andika (primers lectors)</option><option value="upper">MAJÚSCULES</option></select>
             <button class="btn sm" id="bSmaller" aria-label="Lletra més xicoteta">A−</button>
             <button class="btn sm" id="bBigger" aria-label="Lletra més gran">A+</button>
             <button class="btn sm" id="bRuler" aria-pressed="false">Regle</button>
+          </div>
+          <div class="myvoice" id="myVoice" hidden>
+            <p>Grava una lectura model d'este text o puja'n un àudio. «Escolta el model» la farà sonar en lloc de la veu sintètica. La gravació es queda només en este navegador: no es puja enlloc i ningú més la pot escoltar. Les paraules soltes del tutor continuen amb la veu triada en «Ajustos».</p>
+            <button class="btn sm" id="mvRec">Grava</button>
+            <label class="btn sm" for="mvFile">Puja un àudio</label><input type="file" id="mvFile" accept="audio/*" hidden>
+            <button class="btn sm" id="mvDel" disabled>Esborra la gravació</button>
+            <span class="st" id="mvState" aria-live="polite"></span>
           </div>
           <div class="reading-wrap" id="readingWrap">
             <div id="ruler" hidden></div>
@@ -664,6 +677,7 @@ const idb={
   open(){return new Promise(res=>{try{const r=indexedDB.open('resso',1);r.onupgradeneeded=()=>r.result.createObjectStore('tts');r.onsuccess=()=>{this.db=r.result;res(this.db);};r.onerror=()=>res(null);}catch(e){res(null);}});},
   async get(k){const db=this.db||await this.open();if(!db)return null;return new Promise(res=>{try{const q=db.transaction('tts').objectStore('tts').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);}catch(e){res(null);}});},
   async set(k,v){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});},
+  async del(k){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').delete(k);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});},
   async clear(){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').clear();tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
 };
 
@@ -773,7 +787,7 @@ function loadText(){
   $('exBanner').hidden=true;$('live').textContent='';$('timer').textContent='0:00';
   $('after').hidden=true;$('micNotice').hidden=true;$('prosBox').hidden=true;$('cheer').hidden=true;$('bRecPlay').hidden=true;
   ['bSave','bPrint','bPickLast'].forEach(id=>$(id).disabled=true);
-  renderReading();renderMetrics();
+  renderReading();renderMetrics();refreshMyVoice();
 }
 function renderReading(){
   const box=$('reading');box.innerHTML='';
@@ -1186,6 +1200,16 @@ async function playModel(){
   if(!S.words.length)return;
   const lang=S.text.lang;const b=$('bModel');
   modelOn=true;b.classList.add('on');b.querySelector('span').textContent='Atura el model';
+  const own=await ownVoice();
+  if(own){
+    if(!modelOn)return;
+    const t=ownTimes(S.words,own.dur);
+    try{player.src=own.url;player.playbackRate=CFG.rate;player.currentTime=0;await player.play();}catch(e){toast("No s'ha pogut reproduir la gravació.");stopModel();return;}
+    const sc=own.dur&&isFinite(player.duration)&&player.duration>0?player.duration/own.dur:1;
+    const tick=()=>{if(!modelOn)return;const ct=player.currentTime/sc;let k=-1;for(let x=0;x<t.length;x++){if(t[x]<=ct)k=x;else break;}if(k>=0)markSpeaking(k);
+      if(player.ended||player.paused){stopModel();return;}modelRaf=requestAnimationFrame(tick);};
+    tick();return;
+  }
   if(useEleven(lang)){
     try{
       const t=await ensureTTS();if(!modelOn)return;
@@ -1205,6 +1229,69 @@ async function playModel(){
   };
   speakChunk(0);
 }
+
+/* =========================================================
+   Veu gravada: lectura model enregistrada per al text
+   ========================================================= */
+let MV={rec:null,stream:null,chunks:[],t0:0,url:null};
+function myVoiceKey(){const t=S.text;return 'myvoice|'+t.id+'|'+hash(t.body||S.words.join(' '));}
+function fmtSecs(x){x=Math.round(x||0);return Math.floor(x/60)+':'+String(x%60).padStart(2,'0');}
+function realDuration(url){return new Promise(res=>{const a=new Audio();a.preload='metadata';
+  a.onloadedmetadata=()=>{if(isFinite(a.duration)&&a.duration>0){res(a.duration);return;}
+    a.ondurationchange=()=>{if(isFinite(a.duration)&&a.duration>0){res(a.duration);}};a.currentTime=1e7;setTimeout(()=>res(isFinite(a.duration)?a.duration:0),3000);};
+  a.onerror=()=>res(0);a.src=url;});}
+async function ownVoice(){
+  const rec=await idb.get(myVoiceKey());
+  if(rec&&rec.blob){if(MV.url)URL.revokeObjectURL(MV.url);MV.url=URL.createObjectURL(rec.blob);return {url:MV.url,dur:rec.dur||await realDuration(MV.url),kind:'device'};}
+  if(S.text.audio){return {url:S.text.audio,dur:await realDuration(S.text.audio),kind:'published'};}
+  return null;
+}
+/* Repartix la durada entre les paraules segons la llargària i les pauses de puntuació. */
+function ownTimes(words,dur){
+  const w=words.map(x=>x.length+1+(/[.!?:»]$/.test(x)?8:/[,;]$/.test(x)?4:0));
+  const tot=w.reduce((a,b)=>a+b,0)||1;const lead=Math.min(0.4,dur*0.03);const span=Math.max(0.1,dur-lead*2);
+  const out=[];let acc=0;w.forEach(v=>{out.push(lead+span*acc/tot);acc+=v;});return out;
+}
+async function refreshMyVoice(){
+  const b=$('bMyVoice');if(!b||!S||!S.text)return;
+  const rec=await idb.get(myVoiceKey());
+  b.classList.toggle('has',!!(rec&&rec.blob)||!!S.text.audio);
+  $('mvDel').disabled=!(rec&&rec.blob);
+  $('mvState').textContent=rec&&rec.blob?`Hi ha una gravació d'este text (${fmtSecs(rec.dur)}), guardada en este dispositiu.`:
+    S.text.audio?"Este text ja té una lectura model gravada.":"Encara no hi ha cap gravació d'este text.";
+}
+$('bMyVoice').onclick=()=>{const p=$('myVoice');p.hidden=!p.hidden;$('bMyVoice').setAttribute('aria-expanded',String(!p.hidden));if(!p.hidden)refreshMyVoice();};
+$('mvRec').onclick=async()=>{
+  const btn=$('mvRec');
+  if(MV.rec&&MV.rec.state==='recording'){MV.rec.stop();return;}
+  stopModel();
+  if(!window.MediaRecorder){$('mvState').textContent="Este navegador no pot gravar. Prova-ho en Google Chrome o Microsoft Edge, o puja un àudio.";return;}
+  try{MV.stream=await getMic();}catch(e){$('mvState').textContent=micError(e&&e.name||'x');return;}
+  const types=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
+  const mt=types.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  try{MV.rec=new MediaRecorder(MV.stream,mt?{mimeType:mt}:undefined);}catch(e){$('mvState').textContent="No s'ha pogut començar a gravar.";MV.stream.getTracks().forEach(t=>t.stop());return;}
+  MV.chunks=[];MV.rec.ondataavailable=e=>{if(e.data&&e.data.size)MV.chunks.push(e.data);};
+  MV.rec.onstop=async()=>{
+    const dur=(performance.now()-MV.t0)/1000;MV.stream.getTracks().forEach(t=>t.stop());
+    btn.classList.remove('rec-on');btn.textContent='Torna a gravar';
+    const blob=new Blob(MV.chunks,{type:MV.rec.mimeType||'audio/webm'});
+    if(dur<1||!blob.size){$('mvState').textContent='La gravació és massa curta. Torna-ho a provar.';return;}
+    await idb.set(myVoiceKey(),{blob,dur,kind:'rec',date:Date.now()});
+    refreshMyVoice();toast('Gravació guardada. Prem «Escolta el model» per a escoltar-la.',4000);
+  };
+  MV.t0=performance.now();MV.rec.start(1000);btn.classList.add('rec-on');btn.textContent='Atura la gravació';
+  $('mvState').textContent='Gravant… Llig el text en veu alta i prem «Atura la gravació» en acabar.';
+};
+$('mvFile').onchange=async e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+  if(!/^audio\//.test(f.type)&&!/\.(mp3|m4a|wav|ogg|webm|aac)$/i.test(f.name)){$('mvState').textContent='Este fitxer no és un àudio.';return;}
+  if(f.size>40*1024*1024){$('mvState').textContent="L'àudio és massa gran (màxim 40 MB).";return;}
+  const url=URL.createObjectURL(f);const dur=await realDuration(url);URL.revokeObjectURL(url);
+  if(!dur){$('mvState').textContent="No s'ha pogut llegir este àudio. Prova amb un MP3 o M4A.";return;}
+  await idb.set(myVoiceKey(),{blob:f,dur,kind:'file',date:Date.now()});
+  refreshMyVoice();toast("Àudio guardat. Prem «Escolta el model» per a escoltar-lo.",4000);
+};
+$('mvDel').onclick=async()=>{stopModel();await idb.del(myVoiceKey());refreshMyVoice();toast('Gravació esborrada.');};
 
 /* =========================================================
    Tutor, comprensió i prosòdia

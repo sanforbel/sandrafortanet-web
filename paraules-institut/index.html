@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Paraules de l'institut: app per a repassar a casa 31 paraules de l'institut en valencià i castellà, amb la veu de l'autora. Sandra Fortanet.">
+<meta name="description" content="Paraules de l'institut: app per a repassar a casa 31 paraules de l'institut en valencià i castellà. Sandra Fortanet.">
 <title>Paraules de l'institut</title>
 <meta name="author" content="Sandra Fortanet">
 <!-- © 2026 Sandra Fortanet · sandrafortanet.netlify.app · CC BY 4.0 -->
@@ -135,7 +135,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
     </div>
   </section>
 
-  <p class="note" id="voice-note">Veu: Sandra Fortanet. Si no sona, comprova que el dispositiu tinga el so activat.</p>
+  <p class="note" id="voice-note">Si no sona, comprova que el dispositiu tinga el so activat.</p>
   <footer class="credit">© 2026 <strong>Sandra Fortanet</strong> (@sanforbel) · <a href="https://sandrafortanet.netlify.app" target="_blank" rel="noopener">sandrafortanet.netlify.app</a><br>Llicència <a href="https://creativecommons.org/licenses/by/4.0/deed.ca" target="_blank" rel="noopener">Creative Commons Reconeixement 4.0 (CC BY 4.0)</a>: es pot compartir i adaptar sempre que hi aparega l'autoria. Il·lustracions generades amb IA a partir de prompts de l'autora.</footer>
 </div>
 
@@ -148,7 +148,7 @@ let lang = "va", fam = "all";
 const $ = s => document.querySelector(s);
 const other = () => lang === "va" ? "es" : "va";
 
-/* ---------- veu: gravacions de l'autora; si en falta una, veu del navegador ---------- */
+/* ---------- veu: gravacions; si en falta una, veu del navegador ---------- */
 const player = new Audio();
 function playWord(key){
   const src = A[key] && A[key][lang];
