@@ -150,9 +150,20 @@ const other = () => lang === "va" ? "es" : "va";
 
 /* ---------- veu: gravacions; si en falta una, veu del navegador ---------- */
 const player = new Audio();
+player.preload = "auto"; player.setAttribute("playsinline", "");
+/* iPhone: que sone encara que el mòbil estiga en silenci */
+try{ if (navigator.audioSession) navigator.audioSession.type = "playback"; }catch(e){}
 function playWord(key){
   const src = A[key] && A[key][lang];
-  if (src){ try{ if ("speechSynthesis" in window) speechSynthesis.cancel(); player.pause(); player.src = src; player.currentTime = 0; player.play().catch(() => {}); return; }catch(e){} }
+  if (src){
+    try{
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      player.pause(); player.src = src; player.load();
+      const p = player.play();
+      if (p && p.catch) p.catch(() => { $("#voice-note").textContent = "No sona? Puja el volum del mòbil i, en iPhone, desactiva el mode silenci."; say(W[key][lang]); });
+      return;
+    }catch(e){}
+  }
   say(W[key][lang]);
 }
 let voices = [];
