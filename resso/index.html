@@ -100,6 +100,23 @@ textarea{width:100%;min-height:120px;background:var(--surface);border:1px solid 
 .w.speaking{background:var(--speak);box-shadow:0 0 0 2px var(--speak)}
 .w.sub{background:var(--sub-soft);text-decoration:underline wavy var(--sub);text-underline-offset:5px;text-decoration-thickness:1.5px}
 .w.om{background:var(--om-soft);text-decoration:line-through var(--om);text-decoration-thickness:2px}
+.w.selfc{background:var(--accent-soft);text-decoration:underline dotted var(--accent);text-underline-offset:5px;text-decoration-thickness:2px}
+.ins.rep{color:var(--muted);background:var(--surface-2)}
+.idx{display:flex;align-items:baseline;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.idx .n{font-family:var(--f-mono);font-size:2rem;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.idx .u{font-size:.82rem;color:var(--muted)}
+.comp{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:.8rem;margin-top:8px}
+.comp .track{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.comp .track span{display:block;height:100%}
+.comp .v{font-family:var(--f-mono);color:var(--muted);text-align:right}
+.diff{font-family:var(--f-read);font-size:1rem;margin:2px 0 6px}
+.diff mark{background:var(--sub-soft);color:var(--sub);border-radius:3px;padding:0 1px}
+.route{display:inline-block;font-size:.72rem;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--ins-soft);color:var(--ins);margin-left:4px}
+.next{margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r);background:var(--surface)}
+.next h3{margin:0 0 6px;font-size:1.05rem}
+.next p{margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.next .row-actions{margin:0}
+.chip.dif{background:var(--surface-2);color:var(--ink)}
 .w.nr{color:var(--nr)}
 .ins{font-family:var(--f-ui);font-size:.72rem;color:var(--ins);background:var(--ins-soft);border-radius:4px;padding:0 4px;vertical-align:super;margin-inline:2px;cursor:pointer;text-transform:none;letter-spacing:0}
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
@@ -293,7 +310,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
           <div id="exBanner" class="banner" hidden>Exemple de lectura simulada perquè veges com funciona. Prem «Nova lectura» per a començar.</div>
           <div class="sheet-head">
             <h2 id="tTitle"></h2>
-            <div class="meta"><span class="chip" id="tLang"></span><span class="chip" id="tWords"></span></div>
+            <div class="meta"><span class="chip" id="tLang"></span><span class="chip" id="tWords"></span><span class="chip dif" id="tDif" title="Dificultat estimada del text (0-100): llargària de les frases i de les paraules"></span></div>
           </div>
           <div class="toolbar">
             <button class="btn sm" id="bModel"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3Zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4Z"/></svg><span>Escolta el model</span></button>
@@ -306,7 +323,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <button class="btn sm" id="bRuler" aria-pressed="false">Regle</button>
           </div>
           <div class="myvoice" id="myVoice" hidden>
-            <p>Grava una lectura model d'este text o puja'n un àudio. «Escolta el model» la farà sonar en lloc de la veu sintètica. La gravació es queda només en este navegador: no es puja enlloc i ningú més la pot escoltar. Les paraules soltes del tutor continuen amb la veu triada en «Ajustos».</p>
+            <p>Grava una lectura model d'este text o puja'n un àudio. «Escolta el model» la farà sonar en lloc de la veu sintètica. Si graves en Chrome o Edge, Ressò sincronitza la gravació paraula a paraula i el tutor també la fa servir per a pronunciar les paraules i les frases. La gravació es queda només en este navegador; per a passar-la a un altre ordinador, ves a «Ajustos» › «Lectures model gravades».</p>
             <button class="btn sm" id="mvRec">Grava</button>
             <label class="btn sm" for="mvFile">Puja un àudio</label><input type="file" id="mvFile" accept="audio/*" hidden>
             <button class="btn sm" id="mvDel" disabled>Esborra la gravació</button>
@@ -343,10 +360,15 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <span><i style="background:var(--sub)"></i>Substitució <b id="cSub">0</b></span>
             <span><i style="background:var(--om)"></i>Omissió <b id="cOm">0</b></span>
             <span><i style="background:var(--ins)"></i>Inserció <b id="cIns">0</b></span>
+            <span><i style="background:var(--accent)"></i>Autocorrecció <b id="cSelf">0</b></span>
+          </div>
+          <div id="idxBox" hidden>
+            <div class="idx"><span class="n" id="mIdx">–</span><span class="u">/100 · índex de fluïdesa (orientatiu)</span></div>
+            <div class="comp" id="mComp"></div>
           </div>
           <div class="level" id="mLevel" hidden></div>
           <div class="cheer" id="cheer" hidden></div>
-          <p class="hint">Clica una paraula per a corregir-ne la marca: correcta → substituïda → omesa → no arribada. Clica una inserció per a llevar-la.</p>
+          <p class="hint">Clica una paraula per a corregir-ne la marca: correcta → substituïda → autocorregida → omesa → no arribada. Clica una inserció per a llevar-la.</p>
           <div class="stack">
             <button class="btn" id="bPickLast" disabled>Marca l'última paraula llegida</button>
             <button class="btn" id="bRecPlay" hidden>Escolta la gravació</button>
@@ -362,6 +384,11 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
       </aside>
     </div>
 
+    <div class="next" id="nextBox" hidden>
+      <h3>Què faig ara?</h3>
+      <p id="nextMsg"></p>
+      <div class="row-actions" id="nextActs"></div>
+    </div>
     <section class="after" id="after" hidden>
       <div>
         <h3>Tutor: microintervencions</h3>
@@ -398,6 +425,8 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <h3>Evolució de la fluïdesa</h3>
         <div class="field" style="max-width:260px;margin-bottom:10px"><label for="aulaStudent">Alumne/a</label><select id="aulaStudent"></select></div>
         <div id="chart"></div>
+        <h3 style="margin-top:18px">Tipus d'error per lectura</h3>
+        <div id="chartErr"></div>
       </div>
       <div class="box">
         <h3>Paraules a practicar</h3>
@@ -409,7 +438,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
 
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Data</th><th>Curs</th><th>Alumne/a</th><th>Text</th><th>Llengua</th><th class="num">Temps</th><th class="num">PCPM</th><th class="num">Precisió</th><th class="num">Sub.</th><th class="num">Om.</th><th class="num">Ins.</th><th class="num">Prosòdia</th><th class="num">Compr.</th><th>Grup</th><th></th></tr></thead>
+        <thead><tr><th>Data</th><th>Curs</th><th>Alumne/a</th><th>Text</th><th>Llengua</th><th class="num">Temps</th><th class="num">PCPM</th><th class="num">Precisió</th><th class="num">Índex</th><th class="num">Sub.</th><th class="num">Om.</th><th class="num">Ins.</th><th class="num">Prosòdia</th><th class="num">Compr.</th><th>Grup</th><th></th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -498,6 +527,24 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
     </div>
 
     <div class="settings-sec">
+      <h3>Índex de fluïdesa</h3>
+      <p>L'índex combina tres parts: descodificació (velocitat respecte del llindar d'autonomia del curs), errors (precisió, on les autocorreccions no resten) i prosòdia (la teua valoració, o la proposta automàtica quan n'hi ha). Els pesos són una hipòtesi de treball: ajusta'ls al teu criteri.</p>
+      <div class="thgrid">
+        <div class="cell"><label for="wDec"><strong>Descodificació</strong> (%)</label><input type="number" id="wDec" min="0" max="100"></div>
+        <div class="cell"><label for="wErr"><strong>Errors</strong> (%)</label><input type="number" id="wErr" min="0" max="100"></div>
+        <div class="cell"><label for="wPros"><strong>Prosòdia</strong> (%)</label><input type="number" id="wPros" min="0" max="100"></div>
+      </div>
+      <p class="hint" id="wSum"></p>
+    </div>
+
+    <div class="settings-sec">
+      <h3>Lectures model gravades</h3>
+      <p>Les gravacions fetes amb el botó «Veu gravada» es guarden en este navegador. Ací les pots descarregar totes en un fitxer per a passar-les a un altre ordinador o compartir-les amb altres docents, i carregar les que t'hagen passat.</p>
+      <div class="row-actions"><button class="btn" id="bVoicesOut">Descarrega les gravacions</button><label class="btn" for="voicesIn">Carrega gravacions</label><input type="file" id="voicesIn" accept="application/json,.json" hidden></div>
+      <p class="hint" id="voicesInfo"></p>
+    </div>
+
+    <div class="settings-sec">
       <h3>Còpia de seguretat</h3>
       <p>Descarrega totes les lectures, els teus textos i els ajustos (sense la clau d'ElevenLabs) en un fitxer. Després el pots carregar en un altre ordinador.</p>
       <div class="row-actions"><button class="btn" id="bBackup">Descarrega la còpia</button><label class="btn" for="restoreFile">Carrega una còpia</label><input type="file" id="restoreFile" accept="application/json,.json" hidden></div>
@@ -522,7 +569,9 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
       <ul>
         <li><strong>Avalua.</strong> L'alumne/a llig en veu alta. Ressò transcriu la lectura i l'alinea paraula per paraula amb el text original per a detectar substitucions, omissions i insercions. Calcula les paraules correctes per minut (PCPM) i la precisió. El docent hi afig la valoració de la prosòdia.</li>
         <li><strong>Acompanya.</strong> Cada error genera una microintervenció: la paraula es pot escoltar, sola o dins de la frase, i l'alumne/a la pot tornar a llegir fins que ix bé. Abans de llegir, pot escoltar el text sencer com a model, amb les paraules ressaltades. Després, tres preguntes treballen la comprensió.</li>
-        <li><strong>Organitza.</strong> El panell «Aula» agrupa l'alumnat en tres grups de domini segons el curs, mostra l'evolució de cada alumne/a i recull les paraules que més li costen.</li>
+        <li><strong>Interpreta.</strong> Un índex de fluïdesa de 0 a 100 combina descodificació, errors i prosòdia amb pesos ajustables. Les autocorreccions i les repeticions no compten com a error, cada substitució porta una pista sobre la ruta de lectura que ha fallat (fonològica o lèxica) i cada text té una dificultat estimada.</li>
+        <li><strong>Proposa.</strong> En acabar, «Què faig ara?» suggerix rellegir, practicar les paraules fallades o passar a un text més accessible o més exigent.</li>
+        <li><strong>Organitza.</strong> El panell «Aula» agrupa l'alumnat en tres grups de domini segons el curs, mostra l'evolució de cada alumne/a i dels tipus d'error, i recull les paraules que més li costen.</li>
       </ul>
 
       <h3>Per a Primària</h3>
@@ -543,8 +592,16 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <li>Dins de la vista prèvia de Claude, el micròfon i les connexions externes estan bloquejats. Allà només funcionen el marcatge manual i la simulació.</li>
       </ul>
 
+      <h3>Ús en LliureX i sense connexió</h3>
+      <ul>
+        <li><strong>Funciona en qualsevol navegador:</strong> la lectura model gravada, el marcatge manual, l'índex de fluïdesa, el tutor, la comprensió, l'aula i la biblioteca.</li>
+        <li><strong>Reconeixement automàtic de la veu de l'alumnat:</strong> en Firefox no està disponible i en Chromium sovint no funciona. Cal Google Chrome o Microsoft Edge, o bé ElevenLabs Scribe, que funciona també en Firefox.</li>
+        <li><strong>Veus sintètiques:</strong> en Linux solen ser de poca qualitat. Per això és millor gravar una lectura model de cada text.</li>
+        <li><strong>Sense connexió:</strong> en Chrome, Edge o Chromium, després de la primera visita, l'app continua obrint-se sense internet, i es pot instal·lar com una aplicació des del menú del navegador. També la pots <a href="resso-app.zip" download>descarregar en un fitxer .zip</a>: el descomprimixes i obris <code>index.html</code>.</li>
+      </ul>
+
       <h3>Fonamentació</h3>
-      <p>Ressò parteix dels principis de la ciència de la lectura: la fluïdesa lectora (exactitud, velocitat i prosòdia) fa de pont entre la descodificació i la comprensió, tal com recull l'Active View of Reading (Duke i Cartwright, 2021). Els criteris de precisió (95 %, 90 %) són els clàssics dels registres de lectura en veu alta, i la prosòdia es valora amb les quatre dimensions de l'escala multidimensional de fluïdesa de Zutell i Rasinski (1991).</p>
+      <p>Ressò parteix dels principis de la ciència de la lectura: la fluïdesa lectora (exactitud, velocitat i prosòdia) fa de pont entre la descodificació i la comprensió, tal com recull l'Active View of Reading (Duke i Cartwright, 2021). Els criteris de precisió (95 %, 90 %) són els clàssics dels registres de lectura en veu alta, i la prosòdia es valora amb les quatre dimensions de l'escala multidimensional de fluïdesa de Zutell i Rasinski (1991). L'índex de fluïdesa ponderat, la distinció entre tipus d'error (incloses les autocorreccions) i la mesura de la dificultat dels textos s'inspiren en el projecte MentorIA de la Ikastola San Fermín i la Universitat Pública de Navarra.</p>
 
       <h3>Límits que cal conéixer</h3>
       <ul>
@@ -667,7 +724,7 @@ const isAndroid=/Android/i.test(navigator.userAgent);
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 
 /* configuració */
-const DEF_CFG={tts:'browser',bv:{ca:'',es:''},elKey:'',elVoices:[],elVoice:{ca:'',es:''},elModel:{ca:'eleven_v3',es:'eleven_multilingual_v2'},rate:0.9,asr:'browser',saveAudio:true,font:'literata',size:1.28,ruler:false,th:{}};
+const DEF_CFG={tts:'browser',bv:{ca:'',es:''},elKey:'',elVoices:[],elVoice:{ca:'',es:''},elModel:{ca:'eleven_v3',es:'eleven_multilingual_v2'},rate:0.9,asr:'browser',saveAudio:true,w:{dec:40,err:35,pros:25},font:'literata',size:1.28,ruler:false,th:{}};
 let CFG=Object.assign({},DEF_CFG,store.get('resso.cfg',{}));
 function saveCfg(){store.set('resso.cfg',CFG);}
 
@@ -678,6 +735,7 @@ const idb={
   async get(k){const db=this.db||await this.open();if(!db)return null;return new Promise(res=>{try{const q=db.transaction('tts').objectStore('tts').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);}catch(e){res(null);}});},
   async set(k,v){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').put(v,k);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});},
   async del(k){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').delete(k);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});},
+  async keys(){const db=this.db||await this.open();if(!db)return [];return new Promise(res=>{try{const q=db.transaction('tts').objectStore('tts').getAllKeys();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([]);}catch(e){res([]);}});},
   async clear(){const db=this.db||await this.open();if(!db)return;return new Promise(res=>{try{const tx=db.transaction('tts','readwrite');tx.objectStore('tts').clear();tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
 };
 
@@ -692,6 +750,38 @@ function norm(w){
   return VARIANTS[s]||s;
 }
 function tokenize(t){return String(t).trim().split(/\s+/).filter(Boolean);}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let prev=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const cur=[i];for(let j=1;j<=n;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[n];}
+function sim(a,b){if(!a||!b)return 0;return 1-lev(a,b)/Math.max(a.length,b.length);}
+/* Marca les lletres de la paraula del text que no apareixen (en ordre) en el que s'ha dit. */
+function diffMarks(heard,target){
+  const nf=c=>c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const a=[...nf(heard)].filter(c=>/\p{L}/u.test(c)),b=[...target];const bl=b.map(nf);
+  const m=a.length,n=b.length;const L=Array.from({length:m+1},()=>new Uint8Array(n+1));
+  for(let i=m-1;i>=0;i--)for(let j=n-1;j>=0;j--)L[i][j]=a[i]===bl[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  const keep=new Array(n).fill(false);let i=0,j=0;while(i<m&&j<n){if(a[i]===bl[j]){keep[j]=true;i++;j++;}else if(L[i+1][j]>=L[i][j+1])i++;else j++;}
+  return b.map((c,k)=>keep[k]||!/\p{L}/u.test(c)?esc(c):'<mark>'+esc(c)+'</mark>').join('');
+}
+/* Dificultat estimada del text (0-100): llargària de les frases, síl·labes per paraula i paraules llargues. */
+function sylCount(w){const m=norm(w).match(/[aeiouy]+/g);return m?m.length:1;}
+const DIF_CACHE={};
+function textDifficulty(body){
+  if(!body)return null;if(DIF_CACHE[body]!=null)return DIF_CACHE[body];
+  const ws=tokenize(body).filter(w=>norm(w));if(ws.length<5)return null;
+  const sents=Math.max(1,(body.match(/[.!?…]+(\s|$)/g)||[]).length);
+  const asl=ws.length/sents,syl=ws.map(sylCount),asy=syl.reduce((a,b)=>a+b,0)/ws.length,longp=syl.filter(x=>x>=4).length/ws.length;
+  const c=(v,a,b)=>Math.max(0,Math.min(1,(v-a)/(b-a)));
+  return DIF_CACHE[body]=Math.round(100*(0.4*c(asl,5,20)+0.35*c(asy,1.4,2.3)+0.25*c(longp,0,0.15)));
+}
+function difLabel(d){return d<30?'accessible':d<55?'intermèdia':'exigent';}
+/* Pista sobre la ruta de lectura que ha fallat (orientativa). */
+function classifyErr(h,t){
+  const a=norm(h||''),b=norm(t||'');if(!a||a==='?'||!b)return null;
+  const r=sim(a,b);
+  if(r>=0.6)return {k:'desc',n:'Pista: descodificació',tip:"Ruta fonològica: ha descodificat amb errors (lletres canviades, afegides o saltades). Practiqueu-la a poc a poc, per síl·labes."};
+  if(a.slice(0,2)===b.slice(0,2)||(a[0]===b[0]&&r>=0.3))return {k:'antic',n:'Pista: anticipació',tip:"Ruta lèxica: ha començat bé però ha endevinat la resta. Convé mirar la paraula fins al final abans de dir-la."};
+  return {k:'lex',n:'Pista: paraula diferent',tip:"Ruta lèxica o atenció: ha dit una paraula diferent. Rellegiu la frase i comproveu si té sentit."};
+}
+function blobToB64(blob){return new Promise(res=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=()=>res('');r.readAsDataURL(blob);});}
 /* Alinea el que s'ha dit amb el TROS de text llegit fins ara (no amb el text sencer):
    el final de la lectura és la posició i on el cost és mínim (en cas d'empat, la més avançada). */
 function align(ref,hyp){
@@ -730,7 +820,7 @@ let timerId=null,t0=0,running=false;
 function blankState(t){
   livePos=-1;
   const words=tokenize(t.body);
-  return {text:t,words,norms:words.map(norm),states:words.map(()=>'plain'),heard:words.map(()=>''),heardT:words.map(()=>null),ins:[],secs:0,done:false,example:false,answers:{},pros:{},course:$('course').value,pickLast:false,tts:null,recUrl:null,saved:false};
+  return {text:t,words,norms:words.map(norm),states:words.map(()=>'plain'),heard:words.map(()=>''),heardT:words.map(()=>null),ins:[],own:null,secs:0,done:false,example:false,answers:{},pros:{},course:$('course').value,pickLast:false,tts:null,recUrl:null,saved:false};
 }
 function allTexts(){return TEXTS.concat(store.get('resso.library',[]));}
 function currentText(){
@@ -784,6 +874,8 @@ function loadText(){
   $('tTitle').textContent=t.title;
   $('tLang').textContent=t.lang==='ca'?'Valencià':'Castellà';
   $('tWords').textContent=S.words.length+' paraules'+(t.cicle?' · '+(t.cicle==='ESO'?'ESO':CICLES[t.cicle].split('· ')[1]):'');
+  const dfc=textDifficulty(t.body);$('tDif').hidden=dfc==null;if(dfc!=null)$('tDif').textContent='Dificultat '+dfc+' · '+difLabel(dfc);
+  $('nextBox').hidden=true;
   $('exBanner').hidden=true;$('live').textContent='';$('timer').textContent='0:00';
   $('after').hidden=true;$('micNotice').hidden=true;$('prosBox').hidden=true;$('cheer').hidden=true;$('bRecPlay').hidden=true;
   ['bSave','bPrint','bPickLast'].forEach(id=>$(id).disabled=true);
@@ -793,12 +885,13 @@ function renderReading(){
   const box=$('reading');box.innerHTML='';
   box.classList.toggle('clickable',S.done||($('modeSel').value==='manual'&&running));
   const frag=document.createDocumentFragment();
-  const addIns=x=>{const m=document.createElement('span');m.className='ins';m.textContent='+'+x.w;m.title='Inserció: clica per a llevar-la';m.dataset.ins=S.ins.indexOf(x);frag.append(m,' ');};
+  const addIns=x=>{const m=document.createElement('span');m.className='ins'+(x.rep?' rep':'');m.textContent=(x.rep?'⟲ ':'+')+x.w;m.title=x.rep?'Repetició: no compta com a error. Clica per a llevar-la.':'Inserció: clica per a llevar-la';m.dataset.ins=S.ins.indexOf(x);frag.append(m,' ');};
   S.ins.filter(x=>x.after===-1).forEach(addIns);
   S.words.forEach((w,i)=>{
     const sp=document.createElement('span');sp.className='w '+S.states[i];sp.textContent=w;sp.dataset.i=i;
     if(S.states[i]==='sub')sp.title='Ha llegit: '+(S.heard[i]||'?');
     if(S.states[i]==='om')sp.title='Omesa';if(S.states[i]==='nr')sp.title='No arribada';
+    if(S.states[i]==='selfc')sp.title='Autocorregida'+(S.heard[i]&&S.heard[i]!=='?'?' (primer ha dit: '+S.heard[i]+')':'')+'. No compta com a error.';
     frag.append(sp,' ');
     S.ins.filter(x=>x.after===i).forEach(addIns);
   });
@@ -813,17 +906,31 @@ function levelOf(pcpm,acc,course){const t=thFor(course);const a=acc<90?0:acc<95?
 const LEVELS=['Suport intensiu','Pràctica guiada','Autonomia'];
 const LV_COL=['var(--sub)','var(--om)','var(--accent)'];
 function metrics(){
-  const c={ok:0,sub:0,om:0,nr:0};S.states.forEach(s=>{if(c[s]!==undefined)c[s]++;});
-  const attempted=S.words.length-c.nr,ins=S.ins.length,errors=c.sub+c.om+ins,correct=Math.max(0,attempted-errors),mins=S.secs/60;
-  return {c,attempted,ins,errors,correct,pcpm:mins>0?Math.round(correct/mins):0,acc:attempted>0?Math.max(0,Math.round(1000*(attempted-errors)/attempted)/10):0};
+  const c={ok:0,sub:0,om:0,nr:0,selfc:0};S.states.forEach(s=>{if(c[s]!==undefined)c[s]++;});
+  const ins=S.ins.filter(x=>!x.rep).length,rep=S.ins.length-ins;
+  const attempted=S.words.length-c.nr,errors=c.sub+c.om+ins,correct=Math.max(0,attempted-errors),mins=S.secs/60;
+  return {c,attempted,ins,rep,errors,correct,pcpm:mins>0?Math.round(correct/mins):0,acc:attempted>0?Math.max(0,Math.round(1000*(attempted-errors)/attempted)/10):0};
+}
+/* Índex de fluïdesa: descodificació + errors + prosòdia, amb pesos ajustables. */
+function fluencyIndex(m){
+  const t=thFor(S.course),w=CFG.w||{dec:40,err:35,pros:25};
+  const dec=Math.max(0,Math.min(100,Math.round(100*m.pcpm/t.hi)));
+  const werr=m.c.sub+m.c.om+0.5*m.ins,wacc=m.attempted?100*(m.attempted-werr)/m.attempted:0;
+  const err=Math.max(0,Math.min(100,Math.round((wacc-80)/20*100)));
+  const pt=prosTotal(),pros=pt?Math.round(100*(pt-4)/12):null;
+  let num=w.dec*dec+w.err*err,den=w.dec+w.err;if(pros!=null){num+=w.pros*pros;den+=w.pros;}
+  return {dec,err,pros,idx:den?Math.round(num/den):0};
 }
 function prosTotal(){const v=PROS.map(p=>S.pros[p.k]||0);return v.every(x=>x)?v.reduce((a,b)=>a+b,0):null;}
 function renderMetrics(){
-  if(!S.done){['mPcpm','mAcc','mTime','mRead','mErr'].forEach(id=>$(id).textContent='–');$('mBar').innerHTML='';$('mLevel').hidden=true;['cSub','cOm','cIns'].forEach(id=>$(id).textContent='0');return;}
+  if(!S.done){['mPcpm','mAcc','mTime','mRead','mErr'].forEach(id=>$(id).textContent='–');$('mBar').innerHTML='';$('mLevel').hidden=true;$('idxBox').hidden=true;['cSub','cOm','cIns','cSelf'].forEach(id=>$(id).textContent='0');return;}
   const m=metrics();
   $('mPcpm').textContent=m.pcpm;$('mAcc').textContent=m.acc.toLocaleString('ca')+' %';
   $('mTime').textContent=fmtTime(S.secs);$('mRead').textContent=m.attempted+'/'+S.words.length;$('mErr').textContent=m.errors;
-  $('cSub').textContent=m.c.sub;$('cOm').textContent=m.c.om;$('cIns').textContent=m.ins;
+  $('cSub').textContent=m.c.sub;$('cOm').textContent=m.c.om;$('cIns').textContent=m.ins;$('cSelf').textContent=m.c.selfc;
+  const fi=fluencyIndex(m);$('idxBox').hidden=false;$('mIdx').textContent=fi.idx;
+  const row=(n,v,col,note)=>`<span>${n}</span><span class="track"><span style="width:${v??0}%;background:${col}"></span></span><span class="v">${v==null?note:v}</span>`;
+  $('mComp').innerHTML=row('Descodificació',fi.dec,'var(--accent)')+row('Errors',fi.err,'var(--sub)')+row('Prosòdia',fi.pros,'var(--ins)','pendent');
   const tot=Math.max(1,m.attempted+m.ins);
   $('mBar').innerHTML=`<span style="width:${100*m.correct/tot}%;background:var(--accent)"></span><span style="width:${100*m.c.sub/tot}%;background:var(--sub)"></span><span style="width:${100*m.c.om/tot}%;background:var(--om)"></span><span style="width:${100*m.ins/tot}%;background:var(--ins)"></span>`;
   const lv=levelOf(m.pcpm,m.acc,S.course);const L=$('mLevel');L.hidden=false;L.className='level lv-'+lv;L.textContent='Grup suggerit: '+LEVELS[lv]+' ('+courseById(S.course).short+')';
@@ -864,6 +971,19 @@ function analyse(tokens,times){
   let last=-1;S.states.forEach((s,i)=>{if(s==='ok'||s==='sub')last=i;});
   for(let i=last+1;i<S.states.length;i++)S.states[i]='nr';
   S.ins=S.ins.filter(x=>x.after<=last);
+  markSelfCorrections();
+}
+/* Una inserció semblant a la paraula següent, que després es llig bé, és una autocorrecció (no és error).
+   Una inserció igual que la paraula d'abans o la de després és una repetició (tampoc compta com a error). */
+function markSelfCorrections(){
+  const keep=[];
+  S.ins.forEach(x=>{
+    const nw=norm(x.w),pv=x.after,nx=x.after+1;
+    if((pv>=0&&S.norms[pv]===nw)||(nx<S.words.length&&S.norms[nx]===nw)){x.rep=true;keep.push(x);return;}
+    if(nx<S.words.length&&S.states[nx]==='ok'&&(sim(nw,S.norms[nx])>=0.4||nw.slice(0,2)===S.norms[nx].slice(0,2))){S.states[nx]='selfc';S.heard[nx]=x.w;return;}
+    keep.push(x);
+  });
+  S.ins=keep;
 }
 let livePos=-1;
 function liveHighlight(text){
@@ -1061,10 +1181,46 @@ function abortReading(msg){
   if(timerId){clearInterval(timerId);timerId=null;}
   setRunning(false);notice(msg);$('live').textContent='';
 }
+/* Proposta automàtica de fraseig, continuïtat i ritme a partir de les marques de temps (Scribe). */
+function autoProsody(){
+  const T=S.heardT;let withT=0,pairs=0,longMid=0;
+  for(let i=0;i<S.words.length;i++)if(T[i])withT++;
+  for(let i=0;i<S.words.length-1;i++){if(!T[i]||!T[i+1])continue;if(/[.,;:!?»…]$/.test(S.words[i]))continue;pairs++;if(T[i+1][0]-T[i][1]>0.45)longMid++;}
+  if(withT<S.words.length*0.5||pairs<5)return null;
+  const m=metrics(),r=longMid/pairs,t=thFor(S.course);
+  const f=r<0.05?4:r<0.12?3:r<0.25?2:1;
+  const per100=100*(S.ins.length+m.c.selfc)/Math.max(1,m.attempted);const sc=per100<2?4:per100<5?3:per100<10?2:1;
+  const rit=m.pcpm>=t.hi?4:m.pcpm>=t.lo?3:m.pcpm>=t.lo*0.7?2:1;
+  return {f,s:sc,r:rit};
+}
 function finish(){
-  S.done=true;renderReading();renderMetrics();renderAfter();renderPros();
+  S.done=true;
+  const ap=autoProsody();S.prosAuto=!!ap;if(ap)['f','s','r'].forEach(k=>{if(!S.pros[k])S.pros[k]=ap[k];});renderReading();renderMetrics();renderAfter();renderPros();
   $('bSave').disabled=S.example||S.saved;$('bPrint').disabled=false;$('bPickLast').disabled=false;
   $('bRecPlay').hidden=!S.recUrl;$('prosBox').hidden=false;
+  renderNext();
+}
+
+/* Què faig ara? */
+function renderNext(){
+  const box=$('nextBox');if(S.example||!S.done){box.hidden=true;return;}
+  const m=metrics(),lv=levelOf(m.pcpm,m.acc,S.course);
+  const errW=[];S.states.forEach((s,i)=>{if(s==='sub'||s==='om'){const w=cleanWord(S.words[i]);if(w&&!errW.includes(w))errW.push(w);}});
+  const cur=textDifficulty(S.text.body)??50;
+  const pool=allTexts().filter(t=>t.lang===S.text.lang&&t.id!==S.text.id&&t.body).map(t=>({t,d:textDifficulty(t.body)??50}));
+  const easier=pool.filter(x=>x.d<cur).sort((a,b)=>b.d-a.d)[0],harder=pool.filter(x=>x.d>cur).sort((a,b)=>a.d-b.d)[0];
+  const acts=$('nextActs');acts.innerHTML='';
+  const go=t=>{$('textSel').value=t.id;loadText();window.scrollTo({top:0,behavior:'smooth'});toast('Text preparat: '+t.title);};
+  let msg;
+  if(lv===0){msg="Este text encara costa. Proposa escoltar el model, llegir-lo en eco frase a frase i tornar-lo a llegir. També pot practicar abans les paraules difícils.";
+    acts.append(btn('Escolta el model',()=>{window.scrollTo({top:0,behavior:'smooth'});playModel();}));}
+  else if(lv===1){msg="Va pel bon camí. Una relectura del mateix text i la pràctica de les paraules fallades l'ajudaran a guanyar seguretat i ritme.";}
+  else{msg="Lectura fluida. Ja pot passar a un text més exigent o treballar l'expressió amb una lectura dramatitzada.";}
+  acts.append(btn('Rellig este text',()=>{loadText();window.scrollTo({top:0,behavior:'smooth'});}));
+  if(errW.length)acts.append(btn(`Practica les paraules (${errW.length})`,()=>{const c=$('course').value;$('textSel').value='quick';$('customText').value=errW.join(' ');$('customLang').value=S.text.lang;loadText();$('course').value=c;window.scrollTo({top:0,behavior:'smooth'});}));
+  if(lv===2&&harder)acts.append(btn('Text més exigent: '+harder.t.title,()=>go(harder.t)));
+  if(lv<2&&easier)acts.append(btn('Text més accessible: '+easier.t.title,()=>go(easier.t)));
+  $('nextMsg').textContent=msg;box.hidden=false;
 }
 
 /* Simulació */
@@ -1095,7 +1251,7 @@ $('reading').addEventListener('click',e=>{
     S.pickLast=false;$('bPickLast').classList.remove('on');$('live').textContent='';refreshAfterEdit();return;
   }
   if(!S.done&&!($('modeSel').value==='manual'&&running))return;
-  const cyc={ok:'sub',sub:'om',om:'nr',nr:'ok',plain:'sub'};
+  const cyc={ok:'sub',sub:'selfc',selfc:'om',om:'nr',nr:'ok',plain:'sub'};
   S.states[i]=cyc[S.states[i]];if(S.states[i]==='sub'&&!S.heard[i])S.heard[i]='?';
   if(S.done)refreshAfterEdit();else renderReading();
 });
@@ -1182,6 +1338,12 @@ function playSegment(url,from,to,rate){
 }
 async function speakWords(i,j,fallbackText){
   const lang=S.text.lang;
+  if(i!=null){
+    try{const own=await ownVoice();
+      if(own&&(own.starts||j>i)){const st=own.starts||ownTimes(S.words,own.dur);const end=j+1<st.length?st[j+1]:own.dur;
+        playSegment(own.url,Math.max(0,st[i]-0.08),end+0.05,1);return;}
+    }catch(e){}
+  }
   if(useEleven(lang)&&i!=null){
     try{const t=await ensureTTS();playSegment(t.url,t.starts[i]-0.05,t.ends[j]+0.12,Math.min(1,CFG.rate));return;}
     catch(e){toast(e.message,5000);}
@@ -1203,9 +1365,9 @@ async function playModel(){
   const own=await ownVoice();
   if(own){
     if(!modelOn)return;
-    const t=ownTimes(S.words,own.dur);
+    const t=own.starts||ownTimes(S.words,own.dur);
     try{player.src=own.url;player.playbackRate=CFG.rate;player.currentTime=0;await player.play();}catch(e){toast("No s'ha pogut reproduir la gravació.");stopModel();return;}
-    const sc=own.dur&&isFinite(player.duration)&&player.duration>0?player.duration/own.dur:1;
+    const sc=!own.starts&&own.dur&&isFinite(player.duration)&&player.duration>0?player.duration/own.dur:1;
     const tick=()=>{if(!modelOn)return;const ct=player.currentTime/sc;let k=-1;for(let x=0;x<t.length;x++){if(t[x]<=ct)k=x;else break;}if(k>=0)markSpeaking(k);
       if(player.ended||player.paused){stopModel();return;}modelRaf=requestAnimationFrame(tick);};
     tick();return;
@@ -1242,9 +1404,20 @@ function realDuration(url){return new Promise(res=>{const a=new Audio();a.preloa
   a.onerror=()=>res(0);a.src=url;});}
 async function ownVoice(){
   const rec=await idb.get(myVoiceKey());
-  if(rec&&rec.blob){if(MV.url)URL.revokeObjectURL(MV.url);MV.url=URL.createObjectURL(rec.blob);return {url:MV.url,dur:rec.dur||await realDuration(MV.url),kind:'device'};}
-  if(S.text.audio){return {url:S.text.audio,dur:await realDuration(S.text.audio),kind:'published'};}
+  if(rec&&rec.blob){if(MV.url)URL.revokeObjectURL(MV.url);MV.url=URL.createObjectURL(rec.blob);return {url:MV.url,dur:rec.dur||await realDuration(MV.url),kind:'device',starts:rec.starts&&rec.starts.length===S.words.length?rec.starts:null};}
+  if(S.text.audio){return {url:S.text.audio,dur:await realDuration(S.text.audio),kind:'published',starts:S.text.times&&S.text.times.length===S.words.length?S.text.times:null};}
   return null;
+}
+/* Completa les marques de temps que falten interpolant entre les conegudes. Torna null si n'hi ha massa poques. */
+function fillStarts(first,dur){
+  if(!first)return null;const n=first.length;const known=first.map((t,i)=>t==null?null:[i,t]).filter(Boolean);
+  if(known.length<Math.max(3,n*0.4))return null;
+  /* les marques han d'anar sempre cap avant */
+  const mono=[];known.forEach(k=>{if(!mono.length||k[1]>mono[mono.length-1][1])mono.push(k);});
+  const pts=[[-1,Math.max(0,mono[0][1]-0.5)]].concat(mono,[[n,dur]]);
+  const out=new Array(n);
+  for(let p=0;p<pts.length-1;p++){const [i0,t0]=pts[p],[i1,t1]=pts[p+1];for(let i=Math.max(0,i0);i<Math.min(n,i1);i++)out[i]=i===i0?t0:t0+(t1-t0)*(i-i0)/(i1-i0);}
+  return out.map(v=>Math.round(v*100)/100);
 }
 /* Repartix la durada entre les paraules segons la llargària i les pauses de puntuació. */
 function ownTimes(words,dur){
@@ -1271,13 +1444,24 @@ $('mvRec').onclick=async()=>{
   const mt=types.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
   try{MV.rec=new MediaRecorder(MV.stream,mt?{mimeType:mt}:undefined);}catch(e){$('mvState').textContent="No s'ha pogut començar a gravar.";MV.stream.getTracks().forEach(t=>t.stop());return;}
   MV.chunks=[];MV.rec.ondataavailable=e=>{if(e.data&&e.data.size)MV.chunks.push(e.data);};
+  /* Mentre es grava, el reconeixement de veu (si n'hi ha) apunta quan es diu cada paraula. */
+  MV.first=new Array(S.words.length).fill(null);MV.sr=null;
+  if(SR&&!isAndroid){try{const r=new SR();r.lang=S.text.lang==='ca'?'ca-ES':'es-ES';r.continuous=true;r.interimResults=true;
+    let committed='',fin='';
+    r.onresult=e=>{const finals=[];let interim='';for(let k=0;k<e.results.length;k++){const t=e.results[k][0].transcript.trim();if(e.results[k].isFinal)finals.push(t);else interim+=' '+t;}
+      fin=finals.join(' ');const all=(committed+' '+fin+' '+interim).trim();const hyp=tokenize(all).map(norm).filter(Boolean);if(!hyp.length)return;
+      const ops=align(S.norms,hyp);const el=(performance.now()-MV.t0)/1000-0.6;
+      ops.forEach(o=>{if(o.t==='ok'&&MV.first[o.i]==null)MV.first[o.i]=Math.max(0,el);});};
+    r.onend=()=>{if(MV.rec&&MV.rec.state==='recording'){committed+=' '+fin;fin='';try{r.start();}catch(e){}}};
+    r.onerror=()=>{};r.start();MV.sr=r;}catch(e){MV.sr=null;}}
   MV.rec.onstop=async()=>{
     const dur=(performance.now()-MV.t0)/1000;MV.stream.getTracks().forEach(t=>t.stop());
+    if(MV.sr){try{MV.sr.stop();}catch(e){}}const starts=fillStarts(MV.first,dur);
     btn.classList.remove('rec-on');btn.textContent='Torna a gravar';
     const blob=new Blob(MV.chunks,{type:MV.rec.mimeType||'audio/webm'});
     if(dur<1||!blob.size){$('mvState').textContent='La gravació és massa curta. Torna-ho a provar.';return;}
-    await idb.set(myVoiceKey(),{blob,dur,kind:'rec',date:Date.now()});
-    refreshMyVoice();toast('Gravació guardada. Prem «Escolta el model» per a escoltar-la.',4000);
+    await idb.set(myVoiceKey(),{blob,dur,starts,kind:'rec',date:Date.now()});
+    refreshMyVoice();toast(starts?'Gravació guardada i sincronitzada paraula a paraula. Prem «Escolta el model».':'Gravació guardada. Prem «Escolta el model» per a escoltar-la.',4500);
   };
   MV.t0=performance.now();MV.rec.start(1000);btn.classList.add('rec-on');btn.textContent='Atura la gravació';
   $('mvState').textContent='Gravant… Llig el text en veu alta i prem «Atura la gravació» en acabar.';
@@ -1318,16 +1502,20 @@ function cleanWord(w){return w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');}
 function renderAfter(){
   $('after').hidden=false;const M=MSG[S.text.lang];const box=$('tutor');box.innerHTML='';
   const items=[];S.states.forEach((s,i)=>{if(s==='sub'||s==='om')items.push({i,s});});
-  S.ins.forEach(x=>items.push({s:'ins',w:x.w,after:x.after,t:x.t}));
+  S.ins.filter(x=>!x.rep).forEach(x=>items.push({s:'ins',w:x.w,after:x.after,t:x.t}));
   items.sort((a,b)=>(a.i??a.after+.5)-(b.i??b.after+.5));
   if(!items.length)box.innerHTML='<div class="empty">Cap error: lectura exacta. Proposa una relectura expressiva, atenent la puntuació.</div>';
+  const nself=S.states.filter(x=>x==='selfc').length;
+  if(nself){const p=document.createElement('div');p.className='empty';p.style.color='var(--accent)';p.textContent=nself===1?"1 autocorrecció: s'ha adonat de l'error i l'ha corregit. Això és un bon senyal i no compta com a error.":`${nself} autocorreccions: s'ha adonat dels errors i els ha corregit. Això és un bon senyal i no compta com a error.`;box.prepend(p);}
   items.slice(0,15).forEach(it=>{
     const col=it.s==='sub'?'var(--sub)':it.s==='om'?'var(--om)':'var(--ins)';
     const d=document.createElement('div');d.className='err';
     const w=it.s==='ins'?it.w:cleanWord(S.words[it.i]);
     const msg=it.s==='sub'?M.sub(S.heard[it.i],w):it.s==='om'?M.om():M.ins(it.w);
     const tipus=it.s==='sub'?'Substitució':it.s==='om'?'Omissió':'Inserció';
-    d.innerHTML=`<div class="stripe" style="background:${col}"></div><div><div class="word">${esc(w)} <span class="chip">${tipus}</span></div><p class="msg">${esc(msg)}</p><div class="acts"></div><div class="fb"></div></div>`;
+    const route=it.s==='sub'?classifyErr(S.heard[it.i],w):null;
+    const dif=route&&S.heard[it.i]&&S.heard[it.i]!=='?'?`<div class="diff">Ha dit «${esc(S.heard[it.i])}» · El text diu «${diffMarks(norm(S.heard[it.i]),w)}»</div>`:'';
+    d.innerHTML=`<div class="stripe" style="background:${col}"></div><div><div class="word">${esc(w)} <span class="chip">${tipus}</span>${route?`<span class="route" title="${esc(route.tip)}">${route.n}</span>`:''}</div>${dif}<p class="msg">${esc(msg)}</p>${route?`<p class="msg" style="font-style:italic">${esc(route.tip)}</p>`:''}<div class="acts"></div><div class="fb"></div></div>`;
     const acts=d.querySelector('.acts'),fb=d.querySelector('.fb');
     if(it.s!=='ins'){
       const [a,b]=sentenceRange(it.i);
@@ -1359,9 +1547,9 @@ function renderQuiz(){
 }
 function renderPros(){
   $('pros').innerHTML=PROS.map(p=>`<div class="pros-row"><span>${esc(p.n)}</span><div class="scale">${[1,2,3,4].map(v=>`<button type="button" data-p="${p.k}" data-v="${v}" title="${esc(p.d[v-1])}" class="${S.pros[p.k]===v?'sel':''}">${v}</button>`).join('')}</div></div>`).join('');
-  const t=prosTotal();$('prosTotal').textContent=t?`Total: ${t}/16. ${t>=10?'Progrés adequat.':'Cal treballar la prosòdia.'} (10 o més indica un progrés adequat.)`:'1 = inicial · 4 = consolidat. Passa el ratolí per damunt de cada número per a veure el descriptor.';
+  const t=prosTotal();const autoNote=S.prosAuto?'Fraseig, continuïtat i ritme són una proposta automàtica feta a partir de les pauses: revisa-la i valora l\'expressió. ':'';$('prosTotal').textContent=autoNote+t?`Total: ${t}/16. ${t>=10?'Progrés adequat.':'Cal treballar la prosòdia.'} (10 o més indica un progrés adequat.)`:'1 = inicial · 4 = consolidat. Passa el ratolí per damunt de cada número per a veure el descriptor.';
 }
-$('pros').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;S.pros[b.dataset.p]=+b.dataset.v;renderPros();});
+$('pros').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;S.pros[b.dataset.p]=+b.dataset.v;renderPros();renderMetrics();});
 
 /* =========================================================
    Aula
@@ -1375,7 +1563,9 @@ function seedIfEmpty(){
   if(cur!==null){let ch=false;cur.forEach(s=>{if(!s.course){s.course='1E';ch=true;}if(!s.errs){s.errs=[];ch=true;}});if(ch)saveSessions(cur);return;}
   const now=Date.now(),day=86400000,list=[];
   const add=(course,student,daysAgo,textId,pcpm,acc,sub,om,ins,comp,pros,errs)=>{const t=TEXTS.find(x=>x.id===textId);const words=tokenize(t.body).length;
-    list.push({id:'ex'+list.length,date:new Date(now-day*daysAgo).toISOString(),course,student,textId,title:t.title,lang:t.lang,secs:Math.round(words/(pcpm/60)),pcpm,acc,sub,om,ins,comp,pros,errs,example:true});};
+    const th=thFor(course),dec=Math.min(100,Math.round(100*pcpm/th.hi)),er=Math.max(0,Math.min(100,Math.round((acc-80)/20*100))),pr=Math.round(100*(pros-4)/12);
+    const idx=Math.round((40*dec+35*er+25*pr)/100),routes={desc:Math.ceil(sub/2),antic:Math.floor(sub/4),lex:sub-Math.ceil(sub/2)-Math.floor(sub/4)};
+    list.push({id:'ex'+list.length,date:new Date(now-day*daysAgo).toISOString(),course,student,textId,title:t.title,lang:t.lang,secs:Math.round(words/(pcpm/60)),pcpm,acc,sub,om,ins,selfc:(student+daysAgo)%3,routes,idx,dif:textDifficulty(t.body),comp,pros,errs,example:true});};
   add('1E',1,2,'columbretes',138,97.2,2,1,0,'3/3',14,['sargantana','desembarcar-hi']);
   add('1E',2,30,'badall',72,86.1,7,4,2,'1/3',7,['badallàvem','hipòtesi','encomana','empatia','refredar']);
   add('1E',2,16,'columbretes',79,88.9,6,3,1,'2/3',8,['sargantana','provisions','desembarcar-hi','automàtica']);
@@ -1409,8 +1599,8 @@ function renderAula(){
   if(keys.includes(prevSel))$('aulaStudent').value=prevSel;else if(keys.length)$('aulaStudent').value=keys.reduce((a,b)=>counts[b]>counts[a]?b:a);
   renderStudent();
   const rows=[...list].sort((a,b)=>b.date.localeCompare(a.date));
-  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
-    :'<tr><td colspan="15" style="color:var(--muted)">Encara no hi ha lectures desades.</td></tr>';
+  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.idx??'–'}</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
+    :'<tr><td colspan="16" style="color:var(--muted)">Encara no hi ha lectures desades.</td></tr>';
 }
 function renderStudent(){
   const k=$('aulaStudent').value;const list=(sessions()||[]).filter(s=>skey(s)===k).sort((a,b)=>a.date.localeCompare(b.date));
@@ -1431,11 +1621,23 @@ function renderStudent(){
   if(list.length>1)g+=`<polyline points="${pts}" fill="none" style="stroke:var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
   list.forEach((s,i)=>{const last=i===list.length-1;g+=`<circle cx="${x(i)}" cy="${y(s.pcpm)}" r="${last?6:4}" style="fill:var(--accent);stroke:var(--surface)" stroke-width="2"/><text x="${x(i)}" y="${y(s.pcpm)-11}" text-anchor="middle" font-size="12" font-weight="${last?700:500}" style="fill:var(--ink);font-family:var(--f-mono)">${s.pcpm}</text><text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${new Date(s.date).toLocaleDateString('ca-ES',{day:'numeric',month:'numeric'})}</text>`;});
   box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolució de les paraules correctes per minut">${g}</svg>`;
+  renderErrChart(list);
   const freq={};list.forEach(s=>(s.errs||[]).forEach(w=>{const c=cleanWord(w);if(c)freq[c]=(freq[c]||0)+1;}));
   const top=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,18);
   $('practiceWords').innerHTML=top.length?top.map(([w,n])=>`<span>${esc(w)}${n>1?`<b>×${n}</b>`:''}</span>`).join(''):'<p class="hint" style="margin:0">Cap paraula registrada.</p>';
   $('bPractice').disabled=!top.length;$('bPractice').dataset.words=top.map(x=>x[0]).join(' ');
   $('bPractice').dataset.lang=list[list.length-1].lang;$('bPractice').dataset.key=k;
+}
+function renderErrChart(list){
+  const cats=[{k:'desc',n:'Descodificació',c:'var(--sub)'},{k:'lex',n:'Lèxica / anticipació',c:'var(--ins)'},{k:'sub',n:'Substitució sense classificar',c:'var(--nr)'},{k:'om',n:'Omissió',c:'var(--om)'},{k:'ins',n:'Inserció',c:'color-mix(in srgb,var(--ins) 45%,var(--surface))'}];
+  const rows=list.map(s=>{const r=s.routes||null;const desc=r?r.desc:0,lex=r?(r.antic+r.lex):0;return {d:s.date,desc,lex,sub:r?Math.max(0,s.sub-desc-lex):s.sub,om:s.om,ins:s.ins,selfc:s.selfc||0};});
+  const W=640,H=200,L=44,R=16,T=12,B=30;const max=Math.max(4,...rows.map(r=>r.desc+r.lex+r.sub+r.om+r.ins));
+  const bw=Math.min(46,(W-L-R)/rows.length*0.6);const x=i=>L+(i+0.5)*(W-L-R)/rows.length;const y=v=>T+(H-T-B)*(1-v/max);
+  let g='';for(let v=0;v<=max;v+=Math.max(1,Math.ceil(max/4))){g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end" font-size="11" style="fill:var(--muted);font-family:var(--f-mono)">${v}</text>`;}
+  rows.forEach((r,i)=>{let acc=0;cats.forEach(c=>{const v=r[c.k];if(!v)return;g+=`<rect x="${x(i)-bw/2}" y="${y(acc+v)}" width="${bw}" height="${y(acc)-y(acc+v)}" style="fill:${c.c}"><title>${c.n}: ${v}</title></rect>`;acc+=v;});
+    if(r.selfc)g+=`<text x="${x(i)}" y="${y(acc)-5}" text-anchor="middle" font-size="11" style="fill:var(--accent)">↺${r.selfc}</text>`;
+    g+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${new Date(r.d).toLocaleDateString('ca-ES',{day:'numeric',month:'numeric'})}</text>`;});
+  $('chartErr').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tipus d'error per lectura">${g}</svg><div class="legend">${cats.map(c=>`<span><i style="background:${c.c}"></i>${c.n}</span>`).join('')}<span style="color:var(--accent)">↺ autocorreccions</span></div>`;
 }
 $('aulaCourse').onchange=renderAula;$('aulaStudent').onchange=renderStudent;
 $('rows').addEventListener('click',e=>{const id=e.target.dataset.del;if(!id)return;saveSessions((sessions()||[]).filter(s=>s.id!==id));renderAula();});
@@ -1452,13 +1654,14 @@ $('bSave').onclick=()=>{
   const ans=Object.keys(S.answers);const comp=S.text.qs&&S.text.qs.length&&ans.length?ans.filter(k=>S.answers[k]===S.text.qs[k].a).length+'/'+S.text.qs.length:'';
   const errs=[];S.states.forEach((s,i)=>{if(s==='sub'||s==='om')errs.push(cleanWord(S.words[i]));});
   const list=sessions()||[];
-  list.push({id:'s'+Date.now(),date:new Date().toISOString(),course:S.course,student:n,textId:S.text.id,title:S.text.title,lang:S.text.lang,secs:Math.round(S.secs),pcpm:m.pcpm,acc:m.acc,sub:m.c.sub,om:m.c.om,ins:m.ins,comp,pros:prosTotal(),errs,example:false});
+  const routes={desc:0,antic:0,lex:0};S.states.forEach((s,i)=>{if(s==='sub'){const r=classifyErr(S.heard[i],cleanWord(S.words[i]));if(r)routes[r.k]++;}});
+  list.push({id:'s'+Date.now(),date:new Date().toISOString(),course:S.course,student:n,textId:S.text.id,title:S.text.title,lang:S.text.lang,secs:Math.round(S.secs),pcpm:m.pcpm,acc:m.acc,sub:m.c.sub,om:m.c.om,ins:m.ins,selfc:m.c.selfc,rep:m.rep,routes,idx:fluencyIndex(m).idx,dif:textDifficulty(S.text.body),comp,pros:prosTotal(),errs,example:false});
   saveSessions(list);S.saved=true;$('bSave').disabled=true;toast(`Lectura desada a l'aula (${courseById(S.course).short}, núm. ${n})`);
 };
 function csv(){
-  const list=sessions()||[];const h=['data','curs','alumne','text','llengua','segons','PCPM','precisio','substitucions','omissions','insercions','prosodia','comprensio','grup','paraules_errades'];
+  const list=sessions()||[];const h=['data','curs','alumne','text','llengua','dificultat_text','segons','PCPM','precisio','index_fluidesa','substitucions','omissions','insercions','autocorreccions','prosodia','comprensio','grup','paraules_errades'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  return [h.join(';')].concat(list.map(s=>[s.date.slice(0,10),courseById(s.course).short,s.student,q(s.title),s.lang,s.secs,s.pcpm,String(s.acc).replace('.',','),s.sub,s.om,s.ins,s.pros||'',s.comp||'',LEVELS[levelOf(s.pcpm,s.acc,s.course)],q((s.errs||[]).join(', '))].join(';'))).join('\r\n');
+  return [h.join(';')].concat(list.map(s=>[s.date.slice(0,10),courseById(s.course).short,s.student,q(s.title),s.lang,s.dif??'',s.secs,s.pcpm,String(s.acc).replace('.',','),s.idx??'',s.sub,s.om,s.ins,s.selfc??'',s.pros||'',s.comp||'',LEVELS[levelOf(s.pcpm,s.acc,s.course)],q((s.errs||[]).join(', '))].join(';'))).join('\r\n');
 }
 $('bCopy').onclick=()=>{const t=csv();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast("CSV copiat: enganxa'l en un full de càlcul"),()=>toast("No s'ha pogut copiar. Fes servir «Descarrega CSV»."));}else toast("No s'ha pogut copiar. Fes servir «Descarrega CSV».");};
 $('bCsv').onclick=()=>{downloadFile('resso-lectures-'+new Date().toISOString().slice(0,10)+'.csv','﻿'+csv(),'text/csv;charset=utf-8');toast('CSV descarregat');};
@@ -1475,7 +1678,7 @@ $('bPrint').onclick=()=>{
    ========================================================= */
 function renderLibrary(){
   const lib=store.get('resso.library',[]);let h='';
-  const card=(t,own)=>`<div class="tcard"><h4>${esc(t.title)}</h4><div class="meta"><span class="chip">${t.lang==='ca'?'Valencià':'Castellà'}</span><span class="chip">${tokenize(t.body).length} paraules</span>${own?'<span class="chip ex">meu</span>':''}</div><p>${esc(t.body)}</p><div class="acts"><button class="btn sm primary" data-read="${t.id}">Llig-lo</button><button class="btn sm" data-listen="${t.id}">Escolta'l</button>${own?`<button class="btn sm" data-deltext="${t.id}">Esborra</button>`:''}</div></div>`;
+  const card=(t,own)=>`<div class="tcard"><h4>${esc(t.title)}</h4><div class="meta"><span class="chip">${t.lang==='ca'?'Valencià':'Castellà'}</span><span class="chip">${tokenize(t.body).length} paraules</span>${textDifficulty(t.body)!=null?`<span class="chip dif">Dificultat ${textDifficulty(t.body)} · ${difLabel(textDifficulty(t.body))}</span>`:''}${t.audio?'<span class="chip ex">lectura gravada</span>':''}${own?'<span class="chip ex">meu</span>':''}</div><p>${esc(t.body)}</p><div class="acts"><button class="btn sm primary" data-read="${t.id}">Llig-lo</button><button class="btn sm" data-listen="${t.id}">Escolta'l</button>${own?`<button class="btn sm" data-deltext="${t.id}">Esborra</button>`:''}</div></div>`;
   Object.entries(CICLES).forEach(([k,v])=>{
     const ts=TEXTS.filter(t=>t.cicle===k).map(t=>card(t,false)).concat(lib.filter(t=>t.cicle===k).map(t=>card(t,true)));
     h+=`<h3 class="cicle-h">${esc(v)}</h3><div class="cards">${ts.join('')}</div>`;
@@ -1519,7 +1722,27 @@ function fillElevenVoices(){
   if(CFG.elVoice.ca)$('elCa').value=CFG.elVoice.ca;if(CFG.elVoice.es)$('elEs').value=CFG.elVoice.es;
   $('elModelCa').value=CFG.elModel.ca||'eleven_v3';$('elModelEs').value=CFG.elModel.es||'eleven_multilingual_v2';
 }
+function renderWeights(){const w=CFG.w||{dec:40,err:35,pros:25};$('wDec').value=w.dec;$('wErr').value=w.err;$('wPros').value=w.pros;const t=w.dec+w.err+w.pros;$('wSum').textContent=t===100?'Els pesos sumen 100 %.':`Els pesos sumen ${t} %. L'app els reparteix proporcionalment igualment.`;}
+['wDec','wErr','wPros'].forEach(id=>$(id).addEventListener('change',()=>{CFG.w={dec:Math.max(0,+$('wDec').value||0),err:Math.max(0,+$('wErr').value||0),pros:Math.max(0,+$('wPros').value||0)};saveCfg();renderWeights();if(S.done)renderMetrics();}));
+async function renderVoicesInfo(){const n=(await idb.keys()).filter(k=>String(k).startsWith('myvoice|')).length;$('voicesInfo').textContent=n?`Hi ha ${n} ${n===1?'lectura gravada':'lectures gravades'} en este navegador.`:'Encara no hi ha cap lectura gravada en este navegador.';}
+$('bVoicesOut').onclick=async()=>{
+  const ks=(await idb.keys()).filter(k=>String(k).startsWith('myvoice|'));
+  if(!ks.length){toast('Encara no hi ha cap lectura gravada.');return;}
+  toast('Preparant el fitxer…');const items=[];
+  for(const k of ks){const r=await idb.get(k);if(!r||!r.blob)continue;const [,id,h]=String(k).split('|');const t=allTexts().find(x=>x.id===id);
+    items.push({id,h,title:t?t.title:id,lang:t?t.lang:'',mime:r.blob.type||'audio/webm',dur:r.dur,starts:r.starts||null,b64:await blobToB64(r.blob)});}
+  downloadFile('resso-gravacions-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({app:'Ressò',kind:'gravacions',version:1,items}),'application/json');
+  toast(`Descarregades ${items.length} gravacions.`);
+};
+$('voicesIn').onchange=async e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+  try{const j=JSON.parse(await f.text());if(!j||j.kind!=='gravacions'||!Array.isArray(j.items))throw 0;
+    let n=0;for(const it of j.items){if(!it.id||!it.b64)continue;await idb.set('myvoice|'+it.id+'|'+it.h,{blob:b64ToBlob(it.b64,it.mime||'audio/webm'),dur:it.dur,starts:it.starts||null,kind:'import',date:Date.now()});n++;}
+    renderVoicesInfo();refreshMyVoice();toast(`Carregades ${n} gravacions.`);
+  }catch(err){toast('El fitxer no és un paquet de gravacions de Ressò.');}
+};
 function renderSettings(){
+  renderWeights();renderVoicesInfo();
   $('ttsBrowser').checked=CFG.tts==='browser';$('ttsEleven').checked=CFG.tts==='eleven';
   $('browserVoiceBox').hidden=CFG.tts!=='browser';$('elevenBox').hidden=CFG.tts!=='eleven';
   $('elKey').value=CFG.elKey;$('rate').value=CFG.rate;$('rateVal').textContent=Math.round(CFG.rate*100)+' %';
@@ -1558,7 +1781,7 @@ document.querySelectorAll('[data-eltest]').forEach(b=>b.onclick=async()=>{
   catch(e){elStatus(e.message);}
   b.disabled=false;
 });
-$('bClearCache').onclick=async()=>{await idb.clear();S.tts=null;toast("Àudio guardat esborrat");};
+$('bClearCache').onclick=async()=>{const ks=await idb.keys();for(const k of ks){if(!String(k).startsWith('myvoice|'))await idb.del(k);}S.tts=null;toast("Àudio d'ElevenLabs esborrat. Les lectures gravades es mantenen.");};
 function renderTh(){
   $('thGrid').innerHTML=COURSES.map(c=>{const t=thFor(c.id);return `<div class="cell"><strong>${esc(c.label)}</strong><div><label for="thlo${c.id}">Suport &lt;</label><input type="number" id="thlo${c.id}" data-c="${c.id}" data-k="lo" value="${t.lo}" min="5" max="250"></div><div><label for="thhi${c.id}">Autonomia ≥</label><input type="number" id="thhi${c.id}" data-c="${c.id}" data-k="hi" value="${t.hi}" min="5" max="250"></div></div>`;}).join('');
 }
@@ -1596,6 +1819,7 @@ function renderDiag(){
   const vca=voicesFor('ca').length,ves=voicesFor('es').length;
   $('diag').innerHTML=[
     it(isEdge,'Navegador Microsoft Edge (veus gratuïtes Joana i Enric)'),
+    it('serviceWorker' in navigator&&location.protocol==='https:','Ús sense connexió i instal·lació com a aplicació'),
     it(window.isSecureContext,'Adreça segura (https), necessària per al micròfon'),
     it(!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia),'Accés al micròfon'),
     it(!!SR,'Reconeixement de veu del navegador'),
@@ -1647,6 +1871,7 @@ loadText();
 runSimulation(true);
 if('speechSynthesis' in window){fillBrowserVoices();speechSynthesis.onvoiceschanged=fillBrowserVoices;}
 renderDiag();
+if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}}
 </script>
 
 </body>
