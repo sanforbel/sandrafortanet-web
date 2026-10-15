@@ -8,6 +8,10 @@
 <meta name="theme-color" content="#0B7A67">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ressò">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,500&family=Andika:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -270,6 +274,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
       <h1>Ressò</h1>
       <p>Tutor de lectura en veu alta per a Primària i ESO, en valencià i en castellà.</p>
     </div>
+    <button class="btn sm" id="bInstall" style="margin-left:auto" hidden>Instal·la l'app</button>
     <nav class="tabs" role="tablist">
       <button role="tab" id="tab-llig" aria-selected="true" data-tab="llig">Lectura</button>
       <button role="tab" id="tab-aula" aria-selected="false" data-tab="aula">Aula</button>
@@ -598,6 +603,14 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <li><strong>Reconeixement automàtic de la veu de l'alumnat:</strong> en Firefox no està disponible i en Chromium sovint no funciona. Cal Google Chrome o Microsoft Edge, o bé ElevenLabs Scribe, que funciona també en Firefox.</li>
         <li><strong>Veus sintètiques:</strong> en Linux solen ser de poca qualitat. Per això és millor gravar una lectura model de cada text.</li>
         <li><strong>Sense connexió:</strong> en Chrome, Edge o Chromium, després de la primera visita, l'app continua obrint-se sense internet, i es pot instal·lar com una aplicació des del menú del navegador. També la pots <a href="resso-app.zip" download>descarregar en un fitxer .zip</a>: el descomprimixes i obris <code>index.html</code>.</li>
+      </ul>
+
+      <h3>Instal·lar Ressò com una app</h3>
+      <ul>
+        <li><strong>Ordinador (Chrome, Edge o Chromium):</strong> prem el botó «Instal·la l'app» de dalt, o la icona d'instal·lar que apareix a la dreta de la barra d'adreces.</li>
+        <li><strong>Mòbil o tauleta Android (Chrome):</strong> menú ⋮ › «Instal·la l'aplicació» o «Afig a la pantalla d'inici».</li>
+        <li><strong>iPhone o iPad (Safari):</strong> botó de compartir › «Afig a la pantalla d'inici».</li>
+        <li>Un cop instal·lada, s'obri a pantalla completa com qualsevol altra app i guarda les lectures en el mateix dispositiu.</li>
       </ul>
 
       <h3>Fonamentació</h3>
@@ -1871,6 +1884,10 @@ loadText();
 runSimulation(true);
 if('speechSynthesis' in window){fillBrowserVoices();speechSynthesis.onvoiceschanged=fillBrowserVoices;}
 renderDiag();
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('bInstall').hidden=false;});
+window.addEventListener('appinstalled',()=>{$('bInstall').hidden=true;toast("Ressò s'ha instal·lat. La trobaràs entre les aplicacions.");});
+$('bInstall').onclick=async()=>{if(!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;$('bInstall').hidden=true;};
 if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}}
 </script>
 
