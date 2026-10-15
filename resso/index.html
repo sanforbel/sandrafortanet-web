@@ -295,6 +295,15 @@ th.num{text-align:right}
 .tip{background:var(--accent-soft);border-radius:var(--r);padding:14px 16px;font-family:var(--f-kid);font-size:1.02rem}
 .tip span{display:block;font-size:1.6rem;line-height:1;margin-bottom:6px}
 .g-cta{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+.ai{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ins);border-radius:var(--r);padding:18px;margin-top:14px}
+.ai h3{margin:0 0 4px;font-size:1.1rem}
+.ai>p{margin:0 0 12px;color:var(--muted);font-size:.9rem;max-width:75ch}
+.ai .stepline{display:flex;gap:10px;align-items:baseline;margin:16px 0 8px;font-weight:600}
+.ai .stepline span{font-family:var(--f-mono);width:26px;height:26px;border-radius:50%;background:var(--ins-soft);color:var(--ins);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.ai .row{display:flex;flex-wrap:wrap;gap:12px}
+.ai .row .field{flex:1 1 160px}
+.ai pre{white-space:pre-wrap;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:12px;font-size:.8rem;max-height:180px;overflow:auto;margin:0}
+.ai textarea{min-height:140px;font-family:var(--f-ui);font-size:.9rem}
 footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
 
 @media print{
@@ -548,6 +557,8 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <div class="g-sec">
           <h3>Bones pràctiques</h3>
           <ul>
+            <li>Necessites un text a mida? Ves a «Biblioteca › Crea'l amb IA»: Ressò prepara el prompt, tu l'enganxes en la IA i la resposta omple sola la fitxa del text i les preguntes. Revisa-la sempre abans de desar-la.</li>
+            <li>Pots compartir els teus textos amb altres docents amb «Comparteix els meus textos», i carregar els que t'envien amb «Carrega textos».</li>
             <li>Identifica l'alumnat només amb números i informa les famílies abans d'usar el micròfon.</li>
             <li>Fes la mateixa prova (mateix tipus de text i durada) cada 3-4 setmanes per a veure l'evolució.</li>
             <li>Si el reconeixement de veu falla, passa al marcatge manual: les dades valen igual.</li>
@@ -613,7 +624,40 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <h2 class="sec-h">Biblioteca de textos</h2>
         <p style="margin:4px 0 0;color:var(--muted);max-width:62ch">Textos originals per cicles, amb preguntes de comprensió. Pots afegir-hi els teus i quedaran guardats en este navegador.</p>
       </div>
-      <button class="btn primary" id="bNewText">Afig un text</button>
+      <div class="row-actions">
+        <button class="btn primary" id="bNewText">Afig un text</button>
+        <button class="btn" id="bAiText">Crea'l amb IA</button>
+        <button class="btn" id="bLibOut">Comparteix els meus textos</button>
+        <label class="btn" for="libIn">Carrega textos</label><input type="file" id="libIn" accept="application/json,.json,.txt" hidden>
+      </div>
+    </div>
+
+    <div class="ai" id="aiBox" hidden>
+      <h3>Crea un text amb IA</h3>
+      <p>Ressò prepara el prompt amb el format que necessita. El copies en la IA que faces servir, i després enganxes ací la resposta: la fitxa del text i les preguntes s'omplin soles i només cal revisar-les. No poses mai noms ni dades de l'alumnat.</p>
+      <div class="stepline"><span>1</span>Tria com ha de ser el text</div>
+      <div class="row">
+        <div class="field"><label for="aiLang">Llengua</label><select id="aiLang"><option value="ca">Valencià</option><option value="es">Castellà</option></select></div>
+        <div class="field"><label for="aiCourse">Curs</label><select id="aiCourse"></select></div>
+        <div class="field"><label for="aiType">Tipus de text</label><select id="aiType"><option value="narratiu">Narratiu (un conte)</option><option value="expositiu">Expositiu (informatiu)</option><option value="descriptiu">Descriptiu</option><option value="dialogat">Dialogat</option><option value="instructiu">Instructiu</option></select></div>
+        <div class="field"><label for="aiWords">Paraules</label><input id="aiWords" type="number" min="30" max="300" class="inp"></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <div class="field"><label for="aiTopic">Tema</label><input id="aiTopic" class="inp" placeholder="Per exemple: les falles, els volcans, un gos que es perd…"></div>
+        <div class="field"><label for="aiFocus">Focus de lectura (opcional)</label><input id="aiFocus" class="inp" placeholder="Per exemple: paraules amb «ny», vocabulari del mar…"></div>
+      </div>
+      <div class="stepline"><span>2</span>Copia el prompt i enganxa'l en la IA</div>
+      <pre id="aiPrompt"></pre>
+      <div class="row-actions" style="margin-top:10px">
+        <button class="btn primary" id="bAiCopy">Copia el prompt</button>
+        <a class="btn" href="https://claude.ai/new" target="_blank" rel="noopener">Obri Claude</a>
+        <a class="btn" href="https://gemini.google.com/app" target="_blank" rel="noopener">Obri Gemini</a>
+        <a class="btn" href="https://chatgpt.com/" target="_blank" rel="noopener">Obri ChatGPT</a>
+        <a class="btn" href="../prompts-lectura/" target="_blank" rel="noopener">Més prompts: Prompts de Lectura</a>
+      </div>
+      <div class="stepline"><span>3</span>Enganxa ací la resposta de la IA</div>
+      <textarea id="aiAnswer" placeholder="TÍTOL: …&#10;TEXT:&#10;…&#10;PREGUNTA LITERAL: …"></textarea>
+      <div class="row-actions" style="margin-top:10px"><button class="btn primary" id="bAiFill">Omple la fitxa</button><button class="btn" id="bAiClose">Tanca</button><span class="hint" id="aiMsg" style="margin:0"></span></div>
     </div>
     <form class="form" id="textForm" hidden>
       <div class="row">
@@ -623,7 +667,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
       </div>
       <div class="field"><label for="nfBody">Text</label><textarea id="nfBody" required></textarea></div>
       <div id="nfQs"></div>
-      <div class="row-actions"><button class="btn primary" type="submit">Desa el text</button><button class="btn" type="button" id="bCancelText">Cancel·la</button></div>
+      <div class="row-actions"><button class="btn primary" type="submit">Desa el text</button><button class="btn" type="button" id="bCancelText">Cancel·la</button><span class="hint" id="nfDif" style="margin:0"></span></div>
     </form>
     <div id="library"></div>
   </section>
@@ -1847,7 +1891,7 @@ $('bPrint').onclick=()=>{
    ========================================================= */
 function renderLibrary(){
   const lib=store.get('resso.library',[]);let h='';
-  const card=(t,own)=>`<div class="tcard"><h4>${esc(t.title)}</h4><div class="meta"><span class="chip">${t.lang==='ca'?'Valencià':'Castellà'}</span><span class="chip">${tokenize(t.body).length} paraules</span>${textDifficulty(t.body)!=null?`<span class="chip dif">Dificultat ${textDifficulty(t.body)} · ${difLabel(textDifficulty(t.body))}</span>`:''}${t.audio?'<span class="chip ex">lectura gravada</span>':''}${own?'<span class="chip ex">meu</span>':''}</div><p>${esc(t.body)}</p><div class="acts"><button class="btn sm primary" data-read="${t.id}">Llig-lo</button><button class="btn sm" data-listen="${t.id}">Escolta'l</button>${own?`<button class="btn sm" data-deltext="${t.id}">Esborra</button>`:''}</div></div>`;
+  const card=(t,own)=>`<div class="tcard"><h4>${esc(t.title)}</h4><div class="meta"><span class="chip">${t.lang==='ca'?'Valencià':'Castellà'}</span><span class="chip">${tokenize(t.body).length} paraules</span>${textDifficulty(t.body)!=null?`<span class="chip dif">Dificultat ${textDifficulty(t.body)} · ${difLabel(textDifficulty(t.body))}</span>`:''}${t.audio?'<span class="chip ex">lectura gravada</span>':''}${own?'<span class="chip ex">meu</span>':''}</div><p>${esc(t.body)}</p><div class="acts"><button class="btn sm primary" data-read="${t.id}">Llig-lo</button><button class="btn sm" data-listen="${t.id}">Escolta'l</button>${own?`<button class="btn sm" data-edittext="${t.id}">Edita</button><button class="btn sm" data-deltext="${t.id}">Esborra</button>`:''}</div></div>`;
   Object.entries(CICLES).forEach(([k,v])=>{
     const ts=TEXTS.filter(t=>t.cicle===k).map(t=>card(t,false)).concat(lib.filter(t=>t.cicle===k).map(t=>card(t,true)));
     h+=`<h3 class="cicle-h">${esc(v)}</h3><div class="cards">${ts.join('')}</div>`;
@@ -1855,6 +1899,7 @@ function renderLibrary(){
   $('library').innerHTML=h;
 }
 $('library').addEventListener('click',e=>{
+  const ed=e.target.closest('[data-edittext]');if(ed){const t=store.get('resso.library',[]).find(x=>x.id===ed.dataset.edittext);if(t)openTextForm(t);return;}
   const r=e.target.closest('[data-read]'),l=e.target.closest('[data-listen]'),d=e.target.closest('[data-deltext]');
   if(r||l){$('textSel').value=(r||l).dataset.read||(r||l).dataset.listen;const t=currentText();const c=COURSES.find(c=>c.cicle===t.cicle);if(c&&courseById($('course').value).cicle!==t.cicle)$('course').value=c.id;showTab('llig');loadText();if(l)playModel();}
   if(d){store.set('resso.library',store.get('resso.library',[]).filter(t=>t.id!==d.dataset.deltext));fillTextSelect($('textSel').value);renderLibrary();toast('Text esborrat');}
@@ -1862,14 +1907,138 @@ $('library').addEventListener('click',e=>{
 function renderQForm(){
   $('nfQs').innerHTML=['Literal','Inferencial','Crítica'].map((t,k)=>`<div class="qedit"><label class="lbl" for="nq${k}">Pregunta ${t.toLowerCase()} (opcional)</label><input id="nq${k}" class="inp" type="text">${[0,1,2].map(n=>`<div class="opt-row"><input type="radio" name="na${k}" id="na${k}_${n}" value="${n}" ${n===0?'checked':''} aria-label="Resposta correcta"><input type="text" class="inp" id="no${k}_${n}" placeholder="Opció ${n+1}${n===0?' (marca la correcta)':''}"></div>`).join('')}</div>`).join('');
 }
-$('bNewText').onclick=()=>{$('textForm').hidden=false;renderQForm();$('nfTitle').focus();};
-$('bCancelText').onclick=()=>{$('textForm').hidden=true;$('textForm').reset();};
+/* ---------- Crear textos amb IA ---------- */
+const AI_WORDS={C1:[45,70],C2:[80,110],C3:[110,150],ESO:[140,190]};
+function aiDefaults(){const c=courseById($('aiCourse').value);const r=AI_WORDS[c.cicle];if(!$('aiWords').dataset.touched)$('aiWords').value=Math.round((r[0]+r[1])/2);}
+function aiPrompt(){
+  const L=$('aiLang').value,c=courseById($('aiCourse').value),n=+$('aiWords').value||100,tp=$('aiType').value,topic=$('aiTopic').value.trim(),focus=$('aiFocus').value.trim();
+  const maxw={C1:8,C2:12,C3:16,ESO:22}[c.cicle];
+  if(L==='ca'){
+    const tipus={narratiu:'narratiu (un conte breu amb inici, nus i desenllaç)',expositiu:'expositiu (informatiu, amb dades certes i comprovables)',descriptiu:'descriptiu',dialogat:'dialogat (amb guions de diàleg)',instructiu:'instructiu (passos ordenats)'}[tp];
+    return `Actua com un mestre expert en didàctica de la lectura i en la ciència de la lectura.
+
+Escriu un text original en valencià per a llegir en veu alta amb alumnat de ${c.label}.
+- Tipus de text: ${tipus}.
+- Tema: ${topic||'tria un tema interessant i adequat a l\'edat'}.
+- Extensió: unes ${n} paraules.
+- Frases de ${maxw} paraules com a màxim, vocabulari adequat al curs i puntuació clara (que ajude a llegir amb bona entonació).${focus?`\n- Focus de lectura: ${focus}. Inclou-ho de manera natural diverses vegades.`:''}
+- Valencià normatiu de l'Acadèmia Valenciana de la Llengua, variant septentrional: formes com «este», «hui», «xiquet», «eixir», possessius «meua/seua», present en -e («jo parle»). Sense gerundis de posterioritat.
+- Si dones dades, que siguen certes. Sense noms de persones reals.
+
+Després, escriu tres preguntes de comprensió d'opció múltiple amb tres opcions cadascuna (només una correcta): una literal, una inferencial i una crítica.
+
+Respon NOMÉS amb este format exacte, sense negretes ni cap altre text:
+TÍTOL: ...
+TEXT:
+...
+PREGUNTA LITERAL: ...
+a) ...
+b) ...
+c) ...
+CORRECTA: (a, b o c)
+PREGUNTA INFERENCIAL: ...
+a) ...
+b) ...
+c) ...
+CORRECTA: ...
+PREGUNTA CRÍTICA: ...
+a) ...
+b) ...
+c) ...
+CORRECTA: ...`;
+  }
+  const tipo={narratiu:'narrativo (un cuento breve con planteamiento, nudo y desenlace)',expositiu:'expositivo (informativo, con datos ciertos y comprobables)',descriptiu:'descriptivo',dialogat:'dialogado (con rayas de diálogo)',instructiu:'instructivo (pasos ordenados)'}[tp];
+  return `Actúa como un maestro experto en didáctica de la lectura y en la ciencia de la lectura.
+
+Escribe un texto original en castellano para leer en voz alta con alumnado de ${c.label.replace("de Primària","de Primaria").replace("d'ESO","de ESO")}.
+- Tipo de texto: ${tipo}.
+- Tema: ${topic||'elige un tema interesante y adecuado a la edad'}.
+- Extensión: unas ${n} palabras.
+- Frases de ${maxw} palabras como máximo, vocabulario adecuado al curso y puntuación clara (que ayude a leer con buena entonación).${focus?`\n- Foco de lectura: ${focus}. Inclúyelo de forma natural varias veces.`:''}
+- Si das datos, que sean ciertos. Sin nombres de personas reales.
+
+Después, escribe tres preguntas de comprensión de opción múltiple con tres opciones cada una (solo una correcta): una literal, una inferencial y una crítica.
+
+Responde SOLO con este formato exacto, sin negritas ni ningún otro texto:
+TÍTOL: ...
+TEXT:
+...
+PREGUNTA LITERAL: ...
+a) ...
+b) ...
+c) ...
+CORRECTA: (a, b o c)
+PREGUNTA INFERENCIAL: ...
+a) ...
+b) ...
+c) ...
+CORRECTA: ...
+PREGUNTA CRÍTICA: ...
+a) ...
+b) ...
+c) ...
+CORRECTA: ...`;
+}
+function renderAiPrompt(){aiDefaults();$('aiPrompt').textContent=aiPrompt();}
+/* Interpreta la resposta (accepta etiquetes en valencià o castellà i restes de format markdown). */
+function parseAi(raw){
+  const txt=String(raw).replace(/\r/g,'').replace(/\*\*|__|^#+\s*/gm,'');
+  const lines=txt.split('\n');let title='',body=[],qs=[],mode=null,cur=null;
+  const qre=/^\s*(?:pregunta\s+)?(literal|inferencial|cr[ií]tica)\s*:\s*(.*)$/i;
+  for(const ln of lines){
+    const l=ln.trim();
+    let m;
+    if((m=l.match(/^t[ií]tol(?:o)?\s*:\s*(.*)$/i))){title=m[1].trim();mode=null;continue;}
+    if((m=l.match(/^text(?:o)?\s*:\s*(.*)$/i))){mode='body';if(m[1])body.push(m[1]);continue;}
+    if((m=l.match(qre))){const t=m[1].toLowerCase().startsWith('lit')?'Literal':m[1].toLowerCase().startsWith('inf')?'Inferencial':'Crítica';cur={t,q:m[2].trim(),o:[],a:0};qs.push(cur);mode='q';continue;}
+    if(mode==='q'&&cur&&(m=l.match(/^([abc])[\)\.\-:]\s*(.*)$/i))){cur.o.push(m[2].trim());continue;}
+    if(mode==='q'&&cur&&(m=l.match(/^correct[ae]\s*:\s*\(?\s*([abc])/i))){cur.a='abc'.indexOf(m[1].toLowerCase());continue;}
+    if(mode==='body')body.push(l);
+  }
+  const b=body.join(' ').replace(/\s+/g,' ').trim();
+  return {title,body:b,qs:qs.filter(q=>q.q&&q.o.length===3)};
+}
+$('bAiText').onclick=()=>{const box=$('aiBox');box.hidden=!box.hidden;if(!box.hidden){if(!$('aiCourse').options.length){$('aiCourse').innerHTML=COURSES.map(c=>`<option value="${c.id}">${esc(c.label)}</option>`).join('');$('aiCourse').value=$('course').value;}renderAiPrompt();box.scrollIntoView({behavior:'smooth',block:'start'});}};
+['aiLang','aiCourse','aiType','aiTopic','aiFocus'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='aiCourse')$('aiWords').dataset.touched='';renderAiPrompt();}));
+$('aiWords').addEventListener('input',()=>{$('aiWords').dataset.touched='1';renderAiPrompt();});
+$('bAiCopy').onclick=()=>{const t=aiPrompt();if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Prompt copiat. Enganxa\'l en la IA.'),()=>{const r=document.createRange();r.selectNodeContents($('aiPrompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Prem Ctrl + C per a copiar-lo.');});};
+$('bAiClose').onclick=()=>{$('aiBox').hidden=true;};
+$('bAiFill').onclick=()=>{
+  const r=parseAi($('aiAnswer').value);
+  if(!r.body||tokenize(r.body).length<15){$('aiMsg').textContent="No he trobat el text. Comprova que la resposta comença amb «TÍTOL:» i «TEXT:».";$('aiMsg').style.color='var(--sub)';return;}
+  const c=courseById($('aiCourse').value);
+  openTextForm({title:r.title||'Text nou',lang:$('aiLang').value,cicle:c.cicle,body:r.body,qs:r.qs});
+  $('aiMsg').textContent=`Fitxa omplida: ${tokenize(r.body).length} paraules i ${r.qs.length} preguntes. Revisa-la i prem «Desa el text».`;$('aiMsg').style.color='var(--accent)';
+};
+
+/* ---------- Compartir textos ---------- */
+$('bLibOut').onclick=()=>{const lib=store.get('resso.library',[]);if(!lib.length){toast('Encara no has afegit cap text propi.');return;}
+  downloadFile('resso-textos-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({app:'Ressò',kind:'textos',version:1,texts:lib},null,1),'application/json');toast(`Descarregats ${lib.length} textos. Passa el fitxer a qui vulgues.`);};
+$('libIn').onchange=async e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;const raw=await f.text();const lib=store.get('resso.library',[]);let n=0;
+  try{const j=JSON.parse(raw);const arr=Array.isArray(j)?j:(j.texts||j.library||[]);
+    arr.forEach(t=>{if(!t||!t.body||!t.title)return;const id=lib.some(x=>x.id===t.id)||!t.id?'u'+Date.now()+'_'+n:t.id;lib.push({id,own:true,title:String(t.title),lang:t.lang==='es'?'es':'ca',cicle:CICLES[t.cicle]?t.cicle:'ESO',body:String(t.body),qs:Array.isArray(t.qs)?t.qs:[]});n++;});}
+  catch(err){const r=parseAi(raw);if(r.body){openTextForm({title:r.title||f.name.replace(/\.[^.]+$/,''),lang:'ca',cicle:'ESO',body:r.body,qs:r.qs});toast('Text carregat en la fitxa. Revisa-la i desa-la.');return;}}
+  if(!n){toast('No he trobat cap text en el fitxer.');return;}
+  store.set('resso.library',lib);fillTextSelect($('textSel').value);renderLibrary();toast(`Afegits ${n} textos a la biblioteca.`);
+};
+let editingId=null;
+function openTextForm(t){
+  const f=$('textForm');f.hidden=false;renderQForm();editingId=t&&t.id||null;
+  $('nfTitle').value=t?t.title||'':'';$('nfLang').value=t&&t.lang||'ca';$('nfCicle').value=t&&t.cicle||'ESO';$('nfBody').value=t?t.body||'':'';
+  (t&&t.qs||[]).forEach(q=>{const k=['Literal','Inferencial','Crítica'].indexOf(q.t);const kk=k<0?0:k;$('nq'+kk).value=q.q;q.o.forEach((o,n)=>{if(n<3)$('no'+kk+'_'+n).value=o;});const r=$('na'+kk+'_'+(q.a||0));if(r)r.checked=true;});
+  updDif();f.scrollIntoView({behavior:'smooth',block:'start'});$('nfTitle').focus();
+}
+function updDif(){const d=textDifficulty($('nfBody').value.replace(/\s+/g,' ').trim());$('nfDif').textContent=d==null?'':`${tokenize($('nfBody').value).length} paraules · dificultat ${d} (${difLabel(d)})`;}
+$('nfBody').addEventListener('input',updDif);
+$('bNewText').onclick=()=>openTextForm(null);
+$('bCancelText').onclick=()=>{$('textForm').hidden=true;$('textForm').reset();editingId=null;};
 $('textForm').addEventListener('submit',e=>{
   e.preventDefault();
   const qs=[];['Literal','Inferencial','Crítica'].forEach((t,k)=>{const q=$('nq'+k).value.trim();const o=[0,1,2].map(n=>$('no'+k+'_'+n).value.trim());
     if(q&&o.every(Boolean)){const a=+document.querySelector(`input[name="na${k}"]:checked`).value;qs.push({t,q,o,a});}});
-  const t={id:'u'+Date.now(),own:true,title:$('nfTitle').value.trim(),lang:$('nfLang').value,cicle:$('nfCicle').value,body:$('nfBody').value.trim().replace(/\s+/g,' '),qs};
-  const lib=store.get('resso.library',[]);lib.push(t);store.set('resso.library',lib);
+  const t={id:editingId||'u'+Date.now(),own:true,title:$('nfTitle').value.trim(),lang:$('nfLang').value,cicle:$('nfCicle').value,body:$('nfBody').value.trim().replace(/\s+/g,' '),qs};
+  const lib=store.get('resso.library',[]);const ix=lib.findIndex(x=>x.id===t.id);if(ix>=0)lib[ix]=t;else lib.push(t);store.set('resso.library',lib);editingId=null;
   $('textForm').hidden=true;$('textForm').reset();fillTextSelect($('textSel').value);renderLibrary();toast('Text desat a la biblioteca');
 });
 
