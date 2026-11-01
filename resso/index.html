@@ -51,12 +51,13 @@ button,select,input,textarea{font:inherit;color:inherit}
 a{color:var(--accent)}
 
 /* capçalera */
-header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:24px 18px;border-bottom:1px solid var(--line)}
+header.top{position:sticky;top:0;z-index:8;background:var(--bg);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:24px 18px;border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .brand h1{margin:0;font-size:2.6rem;font-weight:700;letter-spacing:-.02em;line-height:1;padding-right:14px;
   text-shadow:6px 0 0 color-mix(in srgb,var(--accent) 38%,transparent),12px 0 0 color-mix(in srgb,var(--accent) 16%,transparent)}
 .brand p{margin:0;color:var(--muted);font-size:.95rem;max-width:36ch}
 nav.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:999px;flex-wrap:wrap}
+@media (max-width:640px){nav.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%}nav.tabs::-webkit-scrollbar{display:none}nav.tabs button{white-space:nowrap}header.top{padding-block:14px 12px}}
 nav.tabs button{border:0;background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--muted)}
 nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
 
@@ -2219,5 +2220,11 @@ $('bInstall').onclick=async()=>{if(!installEvt)return;installEvt.prompt();try{aw
 if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}}
 </script>
 
+<script>
+/* Pestanyes fixades: en baixar, el títol puja i només queden visibles les pestanyes */
+(function(){var h=document.querySelector('header.top'),n=h&&h.querySelector('nav.tabs');if(!h||!n)return;
+function f(){h.style.top=-Math.max(0,n.offsetTop-h.offsetTop-10)+'px'}
+f();addEventListener('resize',f);if(window.ResizeObserver)new ResizeObserver(f).observe(h)})();
+</script>
 </body>
 </html>

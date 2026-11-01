@@ -49,6 +49,8 @@
   .wrap{max-width:1060px;margin:0 auto;padding:0 22px}
 
   /* ---------- Nav ---------- */
+  html{scroll-padding-top:84px}
+  .navbar{position:sticky;top:0;z-index:30;background:var(--paper)}
   .nav{
     display:flex;justify-content:space-between;align-items:center;gap:14px;
     padding:18px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;
@@ -409,6 +411,7 @@
 </head>
 <body>
 
+<div class="navbar">
 <div class="wrap">
   <nav class="nav" aria-label="Principal">
     <!-- EDITA'M: el teu nom o marca curta -->
@@ -431,6 +434,7 @@
       </div>
     </div>
   </nav>
+</div>
 </div>
 
 <header class="hero">
