@@ -90,6 +90,11 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
 
 <style>html,body{margin:0}</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E2A32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Paraules">
 </head>
 <body>
 <div class="wrap">
@@ -313,5 +318,44 @@ $("#u-skip").addEventListener("click", newPair);
 renderChips(); renderGrid();
 </script>
 
+<!-- App instal·lable: botó «Descarrega l'app» -->
+<style>
+.appdl-btn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:900;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px;background:#1E2A32;color:#fff;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.22);cursor:pointer}
+.appdl-btn:hover{filter:brightness(1.08)}
+.appdl-btn:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 6px #1E2A32}
+.appdl-dlg{border:0;border-radius:16px;padding:22px 22px 18px;max-width:min(440px,calc(100vw - 32px));background:#fff;color:#1d2125;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.appdl-dlg::backdrop{background:rgba(0,0,0,.45)}
+.appdl-dlg h2{margin:0 0 12px;font-size:18px;line-height:1.25}
+.appdl-dlg p{margin:0 0 10px}
+.appdl-dlg .appdl-ok{margin-top:6px;border:0;border-radius:999px;padding:10px 18px;background:#1E2A32;color:#fff;font:600 14px/1 inherit;cursor:pointer}
+@media (prefers-color-scheme:dark){.appdl-dlg{background:#1f2427;color:#e8ecee}}
+@media print{.appdl-btn,.appdl-dlg{display:none!important}}
+</style>
+<button type="button" class="appdl-btn" id="appdlBtn" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Descarrega l'app</button>
+<dialog class="appdl-dlg" id="appdlDlg" aria-labelledby="appdlTit">
+  <h2 id="appdlTit">Instal·la Paraules com a aplicació</h2>
+  <p id="appdlIos"><b>En iPhone o iPad:</b> obri esta pàgina amb Safari, prem el botó Compartir (el quadrat amb la fletxa cap amunt) i tria l'opció d'afegir-la a la pantalla d'inici.</p>
+  <p id="appdlAlt"><b>En Android o a l'ordinador:</b> obri el menú del navegador (⋮) i tria l'opció d'instal·lar l'aplicació o d'afegir-la a la pantalla d'inici.</p>
+  <p>Després l'obriràs des de la pantalla d'inici, com qualsevol altra aplicació.</p>
+  <form method="dialog"><button class="appdl-ok">Entesos</button></form>
+</dialog>
+<script>
+(function(){
+  var b=document.getElementById('appdlBtn'),dlg=document.getElementById('appdlDlg'),evt=null;
+  if(!b)return;
+  var inst=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!inst)b.hidden=false;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();evt=e;if(!inst)b.hidden=false;});
+  window.addEventListener('appinstalled',function(){b.hidden=true;evt=null;});
+  b.onclick=function(){
+    if(evt){evt.prompt();(evt.userChoice||Promise.resolve()).catch(function(){});evt=null;return;}
+    document.getElementById(ios?'appdlAlt':'appdlIos').hidden=true;
+    document.getElementById(ios?'appdlIos':'appdlAlt').hidden=false;
+    if(dlg.showModal)dlg.showModal();else alert(dlg.innerText);
+  };
+  if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}}
+})();
+</script>
 </body>
 </html>

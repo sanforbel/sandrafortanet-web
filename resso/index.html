@@ -325,7 +325,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
       <h1>Ressò</h1>
       <p>Tutor de lectura en veu alta per a Primària i ESO, en valencià i en castellà.</p>
     </div>
-    <button class="btn sm" id="bInstall" style="margin-left:auto" hidden>Instal·la l'app</button>
+    <button class="btn sm" id="bInstall" style="margin-left:auto" hidden>Descarrega l'app</button>
     <nav class="tabs" role="tablist">
       <button role="tab" id="tab-llig" aria-selected="true" data-tab="llig">Lectura</button>
       <button role="tab" id="tab-guia" aria-selected="false" data-tab="guia">Guia</button>
@@ -2214,9 +2214,6 @@ runSimulation(true);
 if('speechSynthesis' in window){fillBrowserVoices();speechSynthesis.onvoiceschanged=fillBrowserVoices;}
 renderDiag();
 let installEvt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('bInstall').hidden=false;});
-window.addEventListener('appinstalled',()=>{$('bInstall').hidden=true;toast("Ressò s'ha instal·lat. La trobaràs entre les aplicacions.");});
-$('bInstall').onclick=async()=>{if(!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;$('bInstall').hidden=true;};
 if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}}
 </script>
 
@@ -2225,6 +2222,44 @@ if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.ser
 (function(){var h=document.querySelector('header.top'),n=h&&h.querySelector('nav.tabs');if(!h||!n)return;
 function f(){h.style.top=-Math.max(0,n.offsetTop-h.offsetTop-10)+'px'}
 f();addEventListener('resize',f);if(window.ResizeObserver)new ResizeObserver(f).observe(h)})();
+</script>
+<!-- App instal·lable: botó «Descarrega l'app» -->
+<style>
+.appdl-btn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:900;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px;background:#0B7A67;color:#fff;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.22);cursor:pointer}
+.appdl-btn:hover{filter:brightness(1.08)}
+.appdl-btn:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 6px #0B7A67}
+.appdl-dlg{border:0;border-radius:16px;padding:22px 22px 18px;max-width:min(440px,calc(100vw - 32px));background:#fff;color:#1d2125;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.appdl-dlg::backdrop{background:rgba(0,0,0,.45)}
+.appdl-dlg h2{margin:0 0 12px;font-size:18px;line-height:1.25}
+.appdl-dlg p{margin:0 0 10px}
+.appdl-dlg .appdl-ok{margin-top:6px;border:0;border-radius:999px;padding:10px 18px;background:#0B7A67;color:#fff;font:600 14px/1 inherit;cursor:pointer}
+@media (prefers-color-scheme:dark){.appdl-dlg{background:#1f2427;color:#e8ecee}}
+@media print{.appdl-btn,.appdl-dlg{display:none!important}}
+</style>
+<dialog class="appdl-dlg" id="appdlDlg" aria-labelledby="appdlTit">
+  <h2 id="appdlTit">Instal·la Ressò com a aplicació</h2>
+  <p id="appdlIos"><b>En iPhone o iPad:</b> obri esta pàgina amb Safari, prem el botó Compartir (el quadrat amb la fletxa cap amunt) i tria l'opció d'afegir-la a la pantalla d'inici.</p>
+  <p id="appdlAlt"><b>En Android o a l'ordinador:</b> obri el menú del navegador (⋮) i tria l'opció d'instal·lar l'aplicació o d'afegir-la a la pantalla d'inici.</p>
+  <p>Després l'obriràs des de la pantalla d'inici, com qualsevol altra aplicació.</p>
+  <form method="dialog"><button class="appdl-ok">Entesos</button></form>
+</dialog>
+<script>
+(function(){
+  var b=document.getElementById('bInstall'),dlg=document.getElementById('appdlDlg'),evt=null;
+  if(!b)return;
+  var inst=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!inst)b.hidden=false;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();evt=e;if(!inst)b.hidden=false;});
+  window.addEventListener('appinstalled',function(){b.hidden=true;evt=null;});
+  b.onclick=function(){
+    if(evt){evt.prompt();(evt.userChoice||Promise.resolve()).catch(function(){});evt=null;return;}
+    document.getElementById(ios?'appdlAlt':'appdlIos').hidden=true;
+    document.getElementById(ios?'appdlIos':'appdlAlt').hidden=false;
+    if(dlg.showModal)dlg.showModal();else alert(dlg.innerText);
+  };
+  if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}}
+})();
 </script>
 </body>
 </html>
