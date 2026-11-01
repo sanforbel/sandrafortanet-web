@@ -1,9 +1,9 @@
-/* Dades de La Brúixola IA — revisades el 7 d'agost de 2026.
+/* Dades de La Brúixola IA — revisades l'1 de novembre de 2026.
    Cada ferramenta: id de categoria, nom, adreça, descripció i, si cal, un avís.
    Els avisos són el que fa útil el directori: diuen què ha canviat i què cal
    saber abans de recomanar-la a l'aula. */
 window.BRUIXOLA = {
-  revisio: "2026-09-01",
+  revisio: "2026-11-01",
   categories: [
     {id:"estrella", ca:"Ferramenta estrella", es:"Herramienta estrella", en:"Standout tool", fr:"Outil vedette"},
     {id:"debat",    ca:"Debat i oratòria", es:"Debate y oratoria", en:"Debate & public speaking", fr:"Débat et art oratoire"},
@@ -28,7 +28,7 @@ window.BRUIXOLA = {
 
     {c:"estrella", n:"Gemini Notebook", alies:"NotebookLM", u:"https://notebooklm.google.com", estrella:true,
      d:"Genera pòdcasts, infografies i resums intel·ligents des dels teus documents.",
-     avis:"Google el va rebatejar de NotebookLM a Gemini Notebook el juliol de 2026. Mateix producte i mateixa adreça."},
+     avis:"Google el va rebatejar de NotebookLM a Gemini Notebook el juliol de 2026. Mateix producte i mateixa adreça. Des del 2 de setembre de 2026 els límits d'ús es renoven cada cinc hores, no cada dia."},
 
     {c:"present", n:"Gamma", u:"https://gamma.app/",
      d:"Crea presentacions, documents i pàgines web atractives a partir de text en pocs segons."},
@@ -37,7 +37,7 @@ window.BRUIXOLA = {
 
     {c:"debat", n:"Debate Devil", u:"https://www.debate-devil.com/en",
      d:"Entrena l'oratòria i el pensament crític amb una IA que et porta la contrària de forma mordaç.",
-     avis:"Sense senyals d'activitat recent. Comprova que responga abans d'usar-la en classe."},
+     avis:"L'1 de novembre de 2026 el lloc no responia, i l'arxiu web no en té cap còpia des del 28 d'agost de 2026. Comprova que funcione abans de comptar amb ella en classe."},
     {c:"debat", n:"Kialo Edu", alies:"Kialo AI", u:"https://www.kialo-edu.com",
      d:"Plataforma per a estructurar debats complexos i visualitzar la jerarquia d'arguments.",
      avis:"El nom correcte és Kialo Edu: la plataforma és gratuïta però no anuncia funcions d'IA."},
@@ -61,7 +61,8 @@ window.BRUIXOLA = {
     {c:"models", n:"Claude", u:"https://claude.ai",
      d:"La IA d'Anthropic, referent en ètica i seguretat amb la seua IA constitucional."},
     {c:"models", n:"Gemini", u:"https://gemini.google.com",
-     d:"L'aposta multimodal de Google integrada amb tot el seu ecosistema."},
+     d:"L'aposta multimodal de Google integrada amb tot el seu ecosistema.",
+     avis:"Des del 9 d'octubre de 2026 els comptes gratuïts responen sobretot amb Gemini Flash-Lite; per a Flash i Pro ja cal un pla de pagament."},
     {c:"models", n:"Microsoft Copilot", u:"https://copilot.microsoft.com/",
      d:"L'assistent de Microsoft integrat en Windows i Office."},
     {c:"models", n:"DeepSeek", u:"https://www.deepseek.com/",
@@ -71,9 +72,9 @@ window.BRUIXOLA = {
     {c:"imatges", n:"Recraft", alies:"Red Panda AI", u:"https://www.recraft.ai/",
      d:"Generació d'imatges amb control d'estil i tipografia, molt sòlida per a materials didàctics.",
      avis:"«Red Panda» era el nom en clau de Recraft V3 durant unes proves anònimes; l'eina real és Recraft."},
-    {c:"imatges", n:"ChatGPT Images", alies:"DALL·E 3", u:"https://chatgpt.com",
+    {c:"imatges", n:"ChatGPT Images", u:"https://chatgpt.com",
      d:"Generador d'imatges d'OpenAI amb una comprensió excepcional del llenguatge.",
-     avis:"DALL·E 3 es va retirar de ChatGPT el 30 d'agost de 2026. El generador actual és ChatGPT Images 2.0, disponible en tots els plans."},
+     avis:"DALL·E 3 es va retirar de ChatGPT el 30 d'agost de 2026. El generador actual és ChatGPT Images 2.5, des del 8 de setembre de 2026."},
     {c:"imatges", n:"Midjourney", u:"https://www.midjourney.com/",
      d:"El referent absolut en qualitat artística i realisme visual.",
      avis:"No té pla gratuït: des de 10 $ al mes. Pensa-t'ho abans de recomanar-la a l'alumnat."},
@@ -87,11 +88,9 @@ window.BRUIXOLA = {
 
     {c:"video", n:"HeyGen", u:"https://www.heygen.com/",
      d:"Crea avatars realistes que parlen amb la teua veu i expressió corporal."},
-    {c:"video", n:"Runway", alies:"Runway Gen-3", u:"https://runwayml.com",
+    {c:"video", n:"Runway", u:"https://runway.com/",
      d:"Generació de vídeo cinematogràfic d'alt nivell professional.",
-     avis:"Gen-3 es va retirar el juliol de 2026. Els models actuals són Gen-4.5 i Gen-4 Turbo."},
-    {c:"video", n:"Pika Art", u:"https://pika.art",
-     d:"Anima les teues idees amb clips de vídeo curts i creatius."},
+     avis:"El domini runwayml.com redirigix ara a runway.com. El model actual és Gen-4.5. El pla gratuït dona 125 crèdits d'una sola vegada, no mensuals."},
     {c:"video", n:"Fliki", u:"https://fliki.ai",
      d:"Crea vídeos per a xarxes socials a partir de guions de text."},
 
@@ -106,7 +105,7 @@ window.BRUIXOLA = {
 
     {c:"musica", n:"Suno AI", u:"https://suno.com",
      d:"Crea cançons completes amb lletra i música de qualsevol estil.",
-     avis:"El pla gratuït queda limitat a ús no comercial i ja no dona la propietat de la cançó, sinó una llicència d'ús."},
+     avis:"El pla gratuït queda limitat a ús no comercial i ja no dona la propietat de la cançó, sinó una llicència d'ús. Des del 3 de setembre de 2026, a més, no permet cap descàrrega: la cançó només s'escolta dins la plataforma."},
     {c:"musica", n:"Udio", u:"https://www.udio.com",
      d:"Generació musical d'alta fidelitat amb qualitat professional.",
      avis:"Després de l'acord amb Universal Music ja no es pot descarregar l'àudio: només s'escolta dins la plataforma."},
@@ -118,11 +117,9 @@ window.BRUIXOLA = {
     {c:"artefac", n:"Bolt.new", u:"https://bolt.new/",
      d:"Entorn de desenvolupament per a aplicacions full-stack."},
     {c:"artefac", n:"v0", alies:"v0.dev", u:"https://v0.app/",
-     d:"Genera interfícies d'usuari amb React i Tailwind ràpidament.",
-     avis:"Vercel ha canviat el domini de v0.dev a v0.app."},
+     d:"Genera interfícies d'usuari amb React i Tailwind ràpidament."},
     {c:"artefac", n:"WebSim", u:"https://websim.com/",
-     d:"Simulador d'Internet on pots crear qualsevol web amb un prompt.",
-     avis:"El domini ha passat de websim.ai a websim.com."},
+     d:"Simulador d'Internet on pots crear qualsevol web amb un prompt."},
 
     {c:"pensa", n:"AutoDraw", u:"https://www.autodraw.com",
      d:"Dibuix intel·ligent que prediu traços en temps real."},
@@ -148,7 +145,7 @@ window.BRUIXOLA = {
      avis:"Els comptes nous tenen 14 dies de prova premium; després, la retroacció massiva passa a ser de pagament."},
     {c:"docent", n:"Magic School", u:"https://www.magicschool.ai/",
      d:"Planificació docent integral amb IA.",
-     avis:"El pla gratuït té límit mensual de generacions; les il·limitades són del pla Plus."},
+     avis:"El pla gratuït té límit mensual de generacions; les il·limitades són del pla Plus. L'extensió de Chrome es va retirar el 30 d'octubre de 2026: ara només funciona l'aplicació web, amb el mateix compte."},
     {c:"docent", n:"aiEDU", u:"https://www.aiedu.org/",
      d:"Recursos d'alfabetització en IA per a l'escola."},
 
@@ -168,7 +165,7 @@ window.BRUIXOLA = {
 
     {c:"comunic", n:"Softcatalà", u:"https://www.softcatala.org/traductor/",
      d:"Traductor i corrector de valencià gratuïts, amb variant valenciana i motor neuronal propi.",
-     avis:"Sense registre i sense límit de text. El corrector deixa triar formes generals, valencianes o balears."},
+     avis:"Sense registre i sense límit de text. El corrector deixa triar formes generals, valencianes o balears. Softcatalà també té un doblador de vídeos al català amb variant valenciana (softcatala.org/doblatge): molt útil per a doblar vídeos de classe."},
     {c:"comunic", n:"LanguageTool", u:"https://languagetool.org/",
      d:"Corrector gramatical amb IA en més de 30 llengües, també valencià.",
      avis:"Des del març de 2026 l'extensió de navegador és només de pagament. Per a valencià, el corrector de Softcatalà usa el mateix motor i continua gratuït."},
@@ -192,11 +189,12 @@ window.BRUIXOLA = {
 
     {c:"present", n:"Genially", u:"https://genially.com",
      d:"Creació de continguts interactius i gamificats amb assistents d'IA.",
-     avis:"El pla gratuït dona 500 crèdits d'IA, que són una dotació puntual i no mensual. La generació d'imatges i les locucions són de pagament."},
-    {c:"agents", n:"Manus", u:"https://manus.ai/",
+     avis:"El pla gratuït dona 500 crèdits d'IA a l'any, que es renoven cada any i no cada mes. La generació d'imatges i les locucions són de pagament."},
+    {c:"agents", n:"Manus", u:"https://manus.im/",
      d:"Agent d'IA autònom per a tasques complexes.",
      avis:"La compra per part de Meta es va desfer després que el regulador xinés la bloquejara. Des de l'11 d'agost de 2026 Manus torna a operar pel seu compte, i la separació va comportar l'esborrament de dades d'una part dels usuaris."},
-    {c:"agents", n:"Atlas", u:"https://atlas.nomic.ai/",
-     d:"Plataforma per a connectar dades i agents d'IA."}
+    {c:"agents", n:"Nomic Atlas", alies:"Atlas", u:"https://atlas.nomic.ai/",
+     d:"Plataforma per a connectar dades i agents d'IA.",
+     avis:"És l'Atlas de Nomic, que no té res a veure amb el navegador ChatGPT Atlas ni amb Atlas VPN."}
   ]
 };
