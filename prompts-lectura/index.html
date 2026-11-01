@@ -530,7 +530,7 @@ function renderTabs(){
     b.setAttribute("role","tab");
     b.setAttribute("aria-selected", i===current ? "true":"false");
     b.innerHTML = '<span class="num">'+p.num+'</span><span><span class="t-cat">'+esc(p.cat[lang])+'</span><span class="t-name">'+esc(p.title[lang])+'</span></span>';
-    b.addEventListener("click", function(){ current = i; renderPanel(); renderTabs(); });
+    b.addEventListener("click", function(){ current = i; renderPanel(); renderTabs(); var l=document.querySelector(".layout"); if(l){var y=l.getBoundingClientRect().top+scrollY; if(scrollY>y) window.scrollTo({top:y,behavior:"smooth"});} });
     li.appendChild(b);
     tabsEl.appendChild(li);
   });

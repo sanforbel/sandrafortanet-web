@@ -2178,7 +2178,7 @@ function showTab(k){
   if(k==='aula')renderAula();if(k==='bib')renderLibrary();if(k==='aj')renderSettings();
   if(k!=='llig')stopModel();
 }
-document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{showTab(b.dataset.tab);window.scrollTo({top:0,behavior:'smooth'});});
 document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{showTab(b.dataset.goto);window.scrollTo({top:0,behavior:'smooth'});});
 document.querySelectorAll('.g-switch button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.g-switch button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$('g-alumnat').hidden=b.dataset.g!=='alumnat';$('g-docent').hidden=b.dataset.g!=='docent';});
 if(!store.get('resso.seenGuide',false)){store.set('resso.seenGuide',true);setTimeout(()=>toast("Primera vegada? Mira la pestanya «Guia».",5000),1200);}

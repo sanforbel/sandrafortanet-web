@@ -197,6 +197,7 @@ document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click
   ["aprendre","escolta","ull"].forEach(p => $("#p-" + p).hidden = p !== b.dataset.p);
   if (b.dataset.p === "escolta" && !q.target) newQuiz();
   if (b.dataset.p === "ull" && !u.a) newPair();
+  window.scrollTo({top: 0, behavior: "smooth"});
 }));
 
 /* ---------- aprén ---------- */
