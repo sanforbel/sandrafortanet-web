@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="ca-valencia">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaluador de rúbriques — coavaluació, autoavaluació i heteroavaluació</title>
+<style>
+  :root{
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-1:       #2a78d6; /* hetero */
+    --series-2:       #eb6834; /* auto */
+    --series-3:       #1baf7a; /* co */
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #d03b3b;
+    --card-bg:        #ffffff;
+  }
+  [data-theme="dark"]{
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page:           #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --grid:           #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --series-1:       #3987e5;
+    --series-2:       #d95926;
+    --series-3:       #199e70;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #e66767;
+    --card-bg:        #232322;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background:var(--page); color:var(--text-primary);
+  }
+  header{
+    padding:20px 24px; background:var(--surface-1); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  }
+  header h1{ font-size:1.25rem; margin:0 0 4px 0;}
+  header p{margin:0;color:var(--text-secondary);font-size:0.9rem;}
+  .header-controls{display:flex; gap:8px; align-items:center;}
+  .btn{
+    border:1px solid var(--border); background:var(--card-bg); color:var(--text-primary);
+    padding:8px 14px; border-radius:8px; cursor:pointer; font-size:0.85rem;
+  }
+  .btn:hover{border-color:var(--series-1);}
+  .btn-primary{background:var(--series-1); color:#fff; border-color:var(--series-1);}
+  .btn-primary:hover{opacity:0.9;}
+  .btn-danger{color:var(--critical); border-color:var(--critical);}
+  .btn-small{padding:4px 8px; font-size:0.75rem;}
+  nav.tabs{
+    display:flex; gap:2px; background:var(--surface-1); padding:0 24px; overflow-x:auto;
+    border-bottom:1px solid var(--border);
+    position:sticky; top:0; z-index:20;
+  }
+  nav.tabs button{
+    background:none; border:none; padding:12px 16px; font-size:0.88rem; cursor:pointer;
+    color:var(--text-secondary); border-bottom:3px solid transparent; white-space:nowrap;
+  }
+  nav.tabs button.active{ color:var(--text-primary); border-bottom-color:var(--series-1); font-weight:600;}
+  main{max-width:980px; margin:0 auto; padding:24px;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .card{
+    background:var(--card-bg); border:1px solid var(--border); border-radius:12px;
+    padding:18px 20px; margin-bottom:16px;
+  }
+  .card h2{margin-top:0; font-size:1.05rem;}
+  .card h3{font-size:0.95rem; color:var(--text-secondary); margin-bottom:8px;}
+  label{display:block; font-size:0.82rem; color:var(--text-secondary); margin-bottom:4px; margin-top:10px;}
+  input[type=text], input[type=number], textarea, select{
+    width:100%; padding:8px 10px; border-radius:6px; border:1px solid var(--border);
+    background:var(--surface-1); color:var(--text-primary); font-size:0.9rem; font-family:inherit;
+  }
+  textarea{min-height:60px; resize:vertical;}
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .row > div{flex:1; min-width:160px;}
+  .criterion-block{border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:12px; background:var(--surface-1);}
+  .level-block{border:1px dashed var(--border); border-radius:8px; padding:10px; margin-top:8px;}
+  .level-header{display:flex; gap:8px; align-items:center;}
+  .level-header input[type=text]{flex:2;}
+  .level-header input[type=number]{flex:1;}
+  .pill{
+    display:inline-block; padding:2px 9px; border-radius:999px; font-size:0.75rem;
+    background:var(--grid); color:var(--text-secondary);
+  }
+  .warn-box{background:rgba(250,178,25,0.15); border:1px solid var(--warning); border-radius:8px; padding:10px 14px; font-size:0.85rem; margin-top:8px;}
+  .ok-box{background:rgba(12,163,12,0.10); border:1px solid var(--good); border-radius:8px; padding:10px 14px; font-size:0.85rem; margin-top:8px;}
+  table{width:100%; border-collapse:collapse; font-size:0.85rem;}
+  th, td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--grid);}
+  th{color:var(--text-secondary); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.02em;}
+  tbody tr:hover{background:var(--surface-1);}
+  .level-choice-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:8px; margin-top:6px;}
+  .level-choice{
+    border:1px solid var(--border); border-radius:8px; padding:10px; cursor:pointer; background:var(--surface-1);
+  }
+  .level-choice.selected{ border-color:var(--series-1); background:rgba(42,120,214,0.10);}
+  .level-choice .lbl{font-weight:600; font-size:0.85rem;}
+  .level-choice .val{color:var(--text-muted); font-size:0.75rem;}
+  .level-choice .desc{font-size:0.78rem; color:var(--text-secondary); margin-top:4px; display:none;}
+  .level-choice.selected .desc{display:block;}
+  .score-big{font-size:2.2rem; font-weight:700; color:var(--series-1);}
+  .legend{display:flex; gap:16px; align-items:center; font-size:0.82rem; margin-bottom:8px; flex-wrap:wrap;}
+  .legend-item{display:flex; gap:6px; align-items:center;}
+  .swatch{width:12px; height:12px; border-radius:3px; display:inline-block;}
+  .footer-note{color:var(--text-muted); font-size:0.78rem; margin-top:30px; text-align:center; padding:20px 0;}
+  .file-input-wrap{border:1px dashed var(--border); border-radius:8px; padding:14px; text-align:center; font-size:0.85rem; color:var(--text-secondary);}
+  .flex-between{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+  .muted{color:var(--text-muted); font-size:0.8rem;}
+  select#studentSelect, select#reportStudentSelect{max-width:260px;}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2A78D6">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rúbriques">
+</head>
+<body>
+<header>
+  <div>
+    <h1 id="appTitleTxt">Avaluador de rúbriques</h1>
+    <p id="appSubtitleTxt">Autoavaluació · coavaluació · heteroavaluació — amb alumnat identificat només per número</p>
+  </div>
+  <div class="header-controls">
+    <button class="btn" id="langToggleBtn">ES</button>
+    <button class="btn" id="darkToggleBtn">🌓</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="rubrica" class="active">Rúbrica</button>
+  <button data-tab="alumnat">Alumnat</button>
+  <button data-tab="avaluar">Avaluar</button>
+  <button data-tab="resultats">Resultats</button>
+  <button data-tab="informe">Informe individual</button>
+  <button data-tab="exportar">Guardar / exportar</button>
+</nav>
+
+<main>
+
+  <!-- RUBRICA -->
+  <div class="panel active" id="panel-rubrica">
+    <div class="card">
+      <div class="flex-between">
+        <h2>Dades de la rúbrica</h2>
+        <div>
+          <button class="btn" id="loadRubricBtn">Carregar rúbrica (JSON)</button>
+          <button class="btn" id="saveRubricBtn">Descarregar rúbrica (JSON)</button>
+        </div>
+      </div>
+      <input type="file" id="rubricFileInput" accept=".json" style="display:none;">
+      <label for="rubricTitle">Títol</label>
+      <input type="text" id="rubricTitle">
+      <label for="rubricDesc">Descripció</label>
+      <textarea id="rubricDesc"></textarea>
+      <div class="row">
+        <div>
+          <label for="pesHetero">Pes heteroavaluació (%)</label>
+          <input type="number" id="pesHetero" min="0" max="100">
+        </div>
+        <div>
+          <label for="pesCo">Pes coavaluació (%)</label>
+          <input type="number" id="pesCo" min="0" max="100">
+        </div>
+        <div>
+          <label for="pesAuto">Pes autoavaluació (%)</label>
+          <input type="number" id="pesAuto" min="0" max="100">
+        </div>
+      </div>
+      <div id="pesModeWarning"></div>
+    </div>
+
+    <div class="card">
+      <div class="flex-between">
+        <h2>Criteris i nivells</h2>
+        <button class="btn btn-primary" id="addCriterionBtn">+ Afegir criteri</button>
+      </div>
+      <p class="muted">La suma dels pesos dels criteris ha de ser 100.</p>
+      <div id="criteriaContainer"></div>
+      <div id="criteriaWeightWarning"></div>
+    </div>
+  </div>
+
+  <!-- ALUMNAT -->
+  <div class="panel" id="panel-alumnat">
+    <div class="card">
+      <h2>Llista pseudonimitzada de l'alumnat</h2>
+      <p class="muted">L'alumnat no es guarda mai amb nom i cognoms: només amb un número. Genera una llista correlativa o defineix-la a mà.</p>
+      <div class="row">
+        <div>
+          <label for="numStudents">Nombre d'alumnes</label>
+          <input type="number" id="numStudents" min="1" max="200">
+        </div>
+        <div style="align-self:flex-end;">
+          <button class="btn btn-primary" id="generateRosterBtn">Generar llista 1..N</button>
+        </div>
+      </div>
+      <label for="customRoster">O bé, llista personalitzada (separada per comes)</label>
+      <textarea id="customRoster" placeholder="1, 2, 3, 4, 5..."></textarea>
+      <button class="btn" id="applyCustomRosterBtn" style="margin-top:8px;">Aplicar llista personalitzada</button>
+      <div class="ok-box" id="rosterSummary" style="margin-top:14px;"></div>
+    </div>
+    <div class="card">
+      <h3>Expectatives d'avaluacions per alumne (per a la validació de cobertura)</h3>
+      <div class="row">
+        <div><label for="expAuto">Autoavaluacions esperades</label><input type="number" id="expAuto" min="0"></div>
+        <div><label for="expCo">Coavaluacions esperades (de companys)</label><input type="number" id="expCo" min="0"></div>
+        <div><label for="expHetero">Heteroavaluacions esperades (docent)</label><input type="number" id="expHetero" min="0"></div>
+      </div>
+      <div id="coverageTable" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- AVALUAR -->
+  <div class="panel" id="panel-avaluar">
+    <div class="card">
+      <h2>Nova avaluació</h2>
+      <div class="row">
+        <div>
+          <label for="modeSelect">Tipus d'avaluació</label>
+          <select id="modeSelect">
+            <option value="auto">Autoavaluació</option>
+            <option value="co">Coavaluació (entre companys)</option>
+            <option value="hetero">Heteroavaluació (docent)</option>
+          </select>
+        </div>
+        <div>
+          <label for="evaluatorSelect" id="evaluatorLabelTxt">Número de qui avalua</label>
+          <select id="evaluatorSelect"></select>
+        </div>
+        <div>
+          <label for="evaluatedSelect">Número de l'alumne o alumna avaluat/da</label>
+          <select id="evaluatedSelect"></select>
+        </div>
+      </div>
+      <div id="duplicateWarningBox"></div>
+      <div id="criteriaEvalContainer" style="margin-top:14px;"></div>
+      <label for="commentBox">Comentari opcional</label>
+      <textarea id="commentBox" placeholder="Observacions addicionals..."></textarea>
+      <div class="flex-between" style="margin-top:14px;">
+        <div>Puntuació total: <span class="score-big" id="liveTotalScore">—</span> / 10</div>
+        <button class="btn btn-primary" id="saveEvalBtn">Guardar avaluació</button>
+      </div>
+      <div id="saveConfirmBox"></div>
+    </div>
+  </div>
+
+  <!-- RESULTATS -->
+  <div class="panel" id="panel-resultats">
+    <div class="card">
+      <h2>Totes les avaluacions registrades</h2>
+      <div id="rawTableContainer"></div>
+    </div>
+    <div class="card">
+      <h2>Resum per alumne o alumna</h2>
+      <div id="summaryTableContainer"></div>
+    </div>
+  </div>
+
+  <!-- INFORME -->
+  <div class="panel" id="panel-informe">
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="reportStudentSelect">Alumne/a (número)</label>
+          <select id="reportStudentSelect"></select>
+        </div>
+      </div>
+      <div id="reportContent"></div>
+    </div>
+  </div>
+
+  <!-- EXPORTAR -->
+  <div class="panel" id="panel-exportar">
+    <div class="card">
+      <h2>Sessió completa (rúbrica + alumnat + avaluacions)</h2>
+      <p class="muted">Com que este full no es guarda automàticament al navegador, descarrega la sessió abans de tancar la pestanya i carrega-la de nou quan continues treballant-hi (també servix per a moure el treball a un altre dispositiu).</p>
+      <button class="btn btn-primary" id="exportSessionBtn">Descarregar sessió (JSON)</button>
+      <button class="btn" id="importSessionBtn">Carregar sessió (JSON)</button>
+      <input type="file" id="sessionFileInput" accept=".json" style="display:none;">
+      <div id="sessionMsgBox"></div>
+    </div>
+    <div class="card">
+      <h2>Exportació per a fulls de càlcul</h2>
+      <button class="btn" id="exportRawCsvBtn">Exportar avaluacions (CSV)</button>
+      <button class="btn" id="exportSummaryCsvBtn">Exportar resum per alumne (CSV)</button>
+      <p class="muted" style="margin-top:10px;">Els CSV es poden importar directament a Google Sheets o Excel. No hi apareixen noms, només els números pseudonimitzats.</p>
+    </div>
+    <div class="card">
+      <h2>Importar avaluacions arreplegades amb el formulari de Google (Sheets)</h2>
+      <p class="muted">Si has desplegat el formulari d'Apps Script perquè l'alumnat responga des de casa o des de dispositius diferents, obri el full de càlcul, ves a la pestanya «Avaluacions» i fes <strong>Fitxer &gt; Baixa &gt; Valors separats per comes (.csv)</strong>. Després carrega ací eixe fitxer per a vore els resultats, l'informe individual i el gràfic de comparació amb esta mateixa eina. Cal que la rúbrica carregada a la pestanya «Rúbrica» siga la mateixa (mateixos noms de criteri i de nivell) que la que vas posar al full «Config» de Google.</p>
+      <button class="btn btn-primary" id="importSheetsCsvBtn">Importar CSV de Sheets</button>
+      <input type="file" id="sheetsCsvFileInput" accept=".csv" style="display:none;">
+      <div id="sheetsCsvMsgBox"></div>
+    </div>
+  </div>
+
+</main>
+
+<div class="footer-note">Eina local i autocontinguda — les dades queden només en esta pestanya del navegador mentre no es descarreguen. Cap dada s'envia a cap servidor.</div>
+
+<script>
+/* ============================================================
+   ESTAT
+   ============================================================ */
+const DEFAULT_RUBRIC = {
+  meta: {
+    titol: "Rúbrica d'exposició oral",
+    descripcio: "Rúbrica per a avaluar una exposició oral individual o en grup, pensada per a autoavaluació, coavaluació i heteroavaluació.",
+    pesosMode: { hetero: 60, co: 25, auto: 15 }
+  },
+  criteris: [
+    {
+      id: "c1", nom: "Contingut i estructura", pes: 30,
+      nivells: [
+        { id:"n1", etiqueta:"Excel·lent", valor:10, descriptor:"L'exposició té una introducció, un desenvolupament i una conclusió clars. Les idees estan ben organitzades i s'ajusten al tema proposat." },
+        { id:"n2", etiqueta:"Notable", valor:7, descriptor:"L'exposició té estructura, encara que alguna part és menys clara. Les idees principals s'entenen bé." },
+        { id:"n3", etiqueta:"Suficient", valor:5, descriptor:"L'exposició té alguna part desordenada i costa seguir el fil, però el tema es reconeix." },
+        { id:"n4", etiqueta:"Insuficient", valor:2, descriptor:"No hi ha una estructura clara i costa entendre de què tracta l'exposició." }
+      ]
+    },
+    {
+      id: "c2", nom: "Llenguatge i expressió oral", pes: 25,
+      nivells: [
+        { id:"n1", etiqueta:"Excel·lent", valor:10, descriptor:"Parla amb fluïdesa, vocabulari variat i pronunciació clara. Fa un ús correcte de la llengua." },
+        { id:"n2", etiqueta:"Notable", valor:7, descriptor:"Parla amb fluïdesa general, encara que comet alguns errors puntuals de llengua." },
+        { id:"n3", etiqueta:"Suficient", valor:5, descriptor:"Llig massa sovint les notes i el vocabulari és bàsic, però s'entén el missatge." },
+        { id:"n4", etiqueta:"Insuficient", valor:2, descriptor:"Costa molt d'entendre'l perquè llig tot el temps o el vocabulari és molt limitat." }
+      ]
+    },
+    {
+      id: "c3", nom: "Suport visual i recursos", pes: 20,
+      nivells: [
+        { id:"n1", etiqueta:"Excel·lent", valor:10, descriptor:"El suport visual (diapositives, esquemes, imatges) reforça el contingut i està ben dissenyat." },
+        { id:"n2", etiqueta:"Notable", valor:7, descriptor:"El suport visual ajuda a seguir l'exposició, encara que té alguna mancança de disseny." },
+        { id:"n3", etiqueta:"Suficient", valor:5, descriptor:"Hi ha suport visual, però conté massa text o no aporta gaire a l'exposició oral." },
+        { id:"n4", etiqueta:"Insuficient", valor:2, descriptor:"No hi ha suport visual o este no té relació amb el contingut exposat." }
+      ]
+    },
+    {
+      id: "c4", nom: "Actitud i interacció amb el públic", pes: 25,
+      nivells: [
+        { id:"n1", etiqueta:"Excel·lent", valor:10, descriptor:"Mira el públic, mostra seguretat i respon bé a les preguntes que li fan." },
+        { id:"n2", etiqueta:"Notable", valor:7, descriptor:"Mira el públic la major part del temps i respon a les preguntes amb alguna ajuda." },
+        { id:"n3", etiqueta:"Suficient", valor:5, descriptor:"Mira poc el públic i li costa respondre a les preguntes." },
+        { id:"n4", etiqueta:"Insuficient", valor:2, descriptor:"No mira el públic en cap moment i no és capaç de respondre a les preguntes." }
+      ]
+    }
+  ]
+};
+
+const state = {
+  lang: 'va',
+  dark: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+  rubric: JSON.parse(JSON.stringify(DEFAULT_RUBRIC)),
+  studentIds: Array.from({length:25}, (_,i)=>String(i+1)),
+  expected: { auto:1, co:2, hetero:1 },
+  evaluations: [] // {id, mode, evaluador, avaluat, timestamp, puntuacions:{critId:levelId}, comentari, total}
+};
+
+let currentEvalSelections = {}; // critId -> levelId, for the "avaluar" form in progress
+
+/* ============================================================
+   i18n
+   ============================================================ */
+const I18N = {
+  va: {
+    appTitle:"Avaluador de rúbriques",
+    appSubtitle:"Autoavaluació · coavaluació · heteroavaluació — amb alumnat identificat només per número",
+    tabRubrica:"Rúbrica", tabAlumnat:"Alumnat", tabAvaluar:"Avaluar", tabResultats:"Resultats",
+    tabInforme:"Informe individual", tabExportar:"Guardar / exportar",
+    evaluatorLabelAuto:"Número de l'alumne o alumna (s'avalua a si mateix/a)",
+    evaluatorLabelCo:"Número de qui avalua (un company o companya)",
+    evaluatorLabelHetero:"Avaluador/a: docent",
+    duplicateWarn:"Ja existix una avaluació d'este tipus per a esta parella avaluador/avaluat. En guardar, se substituirà l'anterior.",
+    savedOk:"Avaluació guardada correctament.",
+    selectAllLevels:"Cal triar un nivell per a cada criteri abans de guardar.",
+    noEvaluations:"Encara no hi ha cap avaluació guardada.",
+    noRoster:"Encara no hi ha alumnat definit. Ves a la pestanya «Alumnat».",
+  },
+  es: {
+    appTitle:"Evaluador de rúbricas",
+    appSubtitle:"Autoevaluación · coevaluación · heteroevaluación — con el alumnado identificado solo por número",
+    tabRubrica:"Rúbrica", tabAlumnat:"Alumnado", tabAvaluar:"Evaluar", tabResultats:"Resultados",
+    tabInforme:"Informe individual", tabExportar:"Guardar / exportar",
+    evaluatorLabelAuto:"Número del alumno o alumna (se evalúa a sí mismo/a)",
+    evaluatorLabelCo:"Número de quien evalúa (un compañero o compañera)",
+    evaluatorLabelHetero:"Evaluador/a: docente",
+    duplicateWarn:"Ya existe una evaluación de este tipo para esta pareja evaluador/evaluado. Al guardar, se sustituirá la anterior.",
+    savedOk:"Evaluación guardada correctamente.",
+    selectAllLevels:"Debes elegir un nivel para cada criterio antes de guardar.",
+    noEvaluations:"Todavía no hay ninguna evaluación guardada.",
+    noRoster:"Todavía no hay alumnado definido. Ve a la pestaña «Alumnado».",
+  }
+};
+function t(key){ return I18N[state.lang][key] || key; }
+
+const TAB_LABEL_KEYS = {rubrica:'tabRubrica', alumnat:'tabAlumnat', avaluar:'tabAvaluar', resultats:'tabResultats', informe:'tabInforme', exportar:'tabExportar'};
+
+function applyStaticI18n(){
+  document.getElementById('appTitleTxt').textContent = t('appTitle');
+  document.getElementById('appSubtitleTxt').textContent = t('appSubtitle');
+  document.querySelectorAll('nav.tabs button').forEach(btn=>{
+    btn.textContent = t(TAB_LABEL_KEYS[btn.dataset.tab]);
+  });
+  document.getElementById('langToggleBtn').textContent = state.lang === 'va' ? 'ES' : 'VA';
+}
+
+/* ============================================================
+   UTILITATS
+   ============================================================ */
+function uid(){ return 'e' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function fmt(n){ return Math.round(n*100)/100; }
+
+function criterionMaxCheck(){
+  const sum = state.rubric.criteris.reduce((a,c)=>a+Number(c.pes||0),0);
+  return sum;
+}
+function modeWeightSum(){
+  const m = state.rubric.meta.pesosMode;
+  return Number(m.hetero||0) + Number(m.co||0) + Number(m.auto||0);
+}
+
+function computeEvalTotal(puntuacions){
+  let total = 0;
+  let pesSum = 0;
+  state.rubric.criteris.forEach(c=>{
+    const levelId = puntuacions[c.id];
+    if(!levelId) return;
+    const lvl = c.nivells.find(n=>n.id===levelId);
+    if(!lvl) return;
+    total += (Number(c.pes)/100) * Number(lvl.valor);
+    pesSum += Number(c.pes);
+  });
+  return pesSum>0 ? total * (100/pesSum) : 0; // renormalize if not all criteria answered
+}
+
+function evaluationsFor(studentId, mode){
+  return state.evaluations.filter(e=>e.avaluat===studentId && e.mode===mode);
+}
+
+function averageTotal(evals){
+  if(evals.length===0) return null;
+  return evals.reduce((a,e)=>a+e.total,0)/evals.length;
+}
+
+function combinedScoreFor(studentId){
+  const pm = state.rubric.meta.pesosMode;
+  const modes = [
+    {key:'hetero', w:Number(pm.hetero||0)},
+    {key:'co', w:Number(pm.co||0)},
+    {key:'auto', w:Number(pm.auto||0)}
+  ];
+  let num=0, denom=0;
+  const detail = {};
+  modes.forEach(m=>{
+    const evals = evaluationsFor(studentId, m.key);
+    const avg = averageTotal(evals);
+    detail[m.key] = { avg, count: evals.length };
+    if(avg!==null){ num += avg*m.w; denom += m.w; }
+  });
+  detail.final = denom>0 ? num/denom : null;
+  return detail;
+}
+
+/* ============================================================
+   RENDER: RUBRICA TAB
+   ============================================================ */
+function renderRubricTab(){
+  document.getElementById('rubricTitle').value = state.rubric.meta.titol;
+  document.getElementById('rubricDesc').value = state.rubric.meta.descripcio;
+  document.getElementById('pesHetero').value = state.rubric.meta.pesosMode.hetero;
+  document.getElementById('pesCo').value = state.rubric.meta.pesosMode.co;
+  document.getElementById('pesAuto').value = state.rubric.meta.pesosMode.auto;
+
+  const sumModes = modeWeightSum();
+  document.getElementById('pesModeWarning').innerHTML = sumModes===100
+    ? `<div class="ok-box">Suma de pesos per tipus d'avaluació: ${sumModes}% ✓</div>`
+    : `<div class="warn-box">La suma dels pesos per tipus d'avaluació és ${sumModes}%. Si no és 100%, l'aplicació renormalitzarà automàticament entre els tipus que tinguen dades.</div>`;
+
+  const container = document.getElementById('criteriaContainer');
+  container.innerHTML = '';
+  state.rubric.criteris.forEach((crit, ci)=>{
+    const block = document.createElement('div');
+    block.className = 'criterion-block';
+    block.innerHTML = `
+      <div class="row">
+        <div style="flex:3;">
+          <label>Nom del criteri</label>
+          <input type="text" data-crit="${ci}" data-field="nom" value="${escapeHtml(crit.nom)}">
+        </div>
+        <div>
+          <label>Pes (%)</label>
+          <input type="number" data-crit="${ci}" data-field="pes" value="${crit.pes}" min="0" max="100">
+        </div>
+        <div style="align-self:flex-end;">
+          <button class="btn btn-danger btn-small" data-remove-crit="${ci}">Eliminar criteri</button>
+        </div>
+      </div>
+      <div class="levels-wrap"></div>
+      <button class="btn btn-small" data-add-level="${ci}" style="margin-top:8px;">+ Afegir nivell</button>
+    `;
+    const levelsWrap = block.querySelector('.levels-wrap');
+    crit.nivells.forEach((lvl, li)=>{
+      const lb = document.createElement('div');
+      lb.className = 'level-block';
+      lb.innerHTML = `
+        <div class="level-header">
+          <input type="text" placeholder="Etiqueta (p. ex. Notable)" data-crit="${ci}" data-level="${li}" data-field="etiqueta" value="${escapeHtml(lvl.etiqueta)}">
+          <input type="number" placeholder="Valor 0-10" data-crit="${ci}" data-level="${li}" data-field="valor" value="${lvl.valor}" min="0" max="10" step="0.5">
+          <button class="btn btn-danger btn-small" data-remove-level="${ci}:${li}">✕</button>
+        </div>
+        <label>Descriptor</label>
+        <textarea data-crit="${ci}" data-level="${li}" data-field="descriptor">${escapeHtml(lvl.descriptor)}</textarea>
+      `;
+      levelsWrap.appendChild(lb);
+    });
+    container.appendChild(block);
+  });
+
+  const sumCrit = criterionMaxCheck();
+  document.getElementById('criteriaWeightWarning').innerHTML = sumCrit===100
+    ? `<div class="ok-box">Suma de pesos dels criteris: ${sumCrit}% ✓</div>`
+    : `<div class="warn-box">Suma actual dels pesos dels criteris: ${sumCrit}%. Ajusta'ls perquè sumen 100 (si no, la puntuació es renormalitza igualment, però és recomanable que sumen 100 per a claredat).</div>`;
+
+  // listeners
+  container.querySelectorAll('input[data-field], textarea[data-field]').forEach(el=>{
+    el.addEventListener('change', (e)=>{
+      const ci = Number(el.dataset.crit);
+      const field = el.dataset.field;
+      if(el.dataset.level !== undefined){
+        const li = Number(el.dataset.level);
+        state.rubric.criteris[ci].nivells[li][field] = field==='valor' ? Number(el.value) : el.value;
+      } else {
+        state.rubric.criteris[ci][field] = field==='pes' ? Number(el.value) : el.value;
+      }
+      renderRubricTab();
+      refreshAllDependentViews();
+    });
+  });
+  container.querySelectorAll('[data-remove-crit]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.rubric.criteris.splice(Number(btn.dataset.removeCrit),1);
+      renderRubricTab(); refreshAllDependentViews();
+    });
+  });
+  container.querySelectorAll('[data-add-level]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const ci = Number(btn.dataset.addLevel);
+      state.rubric.criteris[ci].nivells.push({id:'n'+uid(), etiqueta:'Nou nivell', valor:5, descriptor:''});
+      renderRubricTab(); refreshAllDependentViews();
+    });
+  });
+  container.querySelectorAll('[data-remove-level]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const [ci,li] = btn.dataset.removeLevel.split(':').map(Number);
+      state.rubric.criteris[ci].nivells.splice(li,1);
+      renderRubricTab(); refreshAllDependentViews();
+    });
+  });
+}
+function escapeHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+document.getElementById('rubricTitle').addEventListener('change', e=>{ state.rubric.meta.titol = e.target.value; });
+document.getElementById('rubricDesc').addEventListener('change', e=>{ state.rubric.meta.descripcio = e.target.value; });
+['pesHetero','pesCo','pesAuto'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', e=>{
+    const map = {pesHetero:'hetero', pesCo:'co', pesAuto:'auto'};
+    state.rubric.meta.pesosMode[map[id]] = Number(e.target.value);
+    renderRubricTab();
+  });
+});
+document.getElementById('addCriterionBtn').addEventListener('click', ()=>{
+  state.rubric.criteris.push({id:'c'+uid(), nom:'Nou criteri', pes:0, nivells:[
+    {id:'n1', etiqueta:'Excel·lent', valor:10, descriptor:''},
+    {id:'n2', etiqueta:'Insuficient', valor:2, descriptor:''}
+  ]});
+  renderRubricTab(); refreshAllDependentViews();
+});
+
+document.getElementById('saveRubricBtn').addEventListener('click', ()=>{
+  downloadJson(state.rubric, (state.rubric.meta.titol||'rubrica').replace(/[^\w\-]+/g,'_') + '.json');
+});
+document.getElementById('loadRubricBtn').addEventListener('click', ()=> document.getElementById('rubricFileInput').click());
+document.getElementById('rubricFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data.criteris || !data.meta) throw new Error('format');
+      state.rubric = data;
+      renderRubricTab(); refreshAllDependentViews();
+    } catch(err){ alert('El fitxer no té el format esperat de rúbrica JSON.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ============================================================
+   RENDER: ALUMNAT TAB
+   ============================================================ */
+function renderRosterTab(){
+  document.getElementById('numStudents').value = state.studentIds.length;
+  document.getElementById('expAuto').value = state.expected.auto;
+  document.getElementById('expCo').value = state.expected.co;
+  document.getElementById('expHetero').value = state.expected.hetero;
+  document.getElementById('rosterSummary').textContent =
+    state.studentIds.length ? `Llista actual (${state.studentIds.length}): ${state.studentIds.join(', ')}` : t('noRoster');
+  renderCoverageTable();
+}
+document.getElementById('generateRosterBtn').addEventListener('click', ()=>{
+  const n = Math.max(1, Number(document.getElementById('numStudents').value)||1);
+  state.studentIds = Array.from({length:n}, (_,i)=>String(i+1));
+  renderRosterTab(); refreshAllDependentViews();
+});
+document.getElementById('applyCustomRosterBtn').addEventListener('click', ()=>{
+  const raw = document.getElementById('customRoster').value;
+  const ids = raw.split(',').map(s=>s.trim()).filter(Boolean);
+  if(ids.length===0){ alert('Introdueix almenys un número.'); return; }
+  state.studentIds = ids;
+  renderRosterTab(); refreshAllDependentViews();
+});
+['expAuto','expCo','expHetero'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', e=>{
+    const map = {expAuto:'auto', expCo:'co', expHetero:'hetero'};
+    state.expected[map[id]] = Number(e.target.value);
+    renderCoverageTable();
+  });
+});
+function renderCoverageTable(){
+  const wrap = document.getElementById('coverageTable');
+  if(state.studentIds.length===0){ wrap.innerHTML = ''; return; }
+  let rows = state.studentIds.map(sid=>{
+    const a = evaluationsFor(sid,'auto').length;
+    const c = evaluationsFor(sid,'co').length;
+    const h = evaluationsFor(sid,'hetero').length;
+    const okA = a>=state.expected.auto, okC = c>=state.expected.co, okH = h>=state.expected.hetero;
+    return `<tr>
+      <td>${escapeHtml(sid)}</td>
+      <td>${a} / ${state.expected.auto} ${okA?'✅':'⚠️'}</td>
+      <td>${c} / ${state.expected.co} ${okC?'✅':'⚠️'}</td>
+      <td>${h} / ${state.expected.hetero} ${okH?'✅':'⚠️'}</td>
+    </tr>`;
+  }).join('');
+  wrap.innerHTML = `<table><thead><tr><th>Alumne/a</th><th>Auto</th><th>Co</th><th>Hetero</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+/* ============================================================
+   RENDER: AVALUAR TAB
+   ============================================================ */
+function populateSelect(sel, options, placeholder){
+  sel.innerHTML = '';
+  if(placeholder){
+    const o = document.createElement('option'); o.value=''; o.textContent = placeholder; sel.appendChild(o);
+  }
+  options.forEach(v=>{
+    const o = document.createElement('option'); o.value=v; o.textContent = v; sel.appendChild(o);
+  });
+}
+function renderEvaluateTab(){
+  const mode = document.getElementById('modeSelect').value;
+  const evaluatorSel = document.getElementById('evaluatorSelect');
+  const evaluatedSel = document.getElementById('evaluatedSelect');
+  const labelEl = document.getElementById('evaluatorLabelTxt');
+
+  if(mode==='hetero'){
+    evaluatorSel.innerHTML = '<option value="docent">Docent</option>';
+    evaluatorSel.disabled = true;
+    labelEl.textContent = t('evaluatorLabelHetero');
+  } else {
+    evaluatorSel.disabled = false;
+    populateSelect(evaluatorSel, state.studentIds);
+    labelEl.textContent = mode==='auto' ? t('evaluatorLabelAuto') : t('evaluatorLabelCo');
+  }
+  populateSelect(evaluatedSel, state.studentIds);
+  if(mode==='auto'){
+    evaluatedSel.value = evaluatorSel.value;
+    evaluatedSel.disabled = true;
+  } else {
+    evaluatedSel.disabled = false;
+  }
+
+  currentEvalSelections = {};
+  renderCriteriaEvalBlocks();
+  checkDuplicate();
+  updateLiveTotal();
+}
+document.getElementById('modeSelect').addEventListener('change', renderEvaluateTab);
+document.getElementById('evaluatorSelect').addEventListener('change', ()=>{
+  if(document.getElementById('modeSelect').value==='auto'){
+    document.getElementById('evaluatedSelect').value = document.getElementById('evaluatorSelect').value;
+  }
+  checkDuplicate();
+});
+document.getElementById('evaluatedSelect').addEventListener('change', checkDuplicate);
+
+function renderCriteriaEvalBlocks(){
+  const wrap = document.getElementById('criteriaEvalContainer');
+  wrap.innerHTML = '';
+  state.rubric.criteris.forEach(crit=>{
+    const block = document.createElement('div');
+    block.style.marginBottom = '16px';
+    block.innerHTML = `<h3>${escapeHtml(crit.nom)} <span class="pill">${crit.pes}%</span></h3>`;
+    const grid = document.createElement('div');
+    grid.className = 'level-choice-grid';
+    crit.nivells.forEach(lvl=>{
+      const div = document.createElement('div');
+      div.className = 'level-choice';
+      div.dataset.crit = crit.id; div.dataset.level = lvl.id;
+      div.innerHTML = `<div class="lbl">${escapeHtml(lvl.etiqueta)}</div><div class="val">${lvl.valor} / 10</div><div class="desc">${escapeHtml(lvl.descriptor)}</div>`;
+      div.addEventListener('click', ()=>{
+        currentEvalSelections[crit.id] = lvl.id;
+        grid.querySelectorAll('.level-choice').forEach(d=>d.classList.remove('selected'));
+        div.classList.add('selected');
+        updateLiveTotal();
+      });
+      grid.appendChild(div);
+    });
+    block.appendChild(grid);
+    wrap.appendChild(block);
+  });
+}
+function updateLiveTotal(){
+  const total = computeEvalTotal(currentEvalSelections);
+  const allSelected = state.rubric.criteris.every(c=>currentEvalSelections[c.id]);
+  document.getElementById('liveTotalScore').textContent = allSelected ? fmt(total) : '—';
+}
+function checkDuplicate(){
+  const mode = document.getElementById('modeSelect').value;
+  const evaluador = mode==='hetero' ? 'docent' : document.getElementById('evaluatorSelect').value;
+  const avaluat = document.getElementById('evaluatedSelect').value;
+  const existing = state.evaluations.find(e=>e.mode===mode && e.evaluador===evaluador && e.avaluat===avaluat);
+  document.getElementById('duplicateWarningBox').innerHTML = existing ? `<div class="warn-box">${t('duplicateWarn')}</div>` : '';
+}
+document.getElementById('saveEvalBtn').addEventListener('click', ()=>{
+  const mode = document.getElementById('modeSelect').value;
+  const evaluador = mode==='hetero' ? 'docent' : document.getElementById('evaluatorSelect').value;
+  const avaluat = document.getElementById('evaluatedSelect').value;
+  if(!evaluador || !avaluat){ alert('Selecciona avaluador i avaluat.'); return; }
+  const allSelected = state.rubric.criteris.every(c=>currentEvalSelections[c.id]);
+  if(!allSelected){ alert(t('selectAllLevels')); return; }
+  const total = computeEvalTotal(currentEvalSelections);
+  // remove existing duplicate
+  state.evaluations = state.evaluations.filter(e=>!(e.mode===mode && e.evaluador===evaluador && e.avaluat===avaluat));
+  state.evaluations.push({
+    id: uid(), mode, evaluador, avaluat,
+    timestamp: new Date().toISOString(),
+    puntuacions: {...currentEvalSelections},
+    comentari: document.getElementById('commentBox').value,
+    total
+  });
+  document.getElementById('saveConfirmBox').innerHTML = `<div class="ok-box">${t('savedOk')}</div>`;
+  document.getElementById('commentBox').value = '';
+  refreshAllDependentViews();
+  setTimeout(()=>{ document.getElementById('saveConfirmBox').innerHTML=''; }, 3500);
+});
+
+/* ============================================================
+   RENDER: RESULTATS TAB
+   ============================================================ */
+function renderResultsTab(){
+  const rawWrap = document.getElementById('rawTableContainer');
+  if(state.evaluations.length===0){
+    rawWrap.innerHTML = `<p class="muted">${t('noEvaluations')}</p>`;
+  } else {
+    const rows = state.evaluations
+      .slice()
+      .sort((a,b)=> a.avaluat.localeCompare(b.avaluat, undefined, {numeric:true}) || a.mode.localeCompare(b.mode))
+      .map(e=>`<tr>
+        <td>${escapeHtml(e.evaluador)}</td>
+        <td>${escapeHtml(e.avaluat)}</td>
+        <td>${modeLabel(e.mode)}</td>
+        <td>${fmt(e.total)}</td>
+        <td>${new Date(e.timestamp).toLocaleString()}</td>
+        <td><button class="btn btn-small btn-danger" data-del="${e.id}">Eliminar</button></td>
+      </tr>`).join('');
+    rawWrap.innerHTML = `<table><thead><tr><th>Avaluador</th><th>Avaluat</th><th>Tipus</th><th>Total</th><th>Data</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+    rawWrap.querySelectorAll('[data-del]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.evaluations = state.evaluations.filter(e=>e.id!==btn.dataset.del);
+        refreshAllDependentViews();
+      });
+    });
+  }
+
+  const sumWrap = document.getElementById('summaryTableContainer');
+  if(state.studentIds.length===0){
+    sumWrap.innerHTML = `<p class="muted">${t('noRoster')}</p>`;
+  } else {
+    const rows = state.studentIds.map(sid=>{
+      const d = combinedScoreFor(sid);
+      return `<tr>
+        <td>${escapeHtml(sid)}</td>
+        <td>${d.auto.avg!==null?fmt(d.auto.avg):'—'} (${d.auto.count})</td>
+        <td>${d.co.avg!==null?fmt(d.co.avg):'—'} (${d.co.count})</td>
+        <td>${d.hetero.avg!==null?fmt(d.hetero.avg):'—'} (${d.hetero.count})</td>
+        <td><strong>${d.final!==null?fmt(d.final):'—'}</strong></td>
+      </tr>`;
+    }).join('');
+    sumWrap.innerHTML = `<table><thead><tr><th>Alumne/a</th><th>Auto</th><th>Co</th><th>Hetero</th><th>Nota final</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+}
+function modeLabel(mode){
+  return {auto:'Autoavaluació', co:'Coavaluació', hetero:'Heteroavaluació'}[mode] || mode;
+}
+
+/* ============================================================
+   RENDER: INFORME INDIVIDUAL TAB
+   ============================================================ */
+function renderReportTab(){
+  const sel = document.getElementById('reportStudentSelect');
+  const prevVal = sel.value;
+  populateSelect(sel, state.studentIds);
+  if(prevVal && state.studentIds.includes(prevVal)) sel.value = prevVal;
+  renderReportContent();
+}
+document.getElementById('reportStudentSelect').addEventListener('change', renderReportContent);
+
+function levelForCriterionFromEvals(evals, critId){
+  // returns average valor for that criterion across a list of evaluations
+  const vals = evals.map(e=>{
+    const lvlId = e.puntuacions[critId];
+    const crit = state.rubric.criteris.find(c=>c.id===critId);
+    const lvl = crit ? crit.nivells.find(n=>n.id===lvlId) : null;
+    return lvl ? Number(lvl.valor) : null;
+  }).filter(v=>v!==null);
+  if(vals.length===0) return null;
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+
+function buildFeedbackText(sid){
+  const heteroEvals = evaluationsFor(sid,'hetero');
+  const source = heteroEvals.length ? heteroEvals : (evaluationsFor(sid,'co').length ? evaluationsFor(sid,'co') : evaluationsFor(sid,'auto'));
+  if(source.length===0) return null;
+  const lines = state.rubric.criteris.map(crit=>{
+    const lvlCounts = {};
+    source.forEach(e=>{ const l = e.puntuacions[crit.id]; if(l) lvlCounts[l]=(lvlCounts[l]||0)+1; });
+    let bestLvlId = null, bestCount=-1;
+    Object.entries(lvlCounts).forEach(([lid,count])=>{ if(count>bestCount){bestCount=count; bestLvlId=lid;} });
+    const lvl = crit.nivells.find(n=>n.id===bestLvlId);
+    if(!lvl) return null;
+    return `En el criteri «${crit.nom}» s'ha valorat en el nivell «${lvl.etiqueta}»: ${lvl.descriptor}`;
+  }).filter(Boolean);
+  return lines.join('\n\n');
+}
+
+function renderReportContent(){
+  const sid = document.getElementById('reportStudentSelect').value;
+  const wrap = document.getElementById('reportContent');
+  if(!sid){ wrap.innerHTML = `<p class="muted">${t('noRoster')}</p>`; return; }
+  const detail = combinedScoreFor(sid);
+
+  let breakdownRows = state.rubric.criteris.map(crit=>{
+    const autoV = levelForCriterionFromEvals(evaluationsFor(sid,'auto'), crit.id);
+    const coV = levelForCriterionFromEvals(evaluationsFor(sid,'co'), crit.id);
+    const heteroV = levelForCriterionFromEvals(evaluationsFor(sid,'hetero'), crit.id);
+    return `<tr><td>${escapeHtml(crit.nom)}</td><td>${autoV!==null?fmt(autoV):'—'}</td><td>${coV!==null?fmt(coV):'—'}</td><td>${heteroV!==null?fmt(heteroV):'—'}</td></tr>`;
+  }).join('');
+
+  const feedback = buildFeedbackText(sid);
+
+  const autoVals = state.rubric.criteris.map(c=>levelForCriterionFromEvals(evaluationsFor(sid,'auto'), c.id));
+  const heteroVals = state.rubric.criteris.map(c=>levelForCriterionFromEvals(evaluationsFor(sid,'hetero'), c.id));
+  const hasComparison = autoVals.some(v=>v!==null) && heteroVals.some(v=>v!==null);
+
+  wrap.innerHTML = `
+    <div class="flex-between" style="margin-top:14px;">
+      <div>Nota final ponderada: <span class="score-big">${detail.final!==null?fmt(detail.final):'—'}</span> / 10</div>
+      <button class="btn" id="downloadReportBtn">Descarregar informe (.txt)</button>
+    </div>
+    <h3 style="margin-top:20px;">Desglossament per criteri (valor mitjà 0–10)</h3>
+    <table><thead><tr><th>Criteri</th><th>Auto</th><th>Co</th><th>Hetero</th></tr></thead><tbody>${breakdownRows}</tbody></table>
+    <h3 style="margin-top:20px;">Comparació autoavaluació vs. heteroavaluació</h3>
+    <div id="comparisonChartWrap">${hasComparison ? '' : '<p class="muted">Encara falten dades d\'autoavaluació o d\'heteroavaluació per a mostrar la comparació.</p>'}</div>
+    <h3 style="margin-top:20px;">Retroacció generada a partir dels descriptors</h3>
+    <div style="white-space:pre-wrap; font-size:0.88rem; line-height:1.5;">${feedback ? escapeHtml(feedback) : '<span class=\"muted\">Encara no hi ha avaluacions per a generar la retroacció.</span>'}</div>
+  `;
+
+  if(hasComparison){
+    renderComparisonChart(document.getElementById('comparisonChartWrap'), state.rubric.criteris.map(c=>c.nom), autoVals, heteroVals);
+  }
+
+  document.getElementById('downloadReportBtn').addEventListener('click', ()=>{
+    const text = buildReportText(sid, detail, feedback);
+    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `informe_alumne_${sid}.txt`;
+    a.click();
+  });
+}
+function buildReportText(sid, detail, feedback){
+  let txt = `INFORME INDIVIDUAL — Alumne/a núm. ${sid}\n`;
+  txt += `Rúbrica: ${state.rubric.meta.titol}\n`;
+  txt += `Data: ${new Date().toLocaleDateString()}\n\n`;
+  txt += `Nota final ponderada: ${detail.final!==null?fmt(detail.final):'—'} / 10\n`;
+  txt += `  Autoavaluació: ${detail.auto.avg!==null?fmt(detail.auto.avg):'—'} (n=${detail.auto.count})\n`;
+  txt += `  Coavaluació: ${detail.co.avg!==null?fmt(detail.co.avg):'—'} (n=${detail.co.count})\n`;
+  txt += `  Heteroavaluació: ${detail.hetero.avg!==null?fmt(detail.hetero.avg):'—'} (n=${detail.hetero.count})\n\n`;
+  txt += `RETROACCIÓ:\n${feedback || '—'}\n`;
+  return txt;
+}
+
+/* SVG comparison chart, following dataviz mark specs: thin bars, rounded ends,
+   gridlines, legend for 2 series, fixed categorical slots (series-1=hetero, series-2=auto) */
+function truncateLabel(lab, maxChars){
+  return lab.length > maxChars ? lab.slice(0, maxChars-1) + '…' : lab;
+}
+function renderComparisonChart(container, labels, autoVals, heteroVals){
+  const w = 680, h = 60 + labels.length*54, padLeft = 230, padRight = 20, padTop = 30, padBottom = 10;
+  const plotW = w - padLeft - padRight;
+  const maxVal = 10;
+  const barH = 16, groupGap = 54;
+
+  let bars = '';
+  let gridlines = '';
+  const ticks = [0,2.5,5,7.5,10];
+  ticks.forEach(tv=>{
+    const x = padLeft + (tv/maxVal)*plotW;
+    gridlines += `<line x1="${x}" y1="${padTop-6}" x2="${x}" y2="${padTop + labels.length*groupGap}" stroke="var(--grid)" stroke-width="1"/>`;
+    gridlines += `<text x="${x}" y="${padTop-12}" font-size="10" fill="var(--text-muted)" text-anchor="middle">${tv}</text>`;
+  });
+
+  labels.forEach((lab,i)=>{
+    const gy = padTop + i*groupGap;
+    const av = autoVals[i], hv = heteroVals[i];
+    bars += `<text x="${padLeft-12}" y="${gy+barH+2}" font-size="11" fill="var(--text-secondary)" text-anchor="end"><title>${escapeHtml(lab)}</title>${escapeHtml(truncateLabel(lab, 26))}</text>`;
+    if(hv!==null){
+      const bw = (hv/maxVal)*plotW;
+      bars += `<rect x="${padLeft}" y="${gy}" width="${bw}" height="${barH}" rx="4" style="fill:var(--series-1)"><title>Heteroavaluació — ${lab}: ${fmt(hv)}</title></rect>`;
+    }
+    if(av!==null){
+      const bw = (av/maxVal)*plotW;
+      bars += `<rect x="${padLeft}" y="${gy+barH+4}" width="${bw}" height="${barH}" rx="4" style="fill:var(--series-2)"><title>Autoavaluació — ${lab}: ${fmt(av)}</title></rect>`;
+    }
+  });
+
+  const svgH = padTop + labels.length*groupGap + padBottom;
+  const svg = `
+    <div class="legend">
+      <div class="legend-item"><span class="swatch" style="background:var(--series-1)"></span>Heteroavaluació (docent)</div>
+      <div class="legend-item"><span class="swatch" style="background:var(--series-2)"></span>Autoavaluació</div>
+    </div>
+    <svg viewBox="0 0 ${w} ${svgH}" width="100%" style="max-width:${w}px;">
+      ${gridlines}
+      ${bars}
+    </svg>
+  `;
+  container.innerHTML = svg;
+}
+
+/* ============================================================
+   EXPORTACIÓ
+   ============================================================ */
+function downloadJson(obj, filename){
+  const blob = new Blob([JSON.stringify(obj,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+function csvEscape(v){
+  const s = String(v==null?'':v);
+  return /[",\n;]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+}
+function downloadCsv(rows, filename){
+  const csv = rows.map(r=>r.map(csvEscape).join(';')).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+document.getElementById('exportRawCsvBtn').addEventListener('click', ()=>{
+  const header = ['avaluador','avaluat','tipus','total', ...state.rubric.criteris.map(c=>c.nom), 'data', 'comentari'];
+  const rows = [header, ...state.evaluations.map(e=>[
+    e.evaluador, e.avaluat, modeLabel(e.mode), fmt(e.total),
+    ...state.rubric.criteris.map(c=>{
+      const lvl = c.nivells.find(n=>n.id===e.puntuacions[c.id]);
+      return lvl ? lvl.etiqueta : '';
+    }),
+    e.timestamp, e.comentari||''
+  ])];
+  downloadCsv(rows, 'avaluacions_detall.csv');
+});
+document.getElementById('exportSummaryCsvBtn').addEventListener('click', ()=>{
+  const header = ['alumne','auto_mitjana','auto_n','co_mitjana','co_n','hetero_mitjana','hetero_n','nota_final'];
+  const rows = [header, ...state.studentIds.map(sid=>{
+    const d = combinedScoreFor(sid);
+    return [sid, d.auto.avg!==null?fmt(d.auto.avg):'', d.auto.count, d.co.avg!==null?fmt(d.co.avg):'', d.co.count, d.hetero.avg!==null?fmt(d.hetero.avg):'', d.hetero.count, d.final!==null?fmt(d.final):''];
+  })];
+  downloadCsv(rows, 'resum_notes.csv');
+});
+document.getElementById('exportSessionBtn').addEventListener('click', ()=>{
+  downloadJson({
+    rubric: state.rubric,
+    studentIds: state.studentIds,
+    expected: state.expected,
+    evaluations: state.evaluations
+  }, 'sessio_avaluacio_' + new Date().toISOString().slice(0,10) + '.json');
+});
+document.getElementById('importSessionBtn').addEventListener('click', ()=> document.getElementById('sessionFileInput').click());
+document.getElementById('sessionFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data.rubric || !data.studentIds || !data.evaluations) throw new Error('format');
+      state.rubric = data.rubric;
+      state.studentIds = data.studentIds;
+      state.expected = data.expected || state.expected;
+      state.evaluations = data.evaluations;
+      document.getElementById('sessionMsgBox').innerHTML = '<div class="ok-box">Sessió carregada correctament.</div>';
+      renderAll();
+    } catch(err){
+      document.getElementById('sessionMsgBox').innerHTML = '<div class="warn-box">El fitxer no té el format esperat d\'una sessió d\'esta eina.</div>';
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* Parseja un CSV genèric (RFC4180-ish), detectant automàticament si el
+   delimitador és coma o punt i coma, i entenent camps entre cometes. */
+function parseCsv(text){
+  text = text.replace(/^﻿/, ''); // llevar BOM si n'hi ha
+  const firstLine = text.split(/\r?\n/, 1)[0] || '';
+  let inQuotes = false, commas = 0, semicolons = 0;
+  for(let i=0;i<firstLine.length;i++){
+    const ch = firstLine[i];
+    if(ch === '"') inQuotes = !inQuotes;
+    else if(!inQuotes && ch === ',') commas++;
+    else if(!inQuotes && ch === ';') semicolons++;
+  }
+  const delim = semicolons > commas ? ';' : ',';
+
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i], next = text[i+1];
+    if(inQ){
+      if(ch === '"' && next === '"'){ field += '"'; i++; }
+      else if(ch === '"'){ inQ = false; }
+      else field += ch;
+    } else {
+      if(ch === '"') inQ = true;
+      else if(ch === delim){ row.push(field); field=''; }
+      else if(ch === '\n'){ row.push(field); rows.push(row); row=[]; field=''; }
+      else if(ch === '\r'){ /* ignore, \n handles the break */ }
+      else field += ch;
+    }
+  }
+  if(field.length>0 || row.length>0){ row.push(field); rows.push(row); }
+  return rows.filter(r=>r.length>1 || (r.length===1 && r[0]!==''));
+}
+
+document.getElementById('importSheetsCsvBtn').addEventListener('click', ()=> document.getElementById('sheetsCsvFileInput').click());
+document.getElementById('sheetsCsvFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    const box = document.getElementById('sheetsCsvMsgBox');
+    try{
+      const rows = parseCsv(String(ev.target.result));
+      if(rows.length < 2) throw new Error('buit');
+      const headers = rows[0].map(h=>h.trim());
+      const idxTemps = headers.indexOf('Marca de temps');
+      const idxTipus = headers.indexOf('Tipus');
+      const idxAvaluador = headers.indexOf('Avaluador');
+      const idxAvaluat = headers.indexOf('Avaluat');
+      const idxTotal = headers.indexOf('Nota total');
+      const idxComentari = headers.indexOf('Comentari');
+      if([idxTipus,idxAvaluador,idxAvaluat,idxTotal].some(i=>i===-1)){
+        throw new Error('capçaleres no reconegudes');
+      }
+      const modeFromLabel = {'Autoavaluació':'auto','Coavaluació':'co','Heteroavaluació':'hetero'};
+      const criteriCols = headers
+        .map((h,i)=>({nom:h, idx:i}))
+        .filter(h=>[idxTemps,idxTipus,idxAvaluador,idxAvaluat,idxTotal,idxComentari].indexOf(h.idx)===-1);
+
+      let importades = 0, avisosColumnes = new Set(), avisosNivells = 0;
+      criteriCols.forEach(cc=>{
+        if(!state.rubric.criteris.find(c=>c.nom===cc.nom)) avisosColumnes.add(cc.nom);
+      });
+
+      for(let r=1;r<rows.length;r++){
+        const cells = rows[r];
+        if(cells.length<2) continue;
+        const modeLabelTxt = (cells[idxTipus]||'').trim();
+        const mode = modeFromLabel[modeLabelTxt];
+        if(!mode) continue;
+        const evaluador = (cells[idxAvaluador]||'').trim();
+        const avaluat = (cells[idxAvaluat]||'').trim();
+        const totalCell = parseFloat((cells[idxTotal]||'').replace(',','.'));
+        const puntuacions = {};
+        criteriCols.forEach(cc=>{
+          const crit = state.rubric.criteris.find(c=>c.nom===cc.nom);
+          if(!crit) return;
+          const etiquetaTxt = (cells[cc.idx]||'').trim();
+          if(!etiquetaTxt) return;
+          const lvl = crit.nivells.find(n=>n.etiqueta===etiquetaTxt);
+          if(lvl) puntuacions[crit.id] = lvl.id;
+          else avisosNivells++;
+        });
+        let timestamp = new Date().toISOString();
+        if(idxTemps!==-1 && cells[idxTemps]){
+          const d = new Date(cells[idxTemps]);
+          if(!isNaN(d.getTime())) timestamp = d.toISOString();
+        }
+        state.evaluations = state.evaluations.filter(ev=>!(ev.mode===mode && ev.evaluador===evaluador && ev.avaluat===avaluat));
+        state.evaluations.push({
+          id: uid(), mode, evaluador, avaluat, timestamp,
+          puntuacions,
+          comentari: idxComentari!==-1 ? (cells[idxComentari]||'') : '',
+          total: isNaN(totalCell) ? computeEvalTotal(puntuacions) : totalCell
+        });
+        importades++;
+      }
+
+      let msg = `<div class="ok-box">${importades} avaluació(ns) importada(es) correctament.</div>`;
+      if(avisosColumnes.size>0) msg += `<div class="warn-box">Estes columnes del CSV no coincidixen amb cap criteri de la rúbrica carregada i s'han ignorat: ${Array.from(avisosColumnes).map(escapeHtml).join(', ')}. Comprova que has carregat la mateixa rúbrica que vas posar al full de Google.</div>`;
+      if(avisosNivells>0) msg += `<div class="warn-box">${avisosNivells} valor(s) de nivell no s'han pogut relacionar amb cap etiqueta de la rúbrica actual (potser la rúbrica ha canviat després de recollir eixes dades).</div>`;
+      box.innerHTML = msg;
+
+      // si el CSV portava alumnat que encara no estava a la llista, l'afig
+      const nousIds = new Set(state.studentIds);
+      state.evaluations.forEach(ev=>{ nousIds.add(ev.avaluat); });
+      state.studentIds = Array.from(nousIds).sort((a,b)=>a.localeCompare(b, undefined, {numeric:true}));
+
+      refreshAllDependentViews();
+    } catch(err){
+      document.getElementById('sheetsCsvMsgBox').innerHTML = '<div class="warn-box">No s\'ha pogut llegir este CSV. Comprova que és l\'exportat directament des de la pestanya «Avaluacions» del full de Google.</div>';
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ============================================================
+   NAVEGACIÓ, IDIOMA, TEMA
+   ============================================================ */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='resultats') renderResultsTab();
+    if(btn.dataset.tab==='informe') renderReportTab();
+    if(btn.dataset.tab==='alumnat') renderCoverageTable();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+document.getElementById('langToggleBtn').addEventListener('click', ()=>{
+  state.lang = state.lang==='va' ? 'es' : 'va';
+  applyStaticI18n();
+  renderEvaluateTab();
+});
+document.getElementById('darkToggleBtn').addEventListener('click', ()=>{
+  state.dark = !state.dark;
+  document.documentElement.setAttribute('data-theme', state.dark ? 'dark' : 'light');
+});
+if(state.dark) document.documentElement.setAttribute('data-theme','dark');
+
+/* ============================================================
+   INICI
+   ============================================================ */
+function refreshAllDependentViews(){
+  renderResultsTab();
+  renderReportTab();
+  renderCoverageTable();
+}
+function renderAll(){
+  applyStaticI18n();
+  renderRubricTab();
+  renderRosterTab();
+  renderEvaluateTab();
+  renderResultsTab();
+  renderReportTab();
+}
+renderAll();
+</script>
+<!-- App instal·lable: botó «Descarrega l'app» -->
+<style>
+.appdl-btn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:900;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:11px 16px;background:#2A78D6;color:#fff;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.22);cursor:pointer}
+.appdl-btn:hover{filter:brightness(1.08)}
+.appdl-btn:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 6px #2A78D6}
+.appdl-dlg{border:0;border-radius:16px;padding:22px 22px 18px;max-width:min(440px,calc(100vw - 32px));background:#fff;color:#1d2125;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.appdl-dlg::backdrop{background:rgba(0,0,0,.45)}
+.appdl-dlg h2{margin:0 0 12px;font-size:18px;line-height:1.25}
+.appdl-dlg p{margin:0 0 10px}
+.appdl-dlg .appdl-ok{margin-top:6px;border:0;border-radius:999px;padding:10px 18px;background:#2A78D6;color:#fff;font:600 14px/1 inherit;cursor:pointer}
+@media (prefers-color-scheme:dark){.appdl-dlg{background:#1f2427;color:#e8ecee}}
+@media print{.appdl-btn,.appdl-dlg{display:none!important}}
+</style>
+<button type="button" class="appdl-btn" id="appdlBtn" hidden><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Descarrega l'app</button>
+<dialog class="appdl-dlg" id="appdlDlg" aria-labelledby="appdlTit">
+  <h2 id="appdlTit">Instal·la Rúbriques com a aplicació</h2>
+  <p id="appdlIos"><b>En iPhone o iPad:</b> obri esta pàgina amb Safari, prem el botó Compartir (el quadrat amb la fletxa cap amunt) i tria l'opció d'afegir-la a la pantalla d'inici.</p>
+  <p id="appdlAlt"><b>En Android o a l'ordinador:</b> obri el menú del navegador (⋮) i tria l'opció d'instal·lar l'aplicació o d'afegir-la a la pantalla d'inici.</p>
+  <p>Després l'obriràs des de la pantalla d'inici, com qualsevol altra aplicació.</p>
+  <form method="dialog"><button class="appdl-ok">Entesos</button></form>
+</dialog>
+<script>
+(function(){
+  var b=document.getElementById('appdlBtn'),dlg=document.getElementById('appdlDlg'),evt=null;
+  if(!b)return;
+  var inst=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!inst)b.hidden=false;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();evt=e;if(!inst)b.hidden=false;});
+  window.addEventListener('appinstalled',function(){b.hidden=true;evt=null;});
+  b.onclick=function(){
+    if(evt){evt.prompt();(evt.userChoice||Promise.resolve()).catch(function(){});evt=null;return;}
+    document.getElementById(ios?'appdlAlt':'appdlIos').hidden=true;
+    document.getElementById(ios?'appdlIos':'appdlAlt').hidden=false;
+    if(dlg.showModal)dlg.showModal();else alert(dlg.innerText);
+  };
+  if('serviceWorker' in navigator&&location.protocol==='https:'){try{navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}}
+})();
+</script>
+</body>
+</html>
