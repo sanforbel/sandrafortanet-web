@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ca-ES-valencia">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Traça IA: l'alumnat declara i documenta, part per part, com ha usat la IA en una tasca d'acord amb el marc MIAE.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Traça IA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: quadern de traçabilitat — capçalera amb pestanyes, formulari per parts del treball i una "línia de traça" 0–5 que mostra qui fa què */
+:root{
+  --paper:#F3F5F2; --surface:#FFFFFF; --ink:#18211F; --muted:#56625D; --line:#D6DDD8;
+  --human:#B87A12; --human-soft:#F6EAD2; --ai:#0E6874; --ai-soft:#D5EBEE;
+  --warn:#AE2630; --warn-soft:#F8E1E2; --ok:#2B7A4B; --ok-soft:#DDF0E3;
+  --focus:#0E6874;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#111816; --surface:#19221F; --ink:#E7EDEA; --muted:#9BA8A2; --line:#2D3935;
+  --human:#E3A93F; --human-soft:#3A2D14; --ai:#56B7C5; --ai-soft:#15343A;
+  --warn:#F2797F; --warn-soft:#3C1A1D; --ok:#6CCB92; --ok-soft:#163222; --focus:#56B7C5;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#111816; --surface:#19221F; --ink:#E7EDEA; --muted:#9BA8A2; --line:#2D3935;
+  --human:#E3A93F; --human-soft:#3A2D14; --ai:#56B7C5; --ai-soft:#15343A;
+  --warn:#F2797F; --warn-soft:#3C1A1D; --ok:#6CCB92; --ok-soft:#163222; --focus:#56B7C5;
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+a{color:var(--ai)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+/* Capçalera */
+header{border-bottom:1px solid var(--line);background:var(--surface)}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 10px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{display:flex;gap:3px;align-items:flex-end;height:30px}
+.mark i{display:block;width:6px;border-radius:2px}
+.brand h1{font-size:1.75rem;font-weight:800;letter-spacing:-.02em}
+.brand p{margin:0;color:var(--muted);font-size:.9rem}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--muted);font:600 .8rem var(--f-mono);padding:6px 12px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto}
+nav.tabs a{text-decoration:none;color:var(--muted);padding:10px 14px;border-bottom:3px solid transparent;font-weight:700;white-space:nowrap}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ai)}
+
+main{padding-block:28px 48px}
+.view{display:grid;gap:28px}
+.lead{max-width:65ch;color:var(--muted);margin:6px 0 0}
+.sec{display:grid;gap:14px}
+.sec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.step{font:600 .75rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ai)}
+.sec-h h2{font-size:1.35rem}
+
+.banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--human-soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px;font-size:.92rem}
+
+/* Formularis */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label.f{display:grid;gap:4px;font-size:.88rem;font-weight:700;min-width:0}
+label.f span.h{font-weight:400;color:var(--muted);font-size:.8rem}
+input[type=text],input[type=date],select,textarea{font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+textarea{min-height:76px;resize:vertical}
+.btn{font:700 .9rem var(--f-body);border-radius:8px;padding:9px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.small{padding:6px 10px;font-size:.82rem}
+.btn.link{border:0;background:none;color:var(--warn);padding:4px 6px;font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Targetes de part */
+.parts{display:grid;gap:16px}
+.part{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:14px;min-width:0}
+.part-h{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.part-h .f{flex:1 1 220px}
+.part-h .f.narrow{flex:0 1 190px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:.78rem var(--f-body);border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 10px;cursor:pointer}
+.chip:hover{border-color:var(--ai);color:var(--ai)}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:8px;min-width:0}
+legend{font-weight:700;font-size:.92rem;margin-bottom:6px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt label{display:block;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:.92rem;background:var(--surface)}
+.opt input:checked+label{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:700}
+.opt input:focus-visible+label{outline:3px solid var(--focus);outline-offset:2px}
+.sit{display:grid;gap:8px}
+.sit .opt label{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px}
+.sit .opt input:checked+label{background:var(--paper)}
+.lv{font:600 .78rem var(--f-mono);border-radius:6px;padding:3px 7px;white-space:nowrap;align-self:start}
+.note{font-size:.82rem;color:var(--muted);margin:0}
+.ev{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:12px}
+.ev h3{font-size:1rem}
+.flag{font-size:.86rem;border-radius:8px;padding:8px 12px;margin:0}
+.flag.warn{background:var(--warn-soft);color:var(--warn)}
+.flag.ok{background:var(--ok-soft);color:var(--ok)}
+
+/* Barres persona/IA */
+.split{display:flex;height:8px;border-radius:99px;overflow:hidden;width:100%;background:var(--line)}
+.split b{display:block;height:100%}
+.split .p{background:var(--human)} .split .a{background:var(--ai)}
+.split.mix{background:repeating-linear-gradient(90deg,var(--human) 0 8px,var(--ai) 8px 16px)}
+
+/* Línia de traça */
+.trace{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;overflow-x:auto}
+.tgrid{display:grid;grid-template-columns:minmax(120px,1.3fr) repeat(6,minmax(44px,1fr));min-width:520px;align-items:center}
+.tgrid .hd{font:600 .74rem var(--f-mono);color:var(--muted);text-align:center;padding-bottom:8px}
+.tgrid .hd.l{text-align:left}
+.tgrid .nm{font-weight:700;font-size:.9rem;padding:10px 8px 10px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.tgrid .cell{height:44px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative}
+.tgrid .cell.over{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--warn-soft) 6px 12px)}
+.dot{width:22px;height:22px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 2px var(--ink)}
+.dot.disc{background:transparent;box-shadow:0 0 0 2px var(--muted);border-style:dashed}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.summary{font-family:var(--f-display);font-size:1.25rem;font-weight:700;max-width:65ch}
+pre.out{font:.82rem/1.55 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:0;max-height:420px;overflow:auto}
+.toast{font-size:.85rem;color:var(--ok);font-weight:700}
+
+/* Nivells */
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.principles div{border-left:3px solid var(--ai);padding:2px 0 2px 12px;font-size:.92rem}
+.principles strong{display:block;font-family:var(--f-display)}
+.levels{display:grid;gap:14px}
+.level{display:grid;grid-template-columns:72px 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.level .num{font:800 2.6rem/1 var(--f-display);color:var(--ink)}
+.level .role{font:600 .82rem var(--f-mono);color:var(--ai);text-transform:uppercase;letter-spacing:.05em}
+.level h3{font-size:1.15rem;margin:2px 0 6px}
+.level p{margin:0 0 6px;max-width:65ch}
+.level .bd{font-size:.88rem;color:var(--muted)}
+.level .split{margin-top:6px;max-width:260px}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
+footer .wrap{padding-block:18px 28px;display:grid;gap:6px}
+footer p{margin:0;max-width:80ch}
+.level .fit{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px;font-size:.88rem}
+.level .fit div{background:var(--paper);border-radius:8px;padding:10px 12px}
+.level .fit b{display:block;font:600 .72rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+
+/* Solidesa */
+.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.rung{padding:16px;display:grid;gap:8px;align-content:start;border-right:1px solid var(--line);min-width:0}
+.rung:last-child{border-right:0}
+.rung .meter{display:flex;gap:4px}
+.rung .meter i{display:block;height:6px;flex:1;border-radius:3px;background:var(--line)}
+.rung .meter i.on{background:var(--ink)}
+.rung h3{font-size:1.1rem}
+.rung p{margin:0;font-size:.9rem}
+.rung .can{color:var(--ok)} .rung .cannot{color:var(--warn)}
+.sol{font:600 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line);border-radius:999px;padding:2px 7px;color:var(--muted);display:inline-block;margin-top:4px;white-space:nowrap}
+.sol.doc{color:var(--ai);border-color:var(--ai)}
+
+/* Proves de contrast */
+.lvpick{display:flex;flex-wrap:wrap;gap:6px}
+.lvpick button{font:700 .95rem var(--f-display);width:48px;height:48px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.lvpick button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.goal{font-family:var(--f-display);font-size:1.15rem;font-weight:700;max-width:65ch}
+.probes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.probe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:8px;align-content:start;min-width:0}
+.probe h3{font-size:1.05rem}
+.probe p{margin:0;font-size:.9rem}
+.probe dl{margin:0;display:grid;gap:6px;font-size:.86rem}
+.probe dt{font:600 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.probe dd{margin:0}
+.rule{border-left:3px solid var(--human);padding:4px 0 4px 12px;max-width:70ch;font-size:.92rem}
+
+/* Casos frontera */
+.score{font:700 1rem var(--f-mono)}
+.cases{display:grid;gap:14px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:12px;min-width:0}
+.case .q{margin:0;max-width:70ch}
+.case .n{font:600 .74rem var(--f-mono);color:var(--muted);letter-spacing:.06em}
+.picks{display:flex;flex-wrap:wrap;gap:6px}
+.picks button{font:700 .88rem var(--f-body);min-width:44px;height:40px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.picks button:disabled{cursor:default}
+.picks button.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.picks button.wrong{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.fb{margin:0;font-size:.92rem;padding:10px 12px;border-radius:8px;background:var(--paper);max-width:75ch}
+.fb strong{display:block}
+@media (max-width:560px){ .rung{border-right:0;border-bottom:1px solid var(--line)} .rung:last-child{border-bottom:0} }
+@media (max-width:560px){ .level{grid-template-columns:1fr;gap:6px} .level .num{font-size:2rem} .brand h1{font-size:1.45rem} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <i style="height:30px;background:var(--human)"></i><i style="height:24px;background:var(--human)"></i><i style="height:18px;background:linear-gradient(var(--human),var(--ai))"></i><i style="height:22px;background:var(--ai)"></i><i style="height:28px;background:var(--ai)"></i>
+        </div>
+        <div>
+          <h1>Traça IA</h1>
+          <p data-i18n="tagline"></p>
+        </div>
+      </div>
+      <div class="lang" role="group" aria-label="Llengua / Lengua">
+        <button type="button" data-lang="va" aria-pressed="true">VAL</button>
+        <button type="button" data-lang="es" aria-pressed="false">CAS</button>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Seccions">
+      <a href="#declarar" data-view="declarar" data-i18n="tab1"></a>
+      <a href="#consigna" data-view="consigna" data-i18n="tab2"></a>
+      <a href="#contrastar" data-view="contrastar" data-i18n="tab4"></a>
+      <a href="#casos" data-view="casos" data-i18n="tab5"></a>
+      <a href="#nivells" data-view="nivells" data-i18n="tab3"></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ALUMNAT -->
+  <section class="view" id="v-declarar">
+    <div>
+      <h2 style="font-size:1.8rem" data-i18n="d_title"></h2>
+      <p class="lead" data-i18n="d_lead"></p>
+    </div>
+    <div class="banner" id="exBanner" hidden>
+      <span data-i18n="ex_banner"></span>
+      <button type="button" class="btn small ghost" id="clearAll" data-i18n="ex_clear"></button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="s1"></span><h2 data-i18n="s1h"></h2></div>
+      <div class="grid">
+        <label class="f"><span data-i18n="f_title"></span><input type="text" id="t-title"></label>
+        <label class="f"><span data-i18n="f_subject"></span><input type="text" id="t-subject"></label>
+        <label class="f"><span data-i18n="f_course"></span><input type="text" id="t-course"></label>
+        <label class="f"><span data-i18n="f_id"></span><input type="text" id="t-id"><span class="h" data-i18n="f_id_h"></span></label>
+        <label class="f"><span data-i18n="f_date"></span><input type="date" id="t-date"></label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="s2"></span><h2 data-i18n="s2h"></h2></div>
+      <p class="lead" style="margin:0" data-i18n="s2lead"></p>
+      <div class="parts" id="parts"></div>
+      <div class="row"><button type="button" class="btn ghost" id="addPart" data-i18n="add_part"></button></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="s3"></span><h2 data-i18n="s3h"></h2></div>
+      <p class="lead" style="margin:0" data-i18n="s3lead"></p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <label class="f"><span data-i18n="r1"></span><textarea id="r-a"></textarea></label>
+        <label class="f"><span data-i18n="r2"></span><textarea id="r-b"></textarea></label>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="s4"></span><h2 data-i18n="s4h"></h2></div>
+      <p class="summary" id="summary"></p>
+      <div id="flags" class="parts" style="gap:8px"></div>
+      <div class="trace" id="trace"></div>
+      <div class="row">
+        <button type="button" class="btn" id="copyDecl" data-i18n="copy_decl"></button>
+        <span class="toast" id="toastDecl" aria-live="polite"></span>
+      </div>
+      <pre class="out" id="declOut" tabindex="0"></pre>
+    </div>
+  </section>
+
+  <!-- PROFESSORAT -->
+  <section class="view" id="v-consigna" hidden>
+    <div>
+      <h2 style="font-size:1.8rem" data-i18n="c_title"></h2>
+      <p class="lead" data-i18n="c_lead"></p>
+    </div>
+    <div class="sec">
+      <div class="grid">
+        <label class="f"><span data-i18n="f_title"></span><input type="text" id="c-title"></label>
+        <label class="f"><span data-i18n="f_course"></span><input type="text" id="c-course"></label>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="c_s1"></span><h2 data-i18n="c_s1h"></h2></div>
+      <div class="parts" id="cparts"></div>
+      <div class="row"><button type="button" class="btn ghost" id="addCPart" data-i18n="add_part"></button></div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="c_s2"></span><h2 data-i18n="c_s2h"></h2></div>
+      <div class="seg" id="cev"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><span class="step" data-i18n="c_s3"></span><h2 data-i18n="c_s3h"></h2></div>
+      <div class="row">
+        <button type="button" class="btn" id="copyCons" data-i18n="copy_cons"></button>
+        <button type="button" class="btn ghost" id="toStudent" data-i18n="to_student"></button>
+        <span class="toast" id="toastCons" aria-live="polite"></span>
+      </div>
+      <pre class="out" id="consOut" tabindex="0"></pre>
+    </div>
+  </section>
+
+  <!-- CONTRASTAR -->
+  <section class="view" id="v-contrastar" hidden>
+    <div>
+      <h2 style="font-size:1.8rem" data-i18n="k_title"></h2>
+      <p class="lead" data-i18n="k_lead"></p>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><h2 data-i18n="k_s1h"></h2></div>
+      <p class="lead" style="margin:0" data-i18n="k_s1lead"></p>
+      <div class="ladder" id="ladder"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><h2 data-i18n="k_s2h"></h2></div>
+      <p class="lead" style="margin:0" data-i18n="k_s2lead"></p>
+      <div class="lvpick" id="lvpick" role="group"></div>
+      <p class="goal" id="goal"></p>
+      <div class="probes" id="probes"></div>
+      <p class="rule" data-i18n="k_rule"></p>
+    </div>
+  </section>
+
+  <!-- CASOS -->
+  <section class="view" id="v-casos" hidden>
+    <div>
+      <h2 style="font-size:1.8rem" data-i18n="q_title"></h2>
+      <p class="lead" data-i18n="q_lead"></p>
+    </div>
+    <div class="row" style="justify-content:space-between">
+      <span class="score" id="score" aria-live="polite"></span>
+      <button type="button" class="btn small ghost" id="resetQuiz" data-i18n="q_reset"></button>
+    </div>
+    <div class="cases" id="cases"></div>
+  </section>
+
+  <!-- NIVELLS -->
+  <section class="view" id="v-nivells" hidden>
+    <div>
+      <h2 style="font-size:1.8rem" data-i18n="n_title"></h2>
+      <p class="lead" data-i18n="n_lead"></p>
+    </div>
+    <div class="principles" id="principles"></div>
+    <div class="levels" id="levels"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n-html="credit"></p>
+    <p data-i18n="privacy"></p>
+    <p>Sandra Fortanet · <a href="https://sandrafortanet.netlify.app/" target="_blank" rel="noopener">@sanforbel</a> · <a href="https://sandrafortanet.netlify.app/" target="_blank" rel="noopener">sandrafortanet.netlify.app</a></p>
+  </div>
+</footer>
+
+<script>
+const DOI = "https://doi.org/10.5281/zenodo.22647408";
+const SPLIT = [[100,0],[85,15],[70,30],[42,58],[50,50],[15,85]];
+
+const S = {
+va:{
+ tagline:"Declara i evidencia com has usat la IA, part per part",
+ tab1:"Declarar (alumnat)", tab2:"Preparar la consigna (professorat)", tab3:"Els sis nivells",
+ d_title:"La traça del meu treball",
+ d_lead:"No es tracta de dir si has usat IA o no, sinó de mostrar qui ha fet què en cada part. Cap nivell és millor que un altre: el que compta és que siga el nivell acordat i que ho pugues demostrar.",
+ ex_banner:"Hi ha un exemple carregat perquè veges com funciona.",
+ ex_clear:"Buidar i començar",
+ s1:"Pas 1", s1h:"La tasca",
+ f_title:"Títol de la tasca", f_subject:"Matèria", f_course:"Curs i grup", f_id:"Identificador", f_id_h:"Número de llista o codi. No poses el teu nom complet.", f_date:"Data",
+ s2:"Pas 2", s2h:"Les parts del treball",
+ s2lead:"Separa el treball en parts que s'han fet de manera diferent (buscar informació, planificar, redactar, fer imatges...). Cada part té el seu nivell.",
+ part:"Part", part_name:"Nom de la part", allowed:"Nivell permés", allowed_none:"No indicat",
+ allowed_upto:"Fins al nivell", rm:"Eliminar",
+ q_use:"Has fet servir IA generativa en esta part?",
+ use_no:"No", use_disc:"Sí, però vaig descartar la resposta", use_yes:"Sí",
+ disc_note:"Si la resposta no ha influït en el treball, esta part continua sent de nivell 0, però la consulta queda registrada.",
+ q_sit:"Quina frase descriu millor el que ha passat?",
+ sit1:"Les idees i el contingut són meus; la IA només ha corregit, traduït, resumit o redactat el que jo li he donat.",
+ sit2:"La IA m'ha ajudat a pensar idees o a organitzar-me, però el desenvolupament i la redacció són meus.",
+ sit3:"La IA ha fet un primer esborrany i jo l'he reconstruït a fons: he canviat contingut i raonament, no sols l'estil.",
+ sit4:"L'hem anat fent entre la IA i jo, en un diàleg continu: jo aportava arguments, objeccions i decisions.",
+ sit5:"La IA ho ha generat a partir de les meues instruccions i jo he revisat i validat el resultat.",
+ sitn1:"Si la IA ha afegit explicacions o conclusions que tu no havies escrit, mira el nivell 3, 4 o 5.",
+ sitn3:"Si només has retocat l'estil o has triat una resposta de la IA, és nivell 5.",
+ sitn4:"Repetir instruccions o acceptar propostes no és cocrear: has d'haver aportat contingut i criteri durant el procés.",
+ ev_h:"Les teues evidències",
+ ev_tool:"Eina d'IA utilitzada", ev_link:"Enllaç o referència a la conversa",
+ ev_link_h:"Enllaç compartit, captura o arxiu que entregaràs. Si l'omplis, esta part passa de «declarada» a «documentada».",
+ evq_disc:["Què li vas preguntar a la IA?","Per què vas descartar la resposta?"],
+ evq_1:["Què vas aportar tu? (notes, esborrany, idees)","Què va fer exactament la IA? (corregir, traduir, resumir, redactar)","Com has comprovat que no ha afegit idees noves?"],
+ evq_2:["Quines propostes de la IA vas aprofitar i quines vas descartar?","Què has desenvolupat i redactat tu sense IA?"],
+ evq_3:["Què contenia l'esborrany de la IA?","Què has canviat de contingut, raonament o estructura?"],
+ evq_4:["Descriu un moment en què vas reorientar, contradir o corregir la IA.","Quines decisions de contingut són teues?"],
+ evq_5:["Quines instruccions o paràmetres vas donar?","Com has verificat el resultat? (fonts, errors, adequació)"],
+ add_part:"+ Afegir una part",
+ suggest:["Cerca d'informació","Planificació","Redacció","Revisió lingüística","Imatges","Presentació","Codi"],
+ s3:"Pas 3", s3h:"El que he fet jo",
+ s3lead:"Estes respostes ajuden el professorat a saber què has aprés tu, independentment del nivell.",
+ r1:"Explica amb les teues paraules una idea clau del treball que podries defendre sense IA.",
+ r2:"Quina decisió important has pres tu i no la IA?",
+ s4:"Pas 4", s4h:"La teua declaració",
+ copy_decl:"Copiar la declaració", copied:"Copiat. Enganxa-ho en l'entrega.", copy_fail:"No s'ha pogut copiar: el text està seleccionat, prem Ctrl+C.",
+ sum_none:"Treball sense IA generativa (nivell 0 en totes les parts).",
+ sum_all:"Nivell {n} en tot el treball.",
+ sum_lead:"", sum_in:"nivell {n} en «{p}»", and:" i ",
+ sum_empty:"Afig almenys una part per a veure la declaració.",
+ sum_disc:"Consultes descartades en: {list}.",
+ flag_over:"«{p}» està en el nivell {n} i el límit acordat és {m}. Parla-ho amb el professorat abans d'entregar.",
+ flag_ok:"Totes les parts estan dins dels nivells acordats.",
+ flag_ev:"«{p}»: falten evidències per omplir.",
+ tr_part:"Part", tr_over:"Per damunt del límit acordat", tr_disc:"Consulta descartada", tr_lv:"Nivell declarat",
+ decl_head:"DECLARACIÓ D'ÚS DE LA IA · Marc MIAE v2.1",
+ decl_task:"Tasca", decl_who:"Alumne/a", decl_sum:"Resum", decl_parts:"Parts",
+ decl_allowed:"límit acordat", decl_refl:"El que he fet jo", decl_ref:"Referència",
+ decl_disc:"Consulta descartada (nivell 0 en el producte)", decl_noai:"Sense IA generativa",
+ unnamed:"Part sense nom",
+ c_title:"Consigna d'ús de la IA",
+ c_lead:"Decidix quin nivell admets en cada part de la tasca i quines evidències demanes. Obtindràs un text per a enganxar en Classroom, Aules o en l'enunciat.",
+ c_s1:"Pas 1", c_s1h:"Parts i nivell màxim",
+ c_s2:"Pas 2", c_s2h:"Evidències que demanes",
+ c_s3:"Pas 3", c_s3h:"Text per a l'alumnat",
+ c_max:"Nivell màxim",
+ evopts:["Enllaç o historial de la conversa","Esborranys o versions","Captures de pantalla","Defensa oral breve","Declaració feta amb Traça IA"],
+ copy_cons:"Copiar la consigna", to_student:"Provar-la com a alumne/a",
+ cons_head:"ÚS DE LA IA EN ESTA TASCA · Marc MIAE v2.1",
+ cons_intro:"Per a cada part, este és el màxim d'ús de la IA acordat:",
+ cons_ev:"Evidències que hauràs d'aportar:",
+ cons_note:"Cap nivell és millor que un altre. Si en alguna part necessites usar més IA de la permesa, parla-ho abans amb el professorat.",
+ allow:["Sense IA generativa. Tot el contingut, les idees i l'estructura són teus.","La IA només pot corregir, traduir, resumir o redactar el que tu li dones, sense afegir idees.","La IA pot ajudar-te a pensar idees o a organitzar-te; el desenvolupament i la redacció han de ser teus.","La IA pot fer un esborrany que tu has de reconstruir a fons.","Pots treballar en diàleg amb la IA, sempre que tu dirigisques i decidisques el contingut.","La IA pot generar el producte; tu l'has de supervisar i validar."],
+ n_title:"Els sis nivells del MIAE",
+ n_lead:"El marc descriu com es repartix el treball entre la persona i la IA generativa en una tasca. No mesura la qualitat, l'esforç ni l'aprenentatge.",
+ pr:[["Descriu el com","El nivell explica qui fa què, no si el treball és bo."],["No és acumulatiu","Una tasca de nivell 4 no ha de passar abans pels nivells anteriors."],["Per parts","Si les parts s'han fet de manera diferent, cada una té el seu nivell."],["Ho decidix el procés","Compta el procés complet, no la primera petició ni d'on ve la idea."]],
+ lv:[
+  ["La persona crea","Treball completament humà","No s'usa IA generativa en cap moment. Buscar en Internet o usar un processador de textos no és usar IA generativa.","Exemple: un debat a classe, un examen escrit, una redacció feta sense IA."],
+  ["La persona crea, la IA reformula","Assistència tècnica","La IA corregix, traduïx, resumix o redacta a partir d'idees i notes que la persona li dona. No hi aporta idees, anàlisis ni conceptes nous.","Frontera: si la IA proposa una estructura argumental o què desenvolupar, ja planifica (nivell 2)."],
+  ["La persona crea, la IA planifica","Planificació i estructura","La IA ajuda a generar idees inicials o a organitzar el treball. El desenvolupament i la redacció final són de la persona.","Frontera: un índex que orienta és nivell 2; un esborrany que ja desenvolupa contingut és nivell 3."],
+  ["La IA fa un esborrany, la persona construïx","Esborrany o esquelet","La IA genera un primer desenvolupament i la persona el reconstruïx de manera significativa: contingut, raonament o funcionament.","Frontera: triar una resposta o retocar l'estil no és reconstruir (seria nivell 5)."],
+  ["La persona i la IA cocreen","Col·laboració avançada","Hi ha un diàleg continu i en els dos sentits. La persona guia, contrasta i decidix, i el resultat és una fusió del treball de totes dues parts.","Frontera: el nombre d'intercanvis no basta; cal elaboració compartida del contingut."],
+  ["La IA crea, la persona supervisa","Supervisió d'IA autònoma","La IA elabora el producte a partir dels paràmetres de la persona, que el revisa i el valida abans d'usar-lo.","Exemple: un relat generat per IA que després l'alumnat analitza (l'anàlisi és una altra tasca amb el seu nivell)."]
+ ],
+ lvword:"Nivell",
+ credit:'Eina independent basada en el <a href="'+DOI+'" target="_blank" rel="noopener">Marc per a la integració de la IA generativa en les tasques educatives (MIAE) v2.1</a>, de Juan José de Haro (CC BY-SA 4.0). No és una eina oficial del marc.',
+ privacy:"Les dades es queden en este navegador i no s'envien enlloc. Identifica't amb un número, no amb el nom.",
+ ex:{title:"Article d'opinió: el mòbil a l'institut",subject:"Valencià",course:"3r ESO B",id:"14",
+   parts:[{name:"Cerca d'informació",allowed:2,use:"disc",ev:["Li vaig demanar dades sobre l'ús del mòbil en adolescents.","Donava xifres sense font i no les vaig poder comprovar; vaig usar l'informe que vam vore a classe."],tool:"ChatGPT",link:"Captura adjunta"},
+          {name:"Planificació",allowed:2,use:"yes",level:2,ev:["Vaig aprofitar l'ordre: tesi, dos arguments i contraargument. Vaig descartar l'argument de la salut visual perquè no tenia fonts.","Els arguments, els exemples i tot el text."],tool:"Gemini",link:"Enllaç compartit a la conversa"},
+          {name:"Revisió lingüística",allowed:1,use:"yes",level:1,ev:["El meu text complet.","Em va marcar errors d'accentuació i dos castellanismes.","He comparat les dos versions i només canvien paraules soltes."],tool:"Gemini",link:"Versió abans i després"}],
+   r:["Que prohibir el mòbil no resol el problema si no s'ensenya a usar-lo; ho podria explicar amb l'exemple del nostre centre.","Triar el contraargument i com rebatre'l."]}
+},
+es:{
+ tagline:"Declara y evidencia cómo has usado la IA, parte por parte",
+ tab1:"Declarar (alumnado)", tab2:"Preparar la consigna (profesorado)", tab3:"Los seis niveles",
+ d_title:"La traza de mi trabajo",
+ d_lead:"No se trata de decir si has usado IA o no, sino de mostrar quién ha hecho qué en cada parte. Ningún nivel es mejor que otro: lo que cuenta es que sea el nivel acordado y que puedas demostrarlo.",
+ ex_banner:"Hay un ejemplo cargado para que veas cómo funciona.",
+ ex_clear:"Vaciar y empezar",
+ s1:"Paso 1", s1h:"La tarea",
+ f_title:"Título de la tarea", f_subject:"Materia", f_course:"Curso y grupo", f_id:"Identificador", f_id_h:"Número de lista o código. No pongas tu nombre completo.", f_date:"Fecha",
+ s2:"Paso 2", s2h:"Las partes del trabajo",
+ s2lead:"Separa el trabajo en partes que se han hecho de forma distinta (buscar información, planificar, redactar, hacer imágenes...). Cada parte tiene su nivel.",
+ part:"Parte", part_name:"Nombre de la parte", allowed:"Nivel permitido", allowed_none:"No indicado",
+ allowed_upto:"Hasta el nivel", rm:"Eliminar",
+ q_use:"¿Has usado IA generativa en esta parte?",
+ use_no:"No", use_disc:"Sí, pero descarté la respuesta", use_yes:"Sí",
+ disc_note:"Si la respuesta no ha influido en el trabajo, esta parte sigue siendo de nivel 0, pero la consulta queda registrada.",
+ q_sit:"¿Qué frase describe mejor lo que ha pasado?",
+ sit1:"Las ideas y el contenido son míos; la IA solo ha corregido, traducido, resumido o redactado lo que yo le he dado.",
+ sit2:"La IA me ha ayudado a pensar ideas o a organizarme, pero el desarrollo y la redacción son míos.",
+ sit3:"La IA ha hecho un primer borrador y yo lo he reconstruido a fondo: he cambiado contenido y razonamiento, no solo el estilo.",
+ sit4:"Lo hemos ido haciendo entre la IA y yo, en un diálogo continuo: yo aportaba argumentos, objeciones y decisiones.",
+ sit5:"La IA lo ha generado a partir de mis instrucciones y yo he revisado y validado el resultado.",
+ sitn1:"Si la IA ha añadido explicaciones o conclusiones que tú no habías escrito, mira el nivel 3, 4 o 5.",
+ sitn3:"Si solo has retocado el estilo o has elegido una respuesta de la IA, es nivel 5.",
+ sitn4:"Repetir instrucciones o aceptar propuestas no es cocrear: tienes que haber aportado contenido y criterio durante el proceso.",
+ ev_h:"Tus evidencias",
+ ev_tool:"Herramienta de IA utilizada", ev_link:"Enlace o referencia a la conversación",
+ ev_link_h:"Enlace compartido, captura o archivo que entregarás. Si lo rellenas, esta parte pasa de «declarada» a «documentada».",
+ evq_disc:["¿Qué le preguntaste a la IA?","¿Por qué descartaste la respuesta?"],
+ evq_1:["¿Qué aportaste tú? (notas, borrador, ideas)","¿Qué hizo exactamente la IA? (corregir, traducir, resumir, redactar)","¿Cómo has comprobado que no ha añadido ideas nuevas?"],
+ evq_2:["¿Qué propuestas de la IA aprovechaste y cuáles descartaste?","¿Qué has desarrollado y redactado tú sin IA?"],
+ evq_3:["¿Qué contenía el borrador de la IA?","¿Qué has cambiado de contenido, razonamiento o estructura?"],
+ evq_4:["Describe un momento en que reorientaste, contradijiste o corregiste a la IA.","¿Qué decisiones de contenido son tuyas?"],
+ evq_5:["¿Qué instrucciones o parámetros diste?","¿Cómo has verificado el resultado? (fuentes, errores, adecuación)"],
+ add_part:"+ Añadir una parte",
+ suggest:["Búsqueda de información","Planificación","Redacción","Revisión lingüística","Imágenes","Presentación","Código"],
+ s3:"Paso 3", s3h:"Lo que he hecho yo",
+ s3lead:"Estas respuestas ayudan al profesorado a saber qué has aprendido tú, sea cual sea el nivel.",
+ r1:"Explica con tus palabras una idea clave del trabajo que podrías defender sin IA.",
+ r2:"¿Qué decisión importante has tomado tú y no la IA?",
+ s4:"Paso 4", s4h:"Tu declaración",
+ copy_decl:"Copiar la declaración", copied:"Copiado. Pégalo en la entrega.", copy_fail:"No se ha podido copiar: el texto está seleccionado, pulsa Ctrl+C.",
+ sum_none:"Trabajo sin IA generativa (nivel 0 en todas las partes).",
+ sum_all:"Nivel {n} en todo el trabajo.",
+ sum_lead:"", sum_in:"nivel {n} en «{p}»", and:" y ",
+ sum_empty:"Añade al menos una parte para ver la declaración.",
+ sum_disc:"Consultas descartadas en: {list}.",
+ flag_over:"«{p}» está en el nivel {n} y el límite acordado es {m}. Háblalo con el profesorado antes de entregar.",
+ flag_ok:"Todas las partes están dentro de los niveles acordados.",
+ flag_ev:"«{p}»: faltan evidencias por rellenar.",
+ tr_part:"Parte", tr_over:"Por encima del límite acordado", tr_disc:"Consulta descartada", tr_lv:"Nivel declarado",
+ decl_head:"DECLARACIÓN DE USO DE LA IA · Marco MIAE v2.1",
+ decl_task:"Tarea", decl_who:"Alumno/a", decl_sum:"Resumen", decl_parts:"Partes",
+ decl_allowed:"límite acordado", decl_refl:"Lo que he hecho yo", decl_ref:"Referencia",
+ decl_disc:"Consulta descartada (nivel 0 en el producto)", decl_noai:"Sin IA generativa",
+ unnamed:"Parte sin nombre",
+ c_title:"Consigna de uso de la IA",
+ c_lead:"Decide qué nivel admites en cada parte de la tarea y qué evidencias pides. Obtendrás un texto para pegar en Classroom, Aules o en el enunciado.",
+ c_s1:"Paso 1", c_s1h:"Partes y nivel máximo",
+ c_s2:"Paso 2", c_s2h:"Evidencias que pides",
+ c_s3:"Paso 3", c_s3h:"Texto para el alumnado",
+ c_max:"Nivel máximo",
+ evopts:["Enlace o historial de la conversación","Borradores o versiones","Capturas de pantalla","Defensa oral breve","Declaración hecha con Traça IA"],
+ copy_cons:"Copiar la consigna", to_student:"Probarla como alumno/a",
+ cons_head:"USO DE LA IA EN ESTA TAREA · Marco MIAE v2.1",
+ cons_intro:"Para cada parte, este es el máximo de uso de la IA acordado:",
+ cons_ev:"Evidencias que tendrás que aportar:",
+ cons_note:"Ningún nivel es mejor que otro. Si en alguna parte necesitas usar más IA de la permitida, háblalo antes con el profesorado.",
+ allow:["Sin IA generativa. Todo el contenido, las ideas y la estructura son tuyos.","La IA solo puede corregir, traducir, resumir o redactar lo que tú le das, sin añadir ideas.","La IA puede ayudarte a pensar ideas o a organizarte; el desarrollo y la redacción tienen que ser tuyos.","La IA puede hacer un borrador que tú tienes que reconstruir a fondo.","Puedes trabajar en diálogo con la IA, siempre que tú dirijas y decidas el contenido.","La IA puede generar el producto; tú lo tienes que supervisar y validar."],
+ n_title:"Los seis niveles del MIAE",
+ n_lead:"El marco describe cómo se reparte el trabajo entre la persona y la IA generativa en una tarea. No mide la calidad, el esfuerzo ni el aprendizaje.",
+ pr:[["Describe el cómo","El nivel explica quién hace qué, no si el trabajo es bueno."],["No es acumulativo","Una tarea de nivel 4 no tiene que pasar antes por los niveles anteriores."],["Por partes","Si las partes se han hecho de forma distinta, cada una tiene su nivel."],["Lo decide el proceso","Cuenta el proceso completo, no la primera petición ni de dónde viene la idea."]],
+ lv:[
+  ["La persona crea","Trabajo completamente humano","No se usa IA generativa en ningún momento. Buscar en Internet o usar un procesador de textos no es usar IA generativa.","Ejemplo: un debate en clase, un examen escrito, una redacción hecha sin IA."],
+  ["La persona crea, la IA reformula","Asistencia técnica","La IA corrige, traduce, resume o redacta a partir de ideas y notas que la persona le da. No aporta ideas, análisis ni conceptos nuevos.","Frontera: si la IA propone una estructura argumental o qué desarrollar, ya planifica (nivel 2)."],
+  ["La persona crea, la IA planifica","Planificación y estructura","La IA ayuda a generar ideas iniciales o a organizar el trabajo. El desarrollo y la redacción final son de la persona.","Frontera: un índice que orienta es nivel 2; un borrador que ya desarrolla contenido es nivel 3."],
+  ["La IA hace un borrador, la persona construye","Borrador o esqueleto","La IA genera un primer desarrollo y la persona lo reconstruye de forma significativa: contenido, razonamiento o funcionamiento.","Frontera: elegir una respuesta o retocar el estilo no es reconstruir (sería nivel 5)."],
+  ["La persona y la IA cocrean","Colaboración avanzada","Hay un diálogo continuo y en ambos sentidos. La persona guía, contrasta y decide, y el resultado es una fusión del trabajo de ambas partes.","Frontera: el número de intercambios no basta; hace falta elaboración compartida del contenido."],
+  ["La IA crea, la persona supervisa","Supervisión de IA autónoma","La IA elabora el producto a partir de los parámetros de la persona, que lo revisa y lo valida antes de usarlo.","Ejemplo: un relato generado por IA que después el alumnado analiza (el análisis es otra tarea con su nivel)."]
+ ],
+ lvword:"Nivel",
+ credit:'Herramienta independiente basada en el <a href="'+DOI+'" target="_blank" rel="noopener">Marco para la integración de la IA generativa en las tareas educativas (MIAE) v2.1</a>, de Juan José de Haro (CC BY-SA 4.0). No es una herramienta oficial del marco.',
+ privacy:"Los datos se quedan en este navegador y no se envían a ningún sitio. Identifícate con un número, no con tu nombre.",
+ ex:{title:"Artículo de opinión: el móvil en el instituto",subject:"Castellano",course:"3.º ESO B",id:"14",
+   parts:[{name:"Búsqueda de información",allowed:2,use:"disc",ev:["Le pedí datos sobre el uso del móvil en adolescentes.","Daba cifras sin fuente y no las pude comprobar; usé el informe que vimos en clase."],tool:"ChatGPT",link:"Captura adjunta"},
+          {name:"Planificación",allowed:2,use:"yes",level:2,ev:["Aproveché el orden: tesis, dos argumentos y contraargumento. Descarté el argumento de la salud visual porque no tenía fuentes.","Los argumentos, los ejemplos y todo el texto."],tool:"Gemini",link:"Enlace compartido a la conversación"},
+          {name:"Revisión lingüística",allowed:1,use:"yes",level:1,ev:["Mi texto completo.","Me marcó errores de acentuación y dos vulgarismos.","He comparado las dos versiones y solo cambian palabras sueltas."],tool:"Gemini",link:"Versión antes y después"}],
+   r:["Que prohibir el móvil no resuelve el problema si no se enseña a usarlo; lo podría explicar con el ejemplo de nuestro centro.","Elegir el contraargumento y cómo rebatirlo."]}
+}};
+
+Object.assign(S.va,{
+ tab4:"Contrastar (professorat)", tab5:"Casos frontera",
+ sol:["Declarada","Documentada","Contrastada"],
+ k_title:"Del que es declara al que se sap",
+ k_lead:"Una declaració diu com afirma l'alumne que ha treballat. Per a convertir-la en informació fiable cal contrastar-la. Esta secció t'ajuda a decidir què comprovar segons el nivell declarat.",
+ k_s1h:"La solidesa d'una declaració",
+ k_s1lead:"Cada part de la declaració arriba amb un grau de solidesa. L'app marca les dos primeres; la tercera depén de tu.",
+ ladder:[
+  ["Declarada","L'alumne afirma un nivell, però no aporta cap rastre.","Permet saber com diu que ha treballat i obrir la conversa.","No permet afirmar que siga cert."],
+  ["Documentada","Hi ha rastre del procés: conversa compartida, versions, captures o notes.","Permet vore què va fer la IA i què va fer l'alumne.","No permet saber si l'alumne entén el que entrega."],
+  ["Contrastada","El professorat ho ha comprovat amb una prova en directe, a l'aula.","Permet afirmar que l'alumne domina el que declara com a seu.","Continua sent una mostra: no cal contrastar-ho tot, sinó triar bé què."]
+ ],
+ k_s2h:"Proves de contrast per nivell",
+ k_s2lead:"Tria el nivell declarat. Cada nivell planteja un dubte diferent, i per això cada un té les seues proves.",
+ k_shows:"Què mostra", k_limit:"Límit", k_how:"Com fer-ho",
+ k_rule:"Cap prova és definitiva per si sola. Combina'n almenys una que mire el document i una altra que es faça en directe, i reserva el contrast en directe per a les parts on l'aprenentatge és el que avalues.",
+ probes:[
+  {goal:"Dubte que resols: el contingut ix del que l'alumne sap i sap fer?",items:[
+   ["Pregunta «i si...?»","Canvia una dada o una condició del treball i demana que reajuste la conclusió en dos minuts.","Si domina el raonament o només el resultat.","Els nervis poden fer fallar qui sí que ho sap. Fes-la en un ambient tranquil."],
+   ["Inici a l'aula","Fes que una part del treball es comence a classe, a mà o en un document sense assistents.","Un punt de partida propi amb què comparar el producte final.","No cobrix el que es fa després a casa."],
+   ["Coherència amb el que ja coneixes","Compara el producte amb textos que l'alumne ha fet a l'aula durant el curs.","Canvis bruscos de vocabulari, d'estructura o de nivell.","És un indici, no una prova: l'alumnat millora i té dies millors."]]},
+  {goal:"Dubte que resols: la IA s'ha limitat a reformular o hi ha afegit idees?",items:[
+   ["Notes contra text final","Demana les notes o l'esborrany de partida i marca cada idea del text final que no hi aparega.","Si hi ha contingut nou que l'alumne no havia aportat.","Requerix que les notes existisquen i siguen completes."],
+   ["Tres canvis justificats","L'alumne tria tres correccions que va acceptar de la IA i explica la norma o el motiu de cada una.","Si ha llegit les correccions o les ha acceptades sense mirar.","Un alumne pot entendre el canvi sense ser capaç de fer-lo encara."],
+   ["Digues-ho d'una altra manera","Assenyala una frase del text final i demana que l'explique oralment amb paraules seues.","Si les idees reformulades continuen sent seues.","Valora la comprensió, no la capacitat d'escriure-ho igual de bé."]]},
+  {goal:"Dubte que resols: el desenvolupament és de l'alumne o només el pla ve de la IA?",items:[
+   ["La idea descartada","Demana-li una proposta de la IA que va rebutjar i per què no li servia.","Si va triar amb criteri o va acceptar el primer pla.","Una bona tria no garantix un bon desenvolupament."],
+   ["Desenvolupa-ho davant meu","Tria un apartat de l'esquema i que el desenvolupe oralment o per escrit a l'aula.","Si és capaç de passar de l'esquema al contingut sense ajuda.","Fes-ho sobre un apartat curt: no cal repetir el treball."],
+   ["De l'esquema al producte","Compara l'esquema amb el producte final: el text hauria d'anar molt més enllà del que deia l'esquema.","Si el desenvolupament aporta exemples, arguments i connexions propis.","Un esquema molt detallat pot fregar el nivell 3."]]},
+  {goal:"Dubte que resols: la reconstrucció és de fons o només de forma?",items:[
+   ["Els canvis de fons","Posa l'esborrany de la IA i la versió final una al costat de l'altra i marca només els canvis de contingut o de raonament.","Si la reconstrucció és significativa o es queda en retocs d'estil.","Requerix que l'alumne guarde l'esborrany original."],
+   ["El canvi que més pesa","Que explique el canvi que més ha transformat el text i què millorava.","Si sap justificar les seues decisions de revisió.","Pot preparar-se la resposta; demana-li també un segon canvi a l'atzar."],
+   ["El que faltava","Pregunta-li què no tenia l'esborrany de la IA que el seu text sí que té.","Si té una mirada crítica sobre el que genera la IA.","Una resposta genèrica («més personal») no és suficient."]]},
+  {goal:"Dubte que resols: qui dirigia el diàleg i qui decidia el contingut?",items:[
+   ["El moment de desacord","Que assenyale en la conversa un moment en què va corregir, contradir o reorientar la IA, i per què.","Si hi ha criteri humà durant l'elaboració, no només al final.","Una conversa llarga no és prova de direcció."],
+   ["Decidix sense la IA","Planteja una variació de la tasca i que explique, sense IA, com canviaria el producte.","Si ha interioritzat la lògica del producte o depén de la IA per a decidir.","Mira la qualitat de les decisions, no la redacció."],
+   ["Qui proposa, qui decidix","Revisa un fragment de la conversa i classifica cada intervenció: proposta, objecció o decisió.","Com es repartix realment el treball.","Requerix accés a la conversa i temps de lectura."]]},
+  {goal:"Dubte que resols: la supervisió ha sigut real o només formal?",items:[
+   ["Troba l'error","Busca, o introduïx tu, un error en el producte i demana que el localitze.","Si ha revisat el producte amb atenció i coneixement.","Si no troba l'error, pot ser falta d'atenció i no de coneixement."],
+   ["Criteris de validació","Que explique quins criteris va usar per a donar el producte per bo.","Si sap què ha de complir un producte de qualitat.","Els criteris poden ser correctes i l'aplicació, superficial."],
+   ["Reescriu les instruccions","Que reformule les instruccions que va donar a la IA i què canviaria ara.","Si controlava els paràmetres de la tasca.","Valora la planificació de l'encàrrec, no el producte."]]}
+ ],
+ q_title:"On el situaries?",
+ q_lead:"Situacions reals d'aula que fan dubtar. Tria el nivell i llig l'explicació. Va bé per a formacions de professorat o per a preparar l'alumnat abans de la primera declaració.",
+ q_mixed:"Mixt", q_reset:"Tornar a començar", q_score:"Encerts: {a} de {b}",
+ q_right:"Correcte.", q_wrong:"No exactament. La resposta és: {x}.",
+ cases:[
+  {t:"L'Aina escriu la redacció i demana a la IA que li corregisca l'ortografia i la puntuació. Accepta quasi tots els canvis i el text queda molt més clar.",a:"1",e:"Les correccions d'estil i d'ortografia són nivell 1 encara que milloren molt el text, perquè no hi entren idees noves."},
+  {t:"En Marc passa a la IA les notes amb tots els arguments de l'article i li demana que els redacte. Comprova que no ha afegit res.",a:"1",e:"Redactar idees que la persona ja ha aportat és nivell 1, sempre que la IA no afegisca explicacions ni conclusions."},
+  {t:"La Laia només diu el tema a la IA («el mòbil a l'institut») i li demana un article. Després canvia quatre paraules.",a:"5",e:"Donar el tema no és aportar el contingut. Si la IA ho desenvolupa i la persona només fa retocs, és nivell 5."},
+  {t:"En Pau demana a la IA un índex per al treball sobre la variació dialectal i després l'escriu tot ell, apartat per apartat.",a:"2",e:"Un índex que orienta el treball és planificació. El desenvolupament és seu: nivell 2."},
+  {t:"La Júlia demana un esborrany d'un text d'opinió, el reescriu sencer, canvia la tesi i hi posa exemples del seu poble.",a:"3",e:"Hi ha un esborrany de la IA que ja desenvolupa contingut, i ella el reconstruïx a fons, també en el raonament: nivell 3."},
+  {t:"L'Hugo treballa una hora amb la IA: li porta arguments, la IA li proposa contraexemples, ell en rebutja uns, reformula la tesi i van redactant les parts junts.",a:"4",e:"Hi ha diàleg en els dos sentits i elaboració compartida del contingut, amb decisions de la persona durant el procés: nivell 4."},
+  {t:"La Sara pregunta a la IA per un autor, però la resposta no la convenç i no la fa servir. Fa tot el treball amb el llibre de text.",a:"0",e:"Una resposta descartada sense influència no puja el nivell del producte. Ara bé, cal registrar la consulta: no és correcte dir que no s'ha usat IA en cap moment."},
+  {t:"La professora genera amb IA un conte breu i l'alumnat n'analitza els recursos narratius a classe, sense IA.",a:"m",e:"Són dos tasques: generar el conte és nivell 5 (per a la professora) i l'anàlisi de l'alumnat és nivell 0. Cal declarar-les per separat."},
+  {t:"La Nerea fa trenta peticions a la IA («fes-ho més formal», «més curt», «canvia el títol») i entrega l'última versió.",a:"5",e:"El nombre d'intercanvis no determina la cocreació. Si les peticions són de forma i la IA ha generat el contingut, és nivell 5."}
+ ],
+ fitw:"Encaixa quan", taskw:"Exemple a l'aula de llengua",
+ fit:[
+  ["Vols avaluar el que l'alumne sap i fa per si mateix, sense mediació.","Un debat improvisat de tres minuts sobre un tema tret a l'atzar."],
+  ["S'avaluen les idees i el contingut, i la forma no és l'objectiu.","Alumnat nouvingut que escriu les idees en la seua llengua i la IA les traduïx; s'avalua el contingut."],
+  ["Vols que l'alumne supere el bloqueig inicial però construïsca l'argumentació.","Preparar un debat: la IA proposa posicions possibles i cada alumne construïx els seus arguments."],
+  ["L'objectiu és revisar, millorar i reescriure amb criteri lingüístic.","Reescriure un text d'opinió feble generat per IA fins a fer-lo convincent, amb els canvis marcats."],
+  ["Projectes complexos on vols valorar la direcció, el criteri i les decisions.","El guió d'un pòdcast sobre la variació lingüística, amb un registre de decisions preses."],
+  ["Vols treballar l'anàlisi o la crítica d'un material que fa de font.","La IA genera un poema i l'alumnat n'identifica els recursos i valora si funcionen."]
+ ]
+});
+Object.assign(S.es,{
+ tab4:"Contrastar (profesorado)", tab5:"Casos frontera",
+ sol:["Declarada","Documentada","Contrastada"],
+ k_title:"De lo que se declara a lo que se sabe",
+ k_lead:"Una declaración dice cómo afirma el alumno que ha trabajado. Para convertirla en información fiable hay que contrastarla. Esta sección te ayuda a decidir qué comprobar según el nivel declarado.",
+ k_s1h:"La solidez de una declaración",
+ k_s1lead:"Cada parte de la declaración llega con un grado de solidez. La app marca los dos primeros; el tercero depende de ti.",
+ ladder:[
+  ["Declarada","El alumno afirma un nivel, pero no aporta ningún rastro.","Permite saber cómo dice que ha trabajado y abrir la conversación.","No permite afirmar que sea cierto."],
+  ["Documentada","Hay rastro del proceso: conversación compartida, versiones, capturas o notas.","Permite ver qué hizo la IA y qué hizo el alumno.","No permite saber si el alumno entiende lo que entrega."],
+  ["Contrastada","El profesorado lo ha comprobado con una prueba en directo, en el aula.","Permite afirmar que el alumno domina lo que declara como suyo.","Sigue siendo una muestra: no hace falta contrastarlo todo, sino elegir bien qué."]
+ ],
+ k_s2h:"Pruebas de contraste por nivel",
+ k_s2lead:"Elige el nivel declarado. Cada nivel plantea una duda distinta, y por eso cada uno tiene sus pruebas.",
+ k_shows:"Qué muestra", k_limit:"Límite", k_how:"Cómo hacerlo",
+ k_rule:"Ninguna prueba es definitiva por sí sola. Combina al menos una que mire el documento y otra que se haga en directo, y reserva el contraste en directo para las partes donde el aprendizaje es lo que evalúas.",
+ probes:[
+  {goal:"Duda que resuelves: ¿el contenido sale de lo que el alumno sabe y sabe hacer?",items:[
+   ["Pregunta «¿y si...?»","Cambia un dato o una condición del trabajo y pide que reajuste la conclusión en dos minutos.","Si domina el razonamiento o solo el resultado.","Los nervios pueden hacer fallar a quien sí lo sabe. Hazla en un ambiente tranquilo."],
+   ["Inicio en el aula","Haz que una parte del trabajo se empiece en clase, a mano o en un documento sin asistentes.","Un punto de partida propio con el que comparar el producto final.","No cubre lo que se hace después en casa."],
+   ["Coherencia con lo que ya conoces","Compara el producto con textos que el alumno ha hecho en el aula durante el curso.","Cambios bruscos de vocabulario, de estructura o de nivel.","Es un indicio, no una prueba: el alumnado mejora y tiene días mejores."]]},
+  {goal:"Duda que resuelves: ¿la IA se ha limitado a reformular o ha añadido ideas?",items:[
+   ["Notas contra texto final","Pide las notas o el borrador de partida y marca cada idea del texto final que no aparezca en ellos.","Si hay contenido nuevo que el alumno no había aportado.","Requiere que las notas existan y estén completas."],
+   ["Tres cambios justificados","El alumno elige tres correcciones que aceptó de la IA y explica la norma o el motivo de cada una.","Si ha leído las correcciones o las ha aceptado sin mirar.","Un alumno puede entender el cambio sin ser capaz de hacerlo todavía."],
+   ["Dilo de otra manera","Señala una frase del texto final y pide que la explique oralmente con sus palabras.","Si las ideas reformuladas siguen siendo suyas.","Valora la comprensión, no la capacidad de escribirlo igual de bien."]]},
+  {goal:"Duda que resuelves: ¿el desarrollo es del alumno o solo el plan viene de la IA?",items:[
+   ["La idea descartada","Pídele una propuesta de la IA que rechazó y por qué no le servía.","Si eligió con criterio o aceptó el primer plan.","Una buena elección no garantiza un buen desarrollo."],
+   ["Desarróllalo delante de mí","Elige un apartado del esquema y que lo desarrolle oralmente o por escrito en el aula.","Si es capaz de pasar del esquema al contenido sin ayuda.","Hazlo sobre un apartado corto: no hace falta repetir el trabajo."],
+   ["Del esquema al producto","Compara el esquema con el producto final: el texto debería ir mucho más allá de lo que decía el esquema.","Si el desarrollo aporta ejemplos, argumentos y conexiones propios.","Un esquema muy detallado puede rozar el nivel 3."]]},
+  {goal:"Duda que resuelves: ¿la reconstrucción es de fondo o solo de forma?",items:[
+   ["Los cambios de fondo","Pon el borrador de la IA y la versión final una al lado de la otra y marca solo los cambios de contenido o de razonamiento.","Si la reconstrucción es significativa o se queda en retoques de estilo.","Requiere que el alumno guarde el borrador original."],
+   ["El cambio que más pesa","Que explique el cambio que más ha transformado el texto y qué mejoraba.","Si sabe justificar sus decisiones de revisión.","Puede llevar la respuesta preparada; pídele también un segundo cambio al azar."],
+   ["Lo que faltaba","Pregúntale qué no tenía el borrador de la IA que su texto sí tiene.","Si tiene una mirada crítica sobre lo que genera la IA.","Una respuesta genérica («más personal») no es suficiente."]]},
+  {goal:"Duda que resuelves: ¿quién dirigía el diálogo y quién decidía el contenido?",items:[
+   ["El momento de desacuerdo","Que señale en la conversación un momento en que corrigió, contradijo o reorientó a la IA, y por qué.","Si hay criterio humano durante la elaboración, no solo al final.","Una conversación larga no es prueba de dirección."],
+   ["Decide sin la IA","Plantea una variación de la tarea y que explique, sin IA, cómo cambiaría el producto.","Si ha interiorizado la lógica del producto o depende de la IA para decidir.","Mira la calidad de las decisiones, no la redacción."],
+   ["Quién propone, quién decide","Revisa un fragmento de la conversación y clasifica cada intervención: propuesta, objeción o decisión.","Cómo se reparte realmente el trabajo.","Requiere acceso a la conversación y tiempo de lectura."]]},
+  {goal:"Duda que resuelves: ¿la supervisión ha sido real o solo formal?",items:[
+   ["Encuentra el error","Busca, o introduce tú, un error en el producto y pide que lo localice.","Si ha revisado el producto con atención y conocimiento.","Si no encuentra el error, puede ser falta de atención y no de conocimiento."],
+   ["Criterios de validación","Que explique qué criterios usó para dar el producto por bueno.","Si sabe qué tiene que cumplir un producto de calidad.","Los criterios pueden ser correctos y la aplicación, superficial."],
+   ["Reescribe las instrucciones","Que reformule las instrucciones que dio a la IA y qué cambiaría ahora.","Si controlaba los parámetros de la tarea.","Valora la planificación del encargo, no el producto."]]}
+ ],
+ q_title:"¿Dónde lo situarías?",
+ q_lead:"Situaciones reales de aula que hacen dudar. Elige el nivel y lee la explicación. Sirve para formaciones de profesorado o para preparar al alumnado antes de la primera declaración.",
+ q_mixed:"Mixto", q_reset:"Volver a empezar", q_score:"Aciertos: {a} de {b}",
+ q_right:"Correcto.", q_wrong:"No exactamente. La respuesta es: {x}.",
+ cases:[
+  {t:"Aina escribe la redacción y pide a la IA que le corrija la ortografía y la puntuación. Acepta casi todos los cambios y el texto queda mucho más claro.",a:"1",e:"Las correcciones de estilo y de ortografía son nivel 1 aunque mejoren mucho el texto, porque no entran ideas nuevas."},
+  {t:"Marc pasa a la IA las notas con todos los argumentos del artículo y le pide que los redacte. Comprueba que no ha añadido nada.",a:"1",e:"Redactar ideas que la persona ya ha aportado es nivel 1, siempre que la IA no añada explicaciones ni conclusiones."},
+  {t:"Laia solo le dice el tema a la IA («el móvil en el instituto») y le pide un artículo. Después cambia cuatro palabras.",a:"5",e:"Dar el tema no es aportar el contenido. Si la IA lo desarrolla y la persona solo hace retoques, es nivel 5."},
+  {t:"Pau pide a la IA un índice para el trabajo sobre la variación dialectal y después lo escribe todo él, apartado por apartado.",a:"2",e:"Un índice que orienta el trabajo es planificación. El desarrollo es suyo: nivel 2."},
+  {t:"Júlia pide un borrador de un texto de opinión, lo reescribe entero, cambia la tesis y añade ejemplos de su pueblo.",a:"3",e:"Hay un borrador de la IA que ya desarrolla contenido, y ella lo reconstruye a fondo, también en el razonamiento: nivel 3."},
+  {t:"Hugo trabaja una hora con la IA: le lleva argumentos, la IA le propone contraejemplos, él rechaza algunos, reformula la tesis y van redactando las partes juntos.",a:"4",e:"Hay diálogo en ambos sentidos y elaboración compartida del contenido, con decisiones de la persona durante el proceso: nivel 4."},
+  {t:"Sara pregunta a la IA por un autor, pero la respuesta no la convence y no la usa. Hace todo el trabajo con el libro de texto.",a:"0",e:"Una respuesta descartada sin influencia no sube el nivel del producto. Ahora bien, hay que registrar la consulta: no es correcto decir que no se ha usado IA en ningún momento."},
+  {t:"La profesora genera con IA un cuento breve y el alumnado analiza sus recursos narrativos en clase, sin IA.",a:"m",e:"Son dos tareas: generar el cuento es nivel 5 (para la profesora) y el análisis del alumnado es nivel 0. Hay que declararlas por separado."},
+  {t:"Nerea hace treinta peticiones a la IA («hazlo más formal», «más corto», «cambia el título») y entrega la última versión.",a:"5",e:"El número de intercambios no determina la cocreación. Si las peticiones son de forma y la IA ha generado el contenido, es nivel 5."}
+ ],
+ fitw:"Encaja cuando", taskw:"Ejemplo en el aula de lengua",
+ fit:[
+  ["Quieres evaluar lo que el alumno sabe y hace por sí mismo, sin mediación.","Un debate improvisado de tres minutos sobre un tema sacado al azar."],
+  ["Se evalúan las ideas y el contenido, y la forma no es el objetivo.","Alumnado recién llegado que escribe las ideas en su lengua y la IA las traduce; se evalúa el contenido."],
+  ["Quieres que el alumno supere el bloqueo inicial pero construya la argumentación.","Preparar un debate: la IA propone posiciones posibles y cada alumno construye sus argumentos."],
+  ["El objetivo es revisar, mejorar y reescribir con criterio lingüístico.","Reescribir un texto de opinión flojo generado por IA hasta hacerlo convincente, con los cambios marcados."],
+  ["Proyectos complejos donde quieres valorar la dirección, el criterio y las decisiones.","El guion de un pódcast sobre la variación lingüística, con un registro de decisiones tomadas."],
+  ["Quieres trabajar el análisis o la crítica de un material que hace de fuente.","La IA genera un poema y el alumnado identifica sus recursos y valora si funcionan."]
+ ]
+});
+
+const KEY="traca-ia-v1";
+let uid=1; const nid=()=> "p"+(Date.now().toString(36))+(uid++);
+let st;
+
+function exampleState(lang){
+  const e=S[lang].ex;
+  return {lang, example:true, view:"declarar",
+    task:{title:e.title,subject:e.subject,course:e.course,id:e.id,date:new Date().toISOString().slice(0,10)},
+    parts:e.parts.map(p=>({id:nid(),name:p.name,allowed:p.allowed,use:p.use,level:p.level||0,ev:p.ev.slice(),tool:p.tool,link:p.link})),
+    refl:{a:e.r[0],b:e.r[1]},
+    cons:{title:e.title,course:e.course,parts:[{id:nid(),name:e.parts[0].name,max:2},{id:nid(),name:e.parts[1].name,max:2},{id:nid(),name:e.parts[2].name,max:1},{id:nid(),name:lang==="va"?"Redacció":"Redacción",max:0}],ev:[0,1,4]}};
+}
+function load(){ try{const r=localStorage.getItem(KEY); if(r) return JSON.parse(r);}catch(e){} return null; }
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){} }
+
+const T=k=>S[st.lang][k];
+const fmt=(s,o)=>s.replace(/\{(\w+)\}/g,(_,k)=>o[k]);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function splitBar(n){
+  if(n===4) return '<span class="split mix" aria-hidden="true"></span>';
+  const [p,a]=SPLIT[n];
+  return `<span class="split" aria-hidden="true"><b class="p" style="width:${p}%"></b><b class="a" style="width:${a}%"></b></span>`;
+}
+function lvBadge(n){
+  const bg = n===0? "var(--human-soft)" : n>=3? "var(--ai-soft)" : "var(--paper)";
+  return `<span class="lv" style="background:${bg};color:var(--ink);border:1px solid var(--line)">${T("lvword").toUpperCase()} ${n}</span>`;
+}
+
+/* ---------- i18n estàtic ---------- */
+function applyStatic(){
+  document.documentElement.lang = st.lang==="va"?"ca-ES-valencia":"es";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=T(el.dataset.i18n)});
+  document.querySelectorAll("[data-i18n-html]").forEach(el=>{el.innerHTML=T(el.dataset.i18nHtml)});
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===st.lang));
+}
+
+/* ---------- Vistes ---------- */
+function showView(v){
+  if(!["declarar","consigna","contrastar","casos","nivells"].includes(v)) v="declarar";
+  ["declarar","consigna","contrastar","casos","nivells"].forEach(x=>{document.getElementById("v-"+x).hidden = x!==v});
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.toggleAttribute("aria-current",false));
+  const a=document.querySelector(`nav.tabs a[data-view="${v}"]`); if(a) a.setAttribute("aria-current","page");
+}
+
+/* ---------- Alumnat: parts ---------- */
+function evKey(p){ return p.use==="disc"?"evq_disc": p.use==="yes"?("evq_"+p.level):null; }
+
+function renderParts(){
+  const box=document.getElementById("parts");
+  box.innerHTML = st.parts.map((p,i)=>{
+    const allowedOpts = `<option value="">${T("allowed_none")}</option>`+[0,1,2,3,4,5].map(n=>`<option value="${n}" ${p.allowed===n?"selected":""}>${T("allowed_upto")} ${n}</option>`).join("");
+    const use = ["no","disc","yes"].map(u=>`<div class="opt"><input type="radio" name="use-${p.id}" id="use-${p.id}-${u}" value="${u}" data-act="use" data-id="${p.id}" ${p.use===u?"checked":""}><label for="use-${p.id}-${u}">${T("use_"+u)}</label></div>`).join("");
+    let sit="";
+    if(p.use==="yes"){
+      sit = `<fieldset><legend>${T("q_sit")}</legend><div class="sit">`+[1,2,3,4,5].map(n=>`<div class="opt"><input type="radio" name="lv-${p.id}" id="lv-${p.id}-${n}" value="${n}" data-act="level" data-id="${p.id}" ${p.level===n?"checked":""}><label for="lv-${p.id}-${n}">${lvBadge(n)}<span>${T("sit"+n)}</span></label></div>`).join("")+`</div>`;
+      const nk = {1:"sitn1",3:"sitn3",4:"sitn4"}[p.level];
+      if(nk) sit+=`<p class="note">${T(nk)}</p>`;
+      sit+=`</fieldset>`;
+    }
+    if(p.use==="disc") sit=`<p class="note">${T("disc_note")}</p>`;
+    let ev="";
+    const k=evKey(p);
+    if(k && (p.use==="disc" || p.level>0)){
+      const qs=T(k);
+      ev = `<div class="ev"><h3>${T("ev_h")}</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">`+
+        qs.map((q,j)=>`<label class="f"><span>${esc(q)}</span><textarea id="ev-${p.id}-${j}" data-act="ev" data-id="${p.id}" data-j="${j}">${esc(p.ev[j]||"")}</textarea></label>`).join("")+
+        `</div><div class="grid"><label class="f"><span>${T("ev_tool")}</span><input type="text" id="tool-${p.id}" data-act="tool" data-id="${p.id}" value="${esc(p.tool)}"></label>
+         <label class="f"><span>${T("ev_link")}</span><input type="text" id="link-${p.id}" data-act="link" data-id="${p.id}" value="${esc(p.link)}"><span class="h">${T("ev_link_h")}</span></label></div></div>`;
+    }
+    const chips = !p.name ? `<div class="chips">${T("suggest").map(s=>`<button type="button" class="chip" data-act="chip" data-id="${p.id}" data-v="${esc(s)}">${esc(s)}</button>`).join("")}</div>`:"";
+    return `<article class="part" aria-label="${T("part")} ${i+1}">
+      <div class="part-h">
+        <label class="f"><span>${T("part")} ${i+1} · ${T("part_name")}</span><input type="text" id="name-${p.id}" data-act="name" data-id="${p.id}" value="${esc(p.name)}"></label>
+        <label class="f narrow"><span>${T("allowed")}</span><select id="al-${p.id}" data-act="allowed" data-id="${p.id}">${allowedOpts}</select></label>
+        <button type="button" class="btn link" data-act="rm" data-id="${p.id}">${T("rm")}</button>
+      </div>
+      ${chips}
+      <fieldset><legend>${T("q_use")}</legend><div class="seg">${use}</div></fieldset>
+      ${sit}${ev}
+    </article>`;
+  }).join("");
+}
+
+function solid(p){ return (p.use!=="no" && (p.link||"").trim()) ? 1 : 0; }
+function partLevel(p){ return p.use==="yes"? (p.level||0) : 0; }
+function pname(p){ return (p.name||"").trim() || T("unnamed"); }
+
+function summaryText(){
+  const ps=st.parts;
+  if(!ps.length) return T("sum_empty");
+  const undecided = ps.filter(p=>p.use==="yes" && !p.level);
+  const lv=ps.map(partLevel);
+  let s;
+  if(lv.every(n=>n===0)) s=T("sum_none");
+  else if(lv.every(n=>n===lv[0])) s=fmt(T("sum_all"),{n:lv[0]});
+  else {
+    const bits=ps.map(p=>fmt(T("sum_in"),{n:partLevel(p),p:pname(p)}));
+    s = bits.length>1 ? bits.slice(0,-1).join(", ")+T("and")+bits[bits.length-1] : bits[0];
+    s = s.charAt(0).toUpperCase()+s.slice(1)+".";
+  }
+  const disc=ps.filter(p=>p.use==="disc").map(pname);
+  if(disc.length) s+=" "+fmt(T("sum_disc"),{list:disc.join(", ")});
+  return s;
+}
+
+function renderResult(){
+  document.getElementById("summary").textContent = summaryText();
+  // avisos
+  const flags=[];
+  let anyAllowed=false, over=false;
+  st.parts.forEach(p=>{
+    const n=partLevel(p);
+    if(p.allowed!==""&&p.allowed!=null){ anyAllowed=true; if(n>p.allowed){over=true; flags.push(`<p class="flag warn">${esc(fmt(T("flag_over"),{p:pname(p),n,m:p.allowed}))}</p>`);} }
+    const k=evKey(p);
+    if(k && (p.use==="disc"||p.level>0)){
+      const need=T(k).length;
+      const filled=T(k).every((_,j)=>(p.ev[j]||"").trim());
+      if(!filled) flags.push(`<p class="flag warn" style="background:var(--human-soft);color:var(--ink)">${esc(fmt(T("flag_ev"),{p:pname(p)}))}</p>`);
+    }
+  });
+  if(anyAllowed && !over && st.parts.length) flags.unshift(`<p class="flag ok">${T("flag_ok")}</p>`);
+  document.getElementById("flags").innerHTML=flags.join("");
+  // traça
+  const tr=document.getElementById("trace");
+  if(!st.parts.length){ tr.innerHTML=""; tr.hidden=true; }
+  else{
+    tr.hidden=false;
+    let h=`<div class="tgrid" role="table" aria-label="${T("s4h")}"><div class="hd l" role="columnheader">${T("tr_part")}</div>`+[0,1,2,3,4,5].map(n=>`<div class="hd" role="columnheader">${n}<div style="padding:4px 6px 0">${splitBar(n)}</div></div>`).join("");
+    st.parts.forEach(p=>{
+      const n=partLevel(p);
+      const sl=solid(p); h+=`<div class="nm" role="rowheader">${esc(pname(p))}<br><span class="sol${sl?" doc":""}">${T("sol")[sl]}</span></div>`;
+      for(let c=0;c<6;c++){
+        const isOver = p.allowed!==""&&p.allowed!=null&&c>p.allowed;
+        let dot="";
+        if(c===n){
+          const col = n===0?"var(--human)": n===4?"linear-gradient(90deg,var(--human) 50%,var(--ai) 50%)": n>=3?"var(--ai)":"color-mix(in srgb, var(--human) 55%, var(--ai))";
+          dot = p.use==="disc"
+            ? `<span class="dot" style="background:var(--human);outline:2px dashed var(--muted);outline-offset:4px" title="${T("tr_disc")}"></span>`
+            : `<span class="dot" style="background:${col}" title="${T("tr_lv")} ${n}"></span>`;
+        }
+        h+=`<div class="cell${isOver?" over":""}" role="cell">${dot}</div>`;
+      }
+    });
+    h+=`</div><div class="legend"><span><span class="sw" style="background:var(--human)"></span>${st.lang==="va"?"La persona":"La persona"}</span><span><span class="sw" style="background:var(--ai)"></span>IA</span><span><span class="sw" style="background:repeating-linear-gradient(135deg,transparent 0 3px,var(--warn-soft) 3px 6px);border:1px solid var(--line)"></span>${T("tr_over")}</span><span><span class="sw" style="background:var(--human);outline:2px dashed var(--muted);outline-offset:2px;border-radius:50%"></span>${T("tr_disc")}</span></div>`;
+    tr.innerHTML=h;
+  }
+  document.getElementById("declOut").textContent = declText();
+}
+
+function declText(){
+  const t=st.task, L=[];
+  const lvRole=n=>T("lv")[n][0];
+  L.push(T("decl_head"));
+  L.push("");
+  L.push(`${T("decl_task")}: ${t.title||"—"}`);
+  L.push(`${T("decl_who")}: ${t.id||"—"} · ${t.course||"—"} · ${t.subject||"—"} · ${t.date?t.date.split("-").reverse().join("/"):"—"}`);
+  L.push(`${T("decl_sum")}: ${summaryText()}`);
+  L.push("");
+  L.push(T("decl_parts").toUpperCase());
+  st.parts.forEach((p,i)=>{
+    const n=partLevel(p);
+    let head=`${i+1}. ${pname(p)} — `;
+    if(p.use==="disc") head+=T("decl_disc");
+    else if(n===0) head+=`${T("lvword")} 0 (${T("decl_noai")})`;
+    else head+=`${T("lvword")} ${n} (${lvRole(n)})`;
+    if(p.allowed!==""&&p.allowed!=null) head+=` · ${T("decl_allowed")}: ${p.allowed} ${n>p.allowed?"⚠":"✓"}`;
+    head+=` · [${T("sol")[solid(p)]}]`;
+    L.push(head);
+    const k=evKey(p);
+    if(k && (p.use==="disc"||p.level>0)){
+      if(p.tool) L.push(`   ${T("ev_tool")}: ${p.tool}`);
+      if(p.link) L.push(`   ${T("ev_link")}: ${p.link}`);
+      T(k).forEach((q,j)=>{ if((p.ev[j]||"").trim()) L.push(`   · ${q} ${p.ev[j].trim()}`); });
+    }
+  });
+  if((st.refl.a||"").trim()||(st.refl.b||"").trim()){
+    L.push(""); L.push(T("decl_refl").toUpperCase());
+    if(st.refl.a.trim()) L.push(`· ${T("r1")} ${st.refl.a.trim()}`);
+    if(st.refl.b.trim()) L.push(`· ${T("r2")} ${st.refl.b.trim()}`);
+  }
+  L.push(""); L.push(`${T("decl_ref")}: De Haro, J. J. (2026). MIAE v2.1. ${DOI}`);
+  return L.join("\n");
+}
+
+/* ---------- Professorat ---------- */
+function renderCons(){
+  const box=document.getElementById("cparts");
+  box.innerHTML=st.cons.parts.map((p,i)=>`<article class="part">
+    <div class="part-h">
+      <label class="f"><span>${T("part")} ${i+1} · ${T("part_name")}</span><input type="text" id="cn-${p.id}" data-cact="name" data-id="${p.id}" value="${esc(p.name)}"></label>
+      <label class="f narrow"><span>${T("c_max")}</span><select id="cm-${p.id}" data-cact="max" data-id="${p.id}">${[0,1,2,3,4,5].map(n=>`<option value="${n}" ${p.max===n?"selected":""}>${T("lvword")} ${n}</option>`).join("")}</select></label>
+      <button type="button" class="btn link" data-cact="rm" data-id="${p.id}">${T("rm")}</button>
+    </div>
+    <div class="row" style="gap:12px;align-items:center"><div style="flex:0 0 120px">${splitBar(p.max)}</div><p class="note" style="flex:1 1 240px">${esc(T("allow")[p.max])}</p></div>
+  </article>`).join("");
+  document.getElementById("cev").innerHTML=T("evopts").map((o,j)=>`<div class="opt"><input type="checkbox" id="cev-${j}" data-cact="ev" data-j="${j}" ${st.cons.ev.includes(j)?"checked":""}><label for="cev-${j}">${esc(o)}</label></div>`).join("");
+  renderConsOut();
+}
+function consText(){
+  const c=st.cons, L=[T("cons_head"),""];
+  if(c.title) L.push(`${T("decl_task")}: ${c.title}${c.course?" · "+c.course:""}`), L.push("");
+  L.push(T("cons_intro"));
+  c.parts.forEach(p=>L.push(`• ${(p.name||T("unnamed")).trim()}: ${p.max===0?T("lvword")+" 0":T("allowed_upto").toLowerCase()+" "+p.max} — ${T("allow")[p.max]}`));
+  if(c.ev.length){ L.push(""); L.push(T("cons_ev")); c.ev.slice().sort().forEach(j=>L.push(`• ${T("evopts")[j]}`)); }
+  L.push(""); L.push(T("cons_note"));
+  L.push(""); L.push(`${T("decl_ref")}: De Haro, J. J. (2026). MIAE v2.1. ${DOI}`);
+  return L.join("\n");
+}
+function renderConsOut(){ document.getElementById("consOut").textContent=consText(); }
+
+/* ---------- Nivells ---------- */
+function renderLevels(){
+  document.getElementById("principles").innerHTML=T("pr").map(([a,b])=>`<div><strong>${esc(a)}</strong>${esc(b)}</div>`).join("");
+  document.getElementById("levels").innerHTML=T("lv").map(([role,name,desc,bd],n)=>`<article class="level">
+    <div class="num">${n}</div>
+    <div style="min-width:0"><div class="role">${esc(role)}</div><h3>${esc(name)}</h3><p>${esc(desc)}</p><p class="bd">${esc(bd)}</p>${splitBar(n)}<div class="fit"><div><b>${T("fitw")}</b>${esc(T("fit")[n][0])}</div><div><b>${T("taskw")}</b>${esc(T("fit")[n][1])}</div></div></div>
+  </article>`).join("");
+}
+
+/* ---------- Contrastar ---------- */
+let klv=2;
+function renderContrast(){
+  document.getElementById("ladder").innerHTML=T("ladder").map(([n,d,c,x],i)=>`<div class="rung">
+    <div class="meter" aria-hidden="true">${[0,1,2].map(j=>`<i class="${j<=i?"on":""}"></i>`).join("")}</div>
+    <h3>${esc(n)}</h3><p>${esc(d)}</p><p class="can">✓ ${esc(c)}</p><p class="cannot">✕ ${esc(x)}</p></div>`).join("");
+  document.getElementById("lvpick").setAttribute("aria-label",T("lvword"));
+  document.getElementById("lvpick").innerHTML=[0,1,2,3,4,5].map(n=>`<button type="button" data-klv="${n}" aria-pressed="${n===klv}" title="${esc(T("lv")[n][0])}">${n}</button>`).join("");
+  const pr=T("probes")[klv];
+  document.getElementById("goal").textContent=`${T("lvword")} ${klv} · ${T("lv")[klv][0]}. ${pr.goal}`;
+  document.getElementById("probes").innerHTML=pr.items.map(([n,how,sh,lim])=>`<article class="probe"><h3>${esc(n)}</h3>
+    <dl><div><dt>${T("k_how")}</dt><dd>${esc(how)}</dd></div><div><dt>${T("k_shows")}</dt><dd>${esc(sh)}</dd></div><div><dt>${T("k_limit")}</dt><dd>${esc(lim)}</dd></div></dl></article>`).join("");
+}
+/* ---------- Casos frontera ---------- */
+let quiz={};
+function ansLabel(a){ return a==="m"?T("q_mixed"):`${T("lvword")} ${a}`; }
+function renderCases(){
+  const cs=T("cases");
+  const done=Object.keys(quiz).length, ok=Object.entries(quiz).filter(([i,v])=>cs[i].a===v).length;
+  document.getElementById("score").textContent=fmt(T("q_score"),{a:ok,b:done})+` · ${done}/${cs.length}`;
+  document.getElementById("cases").innerHTML=cs.map((c,i)=>{
+    const pick=quiz[i];
+    const opts=["0","1","2","3","4","5","m"].map(o=>{
+      let cls=""; if(pick!=null){ if(o===c.a) cls="right"; else if(o===pick) cls="wrong"; }
+      return `<button type="button" class="${cls}" data-case="${i}" data-o="${o}" ${pick!=null?"disabled":""} aria-label="${esc(ansLabel(o))}">${o==="m"?T("q_mixed"):o}</button>`;}).join("");
+    const fb = pick==null?"":`<p class="fb"><strong>${pick===c.a?T("q_right"):esc(fmt(T("q_wrong"),{x:ansLabel(c.a)}))}</strong>${esc(c.e)}</p>`;
+    return `<article class="case"><span class="n">${T("tab5").toUpperCase()} · ${i+1}/${cs.length}</span><p class="q">${esc(c.t)}</p><div class="picks" role="group">${opts}</div>${fb}</article>`;
+  }).join("");
+}
+
+/* ---------- Renderitzat global ---------- */
+function fillTask(){
+  const t=st.task;
+  [["t-title","title"],["t-subject","subject"],["t-course","course"],["t-id","id"],["t-date","date"]].forEach(([i,k])=>document.getElementById(i).value=t[k]||"");
+  document.getElementById("r-a").value=st.refl.a||""; document.getElementById("r-b").value=st.refl.b||"";
+  document.getElementById("c-title").value=st.cons.title||""; document.getElementById("c-course").value=st.cons.course||"";
+  document.getElementById("exBanner").hidden=!st.example;
+}
+function renderAll(){ applyStatic(); fillTask(); renderParts(); renderResult(); renderCons(); renderLevels(); renderContrast(); renderCases(); }
+
+/* ---------- Esdeveniments ---------- */
+const findP=id=>st.parts.find(p=>p.id===id);
+const findC=id=>st.cons.parts.find(p=>p.id===id);
+function touched(){ if(st.example){st.example=false;document.getElementById("exBanner").hidden=true;} }
+
+document.addEventListener("input",e=>{
+  const el=e.target;
+  const tmap={"t-title":"title","t-subject":"subject","t-course":"course","t-id":"id","t-date":"date"};
+  if(tmap[el.id]){ st.task[tmap[el.id]]=el.value; touched(); renderResult(); save(); return; }
+  if(el.id==="r-a"||el.id==="r-b"){ st.refl[el.id==="r-a"?"a":"b"]=el.value; renderResult(); save(); return; }
+  if(el.id==="c-title"||el.id==="c-course"){ st.cons[el.id==="c-title"?"title":"course"]=el.value; renderConsOut(); save(); return; }
+  const a=el.dataset.act, id=el.dataset.id;
+  if(a){ const p=findP(id); if(!p) return; touched();
+    if(a==="name") p.name=el.value;
+    else if(a==="ev") p.ev[+el.dataset.j]=el.value;
+    else if(a==="tool") p.tool=el.value;
+    else if(a==="link") p.link=el.value;
+    renderResult(); save(); return; }
+  if(el.dataset.cact==="name"){ const c=findC(id); c.name=el.value; renderConsOut(); save(); }
+});
+document.addEventListener("change",e=>{
+  const el=e.target, a=el.dataset.act, id=el.dataset.id;
+  if(a==="use"||a==="level"||a==="allowed"){
+    const p=findP(id); if(!p) return; touched();
+    if(a==="use"){ p.use=el.value; if(p.use!=="yes") p.level=0; p.ev=[]; }
+    if(a==="level"){ p.level=+el.value; p.ev=[]; }
+    if(a==="allowed"){ p.allowed = el.value===""?"":+el.value; }
+    const focusId=el.id; renderParts(); renderResult(); save();
+    const f=document.getElementById(focusId); if(f) f.focus();
+    return;
+  }
+  const ca=el.dataset.cact;
+  if(ca==="max"){ findC(id).max=+el.value; const fid=el.id; renderCons(); save(); const f=document.getElementById(fid); if(f) f.focus(); }
+  if(ca==="ev"){ const j=+el.dataset.j; st.cons.ev = el.checked? [...new Set([...st.cons.ev,j])] : st.cons.ev.filter(x=>x!==j); renderConsOut(); save(); }
+});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.klv){ klv=+b.dataset.klv; renderContrast(); const f=document.querySelector(`[data-klv="${klv}"]`); if(f) f.focus(); return; }
+  if(b.dataset.case){ quiz[b.dataset.case]=b.dataset.o; const i=b.dataset.case; renderCases(); const f=document.querySelector(`[data-case="${i}"]`); if(f) f.focus(); return; }
+  if(b.id==="resetQuiz"){ quiz={}; renderCases(); return; }
+  if(b.dataset.lang){ if(st.example){ st=exampleState(b.dataset.lang); } else { st.lang=b.dataset.lang; } save(); renderAll(); return; }
+  const a=b.dataset.act, id=b.dataset.id;
+  if(a==="rm"){ st.parts=st.parts.filter(p=>p.id!==id); touched(); renderParts(); renderResult(); save(); return; }
+  if(a==="chip"){ const p=findP(id); p.name=b.dataset.v; touched(); renderParts(); renderResult(); save(); const f=document.getElementById("use-"+id+"-no"); if(f) f.focus(); return; }
+  if(b.dataset.cact==="rm"){ st.cons.parts=st.cons.parts.filter(p=>p.id!==id); renderCons(); save(); return; }
+  if(b.id==="addPart"){ const p={id:nid(),name:"",allowed:"",use:"no",level:0,ev:[],tool:"",link:""}; st.parts.push(p); touched(); renderParts(); renderResult(); save(); const f=document.getElementById("name-"+p.id); if(f) f.focus(); return; }
+  if(b.id==="addCPart"){ const p={id:nid(),name:"",max:0}; st.cons.parts.push(p); renderCons(); save(); const f=document.getElementById("cn-"+p.id); if(f) f.focus(); return; }
+  if(b.id==="clearAll"){ const lang=st.lang; st={lang,example:false,view:"declarar",task:{title:"",subject:"",course:"",id:"",date:new Date().toISOString().slice(0,10)},parts:[{id:nid(),name:"",allowed:"",use:"no",level:0,ev:[],tool:"",link:""}],refl:{a:"",b:""},cons:st.cons}; save(); renderAll(); document.getElementById("t-title").focus(); return; }
+  if(b.id==="copyDecl"){ copy(declText(),"declOut","toastDecl"); return; }
+  if(b.id==="copyCons"){ copy(consText(),"consOut","toastCons"); return; }
+  if(b.id==="toStudent"){
+    touched();
+    st.task.title=st.cons.title; st.task.course=st.cons.course;
+    st.parts=st.cons.parts.map(c=>({id:nid(),name:c.name,allowed:c.max,use:"no",level:0,ev:[],tool:"",link:""}));
+    st.refl={a:"",b:""}; save(); renderAll(); location.hash="declarar"; showView("declarar"); window.scrollTo(0,0); return;
+  }
+});
+function copy(text,preId,toastId){
+  const toast=document.getElementById(toastId);
+  const fallback=()=>{ const pre=document.getElementById(preId); const r=document.createRange(); r.selectNodeContents(pre); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); toast.textContent=T("copy_fail"); };
+  try{
+    navigator.clipboard.writeText(text).then(()=>{toast.textContent=T("copied"); setTimeout(()=>toast.textContent="",3500);}).catch(fallback);
+  }catch(err){ fallback(); }
+}
+window.addEventListener("hashchange",()=>showView(location.hash.slice(1)));
+
+/* ---------- Inici ---------- */
+st = load() || exampleState("va");
+renderAll();
+showView(location.hash.slice(1)||"declarar");
+</script>
+
+</body>
+</html>
