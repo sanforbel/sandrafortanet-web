@@ -63,6 +63,16 @@
 
   footer{border-top:2px solid var(--ink);padding:24px 0 40px;color:var(--muted)}
   footer a{color:var(--ink)}
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:900px}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .box h3{font-family:'Fraunces',Georgia,serif;font-size:1.1rem;margin-bottom:6px}
+  .box.hi{border-color:var(--ink);box-shadow:4px 4px 0 var(--marker)}
+  .prose{max-width:66ch;color:#33363d;margin-bottom:18px}
+  .prose p+p{margin-top:10px}
+  .tips{display:grid;gap:10px;max-width:760px;margin-top:6px}
+  .tips li{list-style:none;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px}
+  .tips b{font-weight:600}
+  .chat{font-family:'IBM Plex Mono',monospace;font-size:13px;background:var(--marker-soft);border-radius:6px;padding:2px 6px}
   [data-l]{display:none}
   html[lang="ca"] [data-l="ca"], html[lang="es"] [data-l="es"]{display:revert}
 </style>
@@ -91,15 +101,35 @@
 </header>
 
 <main class="wrap">
+  <section id="que-son">
+    <div class="sec-head"><span class="sec-num mono">01</span><h2 data-l="ca">Què és una skill?</h2><h2 data-l="es">¿Qué es una skill?</h2></div>
+    <div class="prose" data-l="ca">
+      <p>Una <b>skill</b> (habilitat) és un paquet d'instruccions que ensenya a Claude a fer una tasca concreta com la faria una persona experta. Pensa-la com un <b>protocol de treball</b> que Claude consulta quan el necessita: quines preguntes ha de fer, quina normativa ha de respectar, quina estructura ha de tindre el resultat i què ha de revisar abans d'entregar-lo.</p>
+      <p>Una vegada instal·lada, no l'has de cridar ni copiar res: <b>Claude la reconeix sola</b> quan li demanes alguna cosa relacionada. Si li dius «fes-me la programació de Música de 2n d'ESO», activarà la skill de programacions i treballarà amb el seu mètode.</p>
+    </div>
+    <div class="prose" data-l="es">
+      <p>Una <b>skill</b> (habilidad) es un paquete de instrucciones que enseña a Claude a hacer una tarea concreta como la haría una persona experta. Piénsala como un <b>protocolo de trabajo</b> que Claude consulta cuando lo necesita: qué preguntas debe hacer, qué normativa debe respetar, qué estructura debe tener el resultado y qué debe revisar antes de entregarlo.</p>
+      <p>Una vez instalada, no tienes que llamarla ni copiar nada: <b>Claude la reconoce sola</b> cuando le pides algo relacionado. Si le dices «hazme la programación de Música de 2.º de ESO», activará la skill de programaciones y trabajará con su método.</p>
+    </div>
+    <div class="two" data-l="ca">
+      <div class="box"><span class="mono" style="color:var(--muted)">Sense skill</span><h3>Un prompt cada vegada</h3><p>Has de recordar què demanar, copiar el prompt bo, explicar la normativa i revisar que no s'haja inventat res. El resultat depén de com ho expliques eixe dia.</p></div>
+      <div class="box hi"><span class="mono" style="color:var(--blue)">Amb skill</span><h3>Un mètode que no s'oblida</h3><p>Claude ja sap què preguntar, quines normes citar i com estructurar el document. Tu aportes el context del teu grup i decidixes; el resultat és coherent cada vegada.</p></div>
+    </div>
+    <div class="two" data-l="es">
+      <div class="box"><span class="mono" style="color:var(--muted)">Sin skill</span><h3>Un prompt cada vez</h3><p>Tienes que recordar qué pedir, copiar el prompt bueno, explicar la normativa y revisar que no se haya inventado nada. El resultado depende de cómo lo expliques ese día.</p></div>
+      <div class="box hi"><span class="mono" style="color:var(--blue)">Con skill</span><h3>Un método que no se olvida</h3><p>Claude ya sabe qué preguntar, qué normas citar y cómo estructurar el documento. Tú aportas el contexto de tu grupo y decides; el resultado es coherente cada vez.</p></div>
+    </div>
+  </section>
+
   <section id="skills">
-    <div class="sec-head"><span class="sec-num mono">01</span><h2 data-l="ca">Les huit skills</h2><h2 data-l="es">Las ocho skills</h2></div>
+    <div class="sec-head"><span class="sec-num mono">02</span><h2 data-l="ca">Les huit skills</h2><h2 data-l="es">Las ocho skills</h2></div>
     <p class="sec-desc" data-l="ca">Cada skill pregunta el mínim imprescindible, proposa abans de desenvolupar i revisa la coherència curricular. Descarrega només les que necessites.</p>
     <p class="sec-desc" data-l="es">Cada skill pregunta lo mínimo imprescindible, propone antes de desarrollar y revisa la coherencia curricular. Descarga solo las que necesites.</p>
     <div class="grid" id="grid"></div>
   </section>
 
   <section id="installar">
-    <div class="sec-head"><span class="sec-num mono">02</span><h2 data-l="ca">Com s'instal·len</h2><h2 data-l="es">Cómo se instalan</h2></div>
+    <div class="sec-head"><span class="sec-num mono">03</span><h2 data-l="ca">Com s'instal·len</h2><h2 data-l="es">Cómo se instalan</h2></div>
     <ol class="steps" data-l="ca">
       <li>Descarrega el .zip de la skill que vulgues. <b>No el descomprimisques.</b></li>
       <li>A Claude, entra en <b>Configuració → Capacitats</b> i activa l'opció de <b>crear i editar fitxers</b> (execució de codi).</li>
@@ -118,8 +148,32 @@
     <p class="note" data-l="es">Las skills están disponibles en todos los planes de Claude. En cuentas de centro (Team o Enterprise), es posible que la persona administradora tenga que autorizar las skills propias. Los nombres de los menús pueden variar ligeramente según la versión de la aplicación.</p>
   </section>
 
+  <section id="com-usar">
+    <div class="sec-head"><span class="sec-num mono">04</span><h2 data-l="ca">Com s'usen (i com traure'n el màxim)</h2><h2 data-l="es">Cómo se usan (y cómo sacarles el máximo partido)</h2></div>
+    <p class="sec-desc" data-l="ca">Parla amb Claude com ho faries amb un company de departament. Unes quantes idees perquè el resultat siga bo a la primera:</p>
+    <p class="sec-desc" data-l="es">Habla con Claude como lo harías con un compañero de departamento. Algunas ideas para que el resultado sea bueno a la primera:</p>
+    <ul class="tips" data-l="ca">
+      <li><b>Demana-ho amb naturalitat.</b> No cal dir el nom de la skill: <span class="chat">vull una SA sobre l'aigua per a 2n de Primària</span> és suficient.</li>
+      <li><b>Dona context del grup, no dades personals.</b> Quants alumnes són, què els costa, què els motiva. Mai noms, diagnòstics ni fotos: parla de barreres («li costa la lectura llarga»), no d'etiquetes.</li>
+      <li><b>Respon a les preguntes.</b> Les skills pregunten poc però pregunten bé. Si dubtes, tria l'opció recomanada.</li>
+      <li><b>Adjunta el que tingues.</b> El currículum de la teua àrea, la plantilla del centre o una activitat antiga milloren molt el resultat: la skill els usarà com a font principal.</li>
+      <li><b>Itera.</b> Si una part no t'agrada, digues-ho: <span class="chat">la sessió 3 és massa llarga, divideix-la en dos</span>.</li>
+      <li><b>Encadena-les.</b> Després d'una SA, demana la rúbrica del producte final, una versió en tres nivells o un joc per a repassar.</li>
+      <li><b>Revisa sempre.</b> La IA proposa i tu decidixes. Contrasta els codis curriculars amb l'annex oficial abans d'usar-los en un document oficial.</li>
+    </ul>
+    <ul class="tips" data-l="es">
+      <li><b>Pídelo con naturalidad.</b> No hace falta decir el nombre de la skill: <span class="chat">quiero una SA sobre el agua para 2.º de Primaria</span> es suficiente.</li>
+      <li><b>Da contexto del grupo, no datos personales.</b> Cuántos alumnos son, qué les cuesta, qué les motiva. Nunca nombres, diagnósticos ni fotos: habla de barreras («le cuesta la lectura larga»), no de etiquetas.</li>
+      <li><b>Responde a las preguntas.</b> Las skills preguntan poco pero preguntan bien. Si dudas, elige la opción recomendada.</li>
+      <li><b>Adjunta lo que tengas.</b> El currículo de tu área, la plantilla del centro o una actividad antigua mejoran mucho el resultado: la skill los usará como fuente principal.</li>
+      <li><b>Itera.</b> Si una parte no te gusta, dilo: <span class="chat">la sesión 3 es demasiado larga, divídela en dos</span>.</li>
+      <li><b>Encadénalas.</b> Después de una SA, pide la rúbrica del producto final, una versión en tres niveles o un juego para repasar.</li>
+      <li><b>Revisa siempre.</b> La IA propone y tú decides. Contrasta los códigos curriculares con el anexo oficial antes de usarlos en un documento oficial.</li>
+    </ul>
+  </section>
+
   <section id="normativa">
-    <div class="sec-head"><span class="sec-num mono">03</span><h2 data-l="ca">Normativa de referència</h2><h2 data-l="es">Normativa de referencia</h2></div>
+    <div class="sec-head"><span class="sec-num mono">05</span><h2 data-l="ca">Normativa de referència</h2><h2 data-l="es">Normativa de referencia</h2></div>
     <p class="sec-desc" data-l="ca">Les skills citen només estes normes i, quan no poden consultar l'annex oficial d'una àrea, marquen els codis curriculars com a proposta per contrastar.</p>
     <p class="sec-desc" data-l="es">Las skills citan solo estas normas y, cuando no pueden consultar el anexo oficial de un área, marcan los códigos curriculares como propuesta para contrastar.</p>
     <ul class="norm">
