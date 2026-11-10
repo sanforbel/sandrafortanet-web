@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skills per a docents · Sandra Fortanet</title>
+<meta name="description" content="Huit skills de Claude per a docents de la Comunitat Valenciana: programacions, situacions d'aprenentatge, DUA, rúbriques, retroacció, materials graduats, jocs i comunicació amb les famílies, d'Infantil a FP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F1; --card:#FFFFFF; --ink:#1E2126; --muted:#6D6F76; --line:#DEDCD4;
+    --blue:#2743C7; --blue-dark:#1D33A0; --marker:#FFE45C; --marker-soft:#FFF3B8; --red:#C6392C;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *,*::before,*::after{transition:none!important} }
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue)}
+  ::selection{background:var(--marker)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+
+  header{border-bottom:2px solid var(--ink);padding:26px 0 28px}
+  .top-row{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:34px}
+  .back{text-decoration:none;color:var(--muted)}
+  .back:hover{color:var(--blue)}
+  .langs{display:flex;gap:6px}
+  .lang-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;background:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;color:var(--muted)}
+  .lang-btn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.05;letter-spacing:-.01em;max-width:16ch}
+  h1 .hl{background:linear-gradient(transparent 58%,var(--marker) 58%);padding:0 .1em}
+  .lead{margin-top:16px;font-size:17px;max-width:62ch;color:#33363d}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+  .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;color:var(--muted)}
+  .cta{display:inline-flex;align-items:center;gap:8px;margin-top:24px;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;padding:13px 20px;border-radius:var(--radius)}
+  .cta:hover{background:var(--blue-dark)}
+
+  section{padding:44px 0}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+  .sec-num{color:var(--red)}
+  h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.5rem,3.4vw,2rem);line-height:1.15}
+  .sec-desc{color:var(--muted);max-width:66ch;margin-bottom:22px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px}
+  .card .tag{color:var(--blue)}
+  .card h3{font-family:'Fraunces',Georgia,serif;font-size:1.25rem;line-height:1.2}
+  .card p{color:#3a3d44}
+  .try{background:var(--marker-soft);border-left:3px solid var(--marker);padding:8px 10px;border-radius:6px;font-size:14px}
+  .try b{font-weight:600}
+  .dl{margin-top:auto;align-self:flex-start;display:inline-block;text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;border:1.5px solid var(--ink);color:var(--ink);padding:9px 14px;border-radius:8px}
+  .dl:hover{background:var(--ink);color:var(--paper)}
+
+  .steps{counter-reset:s;display:grid;gap:12px;max-width:760px}
+  .steps li{list-style:none;counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 14px 56px;position:relative}
+  .steps li::before{content:counter(s);position:absolute;left:16px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .note{max-width:760px;margin-top:18px;border:1px dashed var(--line);border-radius:var(--radius);padding:14px 16px;color:#3a3d44;background:var(--card)}
+  .norm{columns:2 300px;column-gap:28px;max-width:900px;color:#3a3d44}
+  .norm li{break-inside:avoid;margin:0 0 8px 18px}
+
+  footer{border-top:2px solid var(--ink);padding:24px 0 40px;color:var(--muted)}
+  footer a{color:var(--ink)}
+  [data-l]{display:none}
+  html[lang="ca"] [data-l="ca"], html[lang="es"] [data-l="es"]{display:revert}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top-row">
+      <a class="back mono" href="/">← <span data-l="ca">Sandra Fortanet</span><span data-l="es">Sandra Fortanet</span></a>
+      <div class="langs" role="group" aria-label="Idioma">
+        <button class="lang-btn on" type="button" data-set="ca">VAL</button>
+        <button class="lang-btn" type="button" data-set="es">CAST</button>
+      </div>
+    </div>
+    <p class="mono" style="color:var(--red);margin-bottom:10px"><span data-l="ca">Recurs per a les formacions</span><span data-l="es">Recurso para las formaciones</span></p>
+    <h1><span data-l="ca">Skills per a <span class="hl">docents</span></span><span data-l="es">Skills para <span class="hl">docentes</span></span></h1>
+    <p class="lead" data-l="ca">Huit habilitats per a Claude que convertixen tasques de molts minuts en una conversa guiada: programar, dissenyar situacions d'aprenentatge, adaptar, avaluar i comunicar. Totes funcionen d'Infantil a FP, en valencià i en castellà, i es basen en la normativa valenciana vigent.</p>
+    <p class="lead" data-l="es">Ocho habilidades para Claude que convierten tareas de muchos minutos en una conversación guiada: programar, diseñar situaciones de aprendizaje, adaptar, evaluar y comunicar. Todas funcionan de Infantil a FP, en valenciano y en castellano, y parten de la normativa valenciana vigente.</p>
+    <div class="meta mono">
+      <span class="chip">Infantil · Primària · ESO · Batxillerat · FP</span>
+      <span class="chip" data-l="ca">Normativa revisada: novembre de 2026</span>
+      <span class="chip" data-l="es">Normativa revisada: noviembre de 2026</span>
+    </div>
+    <a class="cta" href="totes-les-skills.zip" download><span data-l="ca">Descarrega-les totes (.zip)</span><span data-l="es">Descárgalas todas (.zip)</span> ↓</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="skills">
+    <div class="sec-head"><span class="sec-num mono">01</span><h2 data-l="ca">Les huit skills</h2><h2 data-l="es">Las ocho skills</h2></div>
+    <p class="sec-desc" data-l="ca">Cada skill pregunta el mínim imprescindible, proposa abans de desenvolupar i revisa la coherència curricular. Descarrega només les que necessites.</p>
+    <p class="sec-desc" data-l="es">Cada skill pregunta lo mínimo imprescindible, propone antes de desarrollar y revisa la coherencia curricular. Descarga solo las que necesites.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="installar">
+    <div class="sec-head"><span class="sec-num mono">02</span><h2 data-l="ca">Com s'instal·len</h2><h2 data-l="es">Cómo se instalan</h2></div>
+    <ol class="steps" data-l="ca">
+      <li>Descarrega el .zip de la skill que vulgues. <b>No el descomprimisques.</b></li>
+      <li>A Claude, entra en <b>Configuració → Capacitats</b> i activa l'opció de <b>crear i editar fitxers</b> (execució de codi).</li>
+      <li>Ves a <b>Personalitza → Skills</b>, prem <b>+</b>, tria <b>Crea una skill</b> i després <b>Puja una skill</b>.</li>
+      <li>Puja el .zip. Apareixerà en la llista de skills i la pots activar o desactivar quan vulgues.</li>
+      <li>Obri un xat nou i demana-ho amb naturalitat: Claude usarà la skill quan toque.</li>
+    </ol>
+    <ol class="steps" data-l="es">
+      <li>Descarga el .zip de la skill que quieras. <b>No lo descomprimas.</b></li>
+      <li>En Claude, entra en <b>Configuración → Capacidades</b> y activa la opción de <b>crear y editar archivos</b> (ejecución de código).</li>
+      <li>Ve a <b>Personalizar → Skills</b>, pulsa <b>+</b>, elige <b>Crear skill</b> y después <b>Subir una skill</b>.</li>
+      <li>Sube el .zip. Aparecerá en la lista de skills y podrás activarla o desactivarla cuando quieras.</li>
+      <li>Abre un chat nuevo y pídelo con naturalidad: Claude usará la skill cuando toque.</li>
+    </ol>
+    <p class="note" data-l="ca">Les skills estan disponibles en tots els plans de Claude. En comptes de centre (Team o Enterprise), és possible que la persona administradora haja d'autoritzar les skills pròpies. Els noms dels menús poden variar lleugerament segons la versió de l'aplicació.</p>
+    <p class="note" data-l="es">Las skills están disponibles en todos los planes de Claude. En cuentas de centro (Team o Enterprise), es posible que la persona administradora tenga que autorizar las skills propias. Los nombres de los menús pueden variar ligeramente según la versión de la aplicación.</p>
+  </section>
+
+  <section id="normativa">
+    <div class="sec-head"><span class="sec-num mono">03</span><h2 data-l="ca">Normativa de referència</h2><h2 data-l="es">Normativa de referencia</h2></div>
+    <p class="sec-desc" data-l="ca">Les skills citen només estes normes i, quan no poden consultar l'annex oficial d'una àrea, marquen els codis curriculars com a proposta per contrastar.</p>
+    <p class="sec-desc" data-l="es">Las skills citan solo estas normas y, cuando no pueden consultar el anexo oficial de un área, marcan los códigos curriculares como propuesta para contrastar.</p>
+    <ul class="norm">
+      <li>LOMLOE · Llei orgànica 3/2020</li>
+      <li>Infantil · Decret 100/2022</li>
+      <li>Primària · Decret 106/2022, modificat pel Decret 96/2026</li>
+      <li>ESO · Decret 107/2022, modificat pel Decret 66/2024</li>
+      <li>Batxillerat · Decret 108/2022, modificat pels decrets 66/2024 i 103/2026</li>
+      <li>ESO i Batxillerat · Ordre 19/2023 (avaluació)</li>
+      <li>FP · Llei orgànica 3/2022, RD 659/2023 i Ordre 8/2025 (avaluació)</li>
+      <li>Inclusió · Decret 104/2018 i Ordre 20/2019</li>
+      <li>Convivència · Decret 193/2025</li>
+      <li>Llengües · Llei 1/2024, de llibertat educativa</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-l="ca">Creades per <a href="/">Sandra Fortanet</a> per a les formacions d'IA i educació. Revisa sempre el resultat abans d'usar-lo en un document oficial: la IA proposa, el docent decidix.</p>
+    <p data-l="es">Creadas por <a href="/">Sandra Fortanet</a> para las formaciones de IA y educación. Revisa siempre el resultado antes de usarlo en un documento oficial: la IA propone, el docente decide.</p>
+  </div>
+</footer>
+
+<script>
+const SKILLS = [
+  {f:"programacio-didactica-cv",
+   tag:{ca:"Planificar · Totes les etapes",es:"Planificar · Todas las etapas"},
+   h:{ca:"Programació didàctica",es:"Programación didáctica"},
+   p:{ca:"Codissenya la programació anual o d'una unitat: entrevista breu, esquema i temporalització per validar, i document complet amb la concreció curricular, l'avaluació i les mesures d'inclusió.",
+      es:"Codiseña la programación anual o de una unidad: entrevista breve, esquema y temporalización para validar, y documento completo con la concreción curricular, la evaluación y las medidas de inclusión."},
+   t:{ca:"Fes-me la programació de Matemàtiques de 5è de Primària.",es:"Hazme la programación de Matemáticas de 5.º de Primaria."}},
+  {f:"situacio-aprenentatge-cv",
+   tag:{ca:"Planificar · Totes les etapes",es:"Planificar · Todas las etapas"},
+   h:{ca:"Situació d'aprenentatge",es:"Situación de aprendizaje"},
+   p:{ca:"Proposa tres idees realment diferents a partir d'un tema, un text o una efemèride, i desenvolupa la triada amb seqüència per sessions, producte final, avaluació i DUA.",
+      es:"Propone tres ideas realmente distintas a partir de un tema, un texto o una efeméride, y desarrolla la elegida con secuencia por sesiones, producto final, evaluación y DUA."},
+   t:{ca:"Vull una SA sobre el reciclatge per a 3 anys.",es:"Quiero una SA sobre el reciclaje para 3 años."}},
+  {f:"adaptacio-dua",
+   tag:{ca:"Diversitat · DUA",es:"Diversidad · DUA"},
+   h:{ca:"Adaptació DUA",es:"Adaptación DUA"},
+   p:{ca:"Adapta activitats i exàmens a partir de barreres reals, no d'etiquetes: versió universal per al grup, ajustos personalitzats, ampliació i una nota per al docent.",
+      es:"Adapta actividades y exámenes a partir de barreras reales, no de etiquetas: versión universal para el grupo, ajustes personalizados, ampliación y una nota para el docente."},
+   t:{ca:"Adapta este examen per a un alumne nouvingut que encara no llig bé en valencià.",es:"Adapta este examen para un alumno recién llegado que aún no lee bien en castellano."}},
+  {f:"material-graduat",
+   tag:{ca:"Diversitat · Multinivell",es:"Diversidad · Multinivel"},
+   h:{ca:"Material en tres nivells",es:"Material en tres niveles"},
+   p:{ca:"La mateixa tasca en nivell bàsic, estàndard i repte, amb el mateix criteri d'avaluació, una posada en comú final i solucionari.",
+      es:"La misma tarea en nivel básico, estándar y reto, con el mismo criterio de evaluación, una puesta en común final y solucionario."},
+   t:{ca:"Fes-me una activitat de fraccions en tres nivells per a 4t.",es:"Hazme una actividad de fracciones en tres niveles para 4.º."}},
+  {f:"rubrica-competencial",
+   tag:{ca:"Avaluar",es:"Evaluar"},
+   h:{ca:"Rúbrica competencial",es:"Rúbrica competencial"},
+   p:{ca:"Rúbriques vinculades als criteris d'avaluació, amb descriptors observables, pesos que sumen 100 % i versió per a l'alumnat. En Infantil, escala d'observació sense notes.",
+      es:"Rúbricas vinculadas a los criterios de evaluación, con descriptores observables, pesos que suman 100 % y versión para el alumnado. En Infantil, escala de observación sin notas."},
+   t:{ca:"Rúbrica per a avaluar una exposició oral a 2n de Batxillerat.",es:"Rúbrica para evaluar una exposición oral en 2.º de Bachillerato."}},
+  {f:"feedback-formatiu",
+   tag:{ca:"Avaluar · Retroacció",es:"Evaluar · Retroalimentación"},
+   h:{ca:"Retroacció formativa",es:"Retroalimentación formativa"},
+   p:{ca:"Comentaris concrets per a cada treball (punts forts, què millorar i pròxim pas) i una visió de grup. Amb alumnat pseudonimitzat i la decisió final sempre del docent.",
+      es:"Comentarios concretos para cada trabajo (puntos fuertes, qué mejorar y próximo paso) y una visión de grupo. Con alumnado seudonimizado y la decisión final siempre del docente."},
+   t:{ca:"Ajuda'm a fer el feedback d'estes redaccions amb la rúbrica.",es:"Ayúdame a hacer la retroalimentación de estas redacciones con la rúbrica."}},
+  {f:"joc-interactiu-aula",
+   tag:{ca:"Crear · Gamificació",es:"Crear · Gamificación"},
+   h:{ca:"Joc interactiu",es:"Juego interactivo"},
+   p:{ca:"Qüestionari amb mode equips, memory o escape room en un sol fitxer HTML, per a la pissarra digital o Google Sites. Sense registre i sense enviar dades.",
+      es:"Cuestionario con modo equipos, memory o escape room en un solo archivo HTML, para la pizarra digital o Google Sites. Sin registro y sin enviar datos."},
+   t:{ca:"Fes un escape room per a repassar la Revolució Francesa.",es:"Haz un escape room para repasar la Revolución Francesa."}},
+  {f:"comunicacio-families",
+   tag:{ca:"Comunicar",es:"Comunicar"},
+   h:{ca:"Comunicació amb les famílies",es:"Comunicación con las familias"},
+   p:{ca:"Circulars, avisos i autoritzacions clars, en valencià, castellà o bilingües, amb versió de lectura fàcil o traduïda per a famílies nouvingudes.",
+      es:"Circulares, avisos y autorizaciones claros, en valenciano, castellano o bilingües, con versión de lectura fácil o traducida para familias recién llegadas."},
+   t:{ca:"Circular bilingüe per a l'eixida al museu del dijous.",es:"Circular bilingüe para la salida al museo del jueves."}}
+];
+const L = {try:{ca:"Prova a dir:",es:"Prueba a decir:"}, dl:{ca:"DESCARREGA (.ZIP) ↓",es:"DESCARGA (.ZIP) ↓"}};
+const grid = document.getElementById("grid");
+function render(lang){
+  grid.innerHTML = "";
+  SKILLS.forEach(s=>{
+    const a = document.createElement("article"); a.className="card";
+    a.innerHTML = `<span class="tag mono"></span><h3></h3><p></p><div class="try"><b></b> <span></span></div><a class="dl" download></a>`;
+    a.querySelector(".tag").textContent = s.tag[lang];
+    a.querySelector("h3").textContent = s.h[lang];
+    a.querySelector("p").textContent = s.p[lang];
+    a.querySelector(".try b").textContent = L.try[lang];
+    a.querySelector(".try span").textContent = "«" + s.t[lang] + "»";
+    const d = a.querySelector(".dl"); d.href = s.f + ".zip"; d.textContent = L.dl[lang];
+    grid.appendChild(a);
+  });
+}
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll(".lang-btn").forEach(b=>b.classList.toggle("on", b.dataset.set===lang));
+  render(lang);
+  try{ localStorage.setItem("sf_lang", lang); }catch(e){}
+}
+document.querySelectorAll(".lang-btn").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.set)));
+let inicial = "ca"; try{ inicial = localStorage.getItem("sf_lang") || "ca"; }catch(e){}
+setLang(inicial === "es" ? "es" : "ca");
+</script>
+</body>
+</html>
