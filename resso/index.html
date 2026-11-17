@@ -861,8 +861,13 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <li>Castejón i Menéndez (2025): l'avaluació i el reforç de la competència lectora a l'aula.</li>
       </ul>
 
-      <h3>Límits que cal conéixer</h3>
+      <h3>Límits i validesa</h3>
+      <p>Ressò és una ferramenta de pràctica i de seguiment formatiu fonamentada en la ciència de la lectura. No és una prova estandarditzada ni diagnòstica: per a això hi ha instruments validats (per exemple, PROLEC-R o TECLE) i l'orientació del centre.</p>
       <ul>
+        <li>Les paraules correctes per minut, els criteris de precisió (95 %, 90 %) i l'escala de prosòdia són mesures amb molta recerca al darrere. En canvi, els llindars per curs, els pesos de l'índex de fluïdesa, la dificultat del text, la pista de ruta, la detecció d'autocorreccions i la proposta automàtica de prosòdia són aproximacions de Ressò encara no validades.</li>
+        <li>El reconeixement automàtic de veu no s'ha validat amb lectures d'infants en valencià: pot «corregir» paraules mal llegides i detectar menys errors dels reals. Revisa les marques i, per a decisions importants, fes el marcatge manual.</li>
+        <li>El perfil lector es basa en tres preguntes d'opció múltiple per lectura: és orientatiu i s'ha de confirmar amb diverses lectures.</li>
+        <li>Per a comparar l'evolució d'un alumne/a, fes servir textos de dificultat semblant.</li>
         <li>El reconeixement del navegador pot canviar formes valencianes per les centrals (per exemple, «este» per «aquest»). Ressò accepta les variants més habituals com a correctes, i el docent sempre pot corregir qualsevol marca clicant la paraula.</li>
         <li>Els llindars de PCPM són orientatius. No hi ha barems publicats per al valencià: el criteri del docent té l'última paraula.</li>
         <li>Ressò no diagnostica la dislèxia ni cap altra dificultat. Si un alumne/a mostra dificultats persistents, cal derivar-lo a l'orientació del centre.</li>
@@ -1199,7 +1204,8 @@ function renderProfile(){
   const el=$('mProfile');if(!S.done||S.example){el.hidden=true;return;}
   const c=currentComp();if(!c){el.hidden=false;el.style.setProperty('--c','var(--line)');el.innerHTML='<b>Perfil lector</b>Contesta les preguntes de comprensió per a veure el perfil.';return;}
   const m=metrics(),pf=PROFILES[profileOf(levelOf(m.pcpm,m.acc,S.course),c.score)];
-  el.hidden=false;el.style.setProperty('--c',pf.col);el.innerHTML=`<b>${pf.n}</b>Comprensió ${c.label} · ${esc(pf.tip)}`;
+  const n=+$('student').value,prev=(sessions()||[]).filter(s=>s.student===n&&s.course===S.course&&!s.example&&compScoreOf(s)!=null).length;
+  el.hidden=false;el.style.setProperty('--c',pf.col);el.innerHTML=`<b>${pf.n}${prev<1?' · provisional':''}</b>Comprensió ${c.label} · ${esc(pf.tip)}${prev<1?'<br><span style="color:var(--muted)">Perfil provisional: es basa en una sola lectura amb preguntes. Confirma\'l amb dues lectures més.</span>':''}`;
 }
 const LV_COL=['var(--sub)','var(--om)','var(--accent)'];
 function metrics(){
@@ -1292,10 +1298,35 @@ function liveHighlight(text){
   if(cur<livePos)cur=livePos;
   if(livePos>=0&&cur>livePos+12)cur=livePos+12;
   livePos=cur;
-  document.querySelectorAll('#reading .w').forEach((el,i)=>{el.classList.toggle('reached',i<cur);el.classList.toggle('current',i===cur);});
-  const el=document.querySelector(`#reading .w[data-i="${cur}"]`);
+  const now=performance.now();TRK.hist.push({t:now,p:cur});while(TRK.hist.length>2&&now-TRK.hist[0].t>6000)TRK.hist.shift();
+  if(!TRK.on)paintTrack(cur);
+}
+/* Seguiment suau: el reconeixement arriba amb un poc de retard i a salts.
+   Entre resultat i resultat, el color avança al ritme de lectura de l'alumne/a (calculat amb els últims segons),
+   només mentre parla, i mai més d'una paraula i mitja per davant de l'última paraula reconeguda. */
+const TRK={hist:[],disp:-1,shown:-2,raf:0,last:0,on:false};
+function paintTrack(idx){
+  document.querySelectorAll('#reading .w').forEach((el,i)=>{el.classList.toggle('reached',i<idx);el.classList.toggle('current',i===idx);});
+  const el=idx>=0?document.querySelector(`#reading .w[data-i="${idx}"]`):null;
   if(el){const r=el.getBoundingClientRect();if(r.bottom>innerHeight-80||r.top<60)el.scrollIntoView({block:'center',behavior:'smooth'});}
 }
+function trackLoop(now){
+  if(!TRK.on)return;
+  const dt=Math.min(0.1,(now-TRK.last)/1000);TRK.last=now;
+  const h=TRK.hist;let rate=null;
+  if(h.length>=2){const a=h[0],b=h[h.length-1];if(b.t-a.t>800)rate=(b.p-a.p)/((b.t-a.t)/1000);}
+  if(!rate||rate<0.4)rate=Math.max(0.8,thFor(S.course).lo/60);rate=Math.min(rate,4);
+  const speaking=MIC.ctx?(now-(MIC.lastVoice||0)<350):(h.length>0&&now-h[h.length-1].t<1500);
+  if(livePos>=0){
+    if(TRK.disp<livePos)TRK.disp=Math.min(livePos,TRK.disp+Math.max(rate*3,6)*dt);
+    else if(speaking)TRK.disp=Math.min(TRK.disp+rate*dt,livePos+1.6,S.words.length-1);
+  }
+  const idx=Math.floor(TRK.disp);
+  if(idx!==TRK.shown){paintTrack(idx);TRK.shown=idx;}
+  TRK.raf=requestAnimationFrame(trackLoop);
+}
+function trackStart(){TRK.hist=[];TRK.disp=-1;TRK.shown=-2;TRK.last=performance.now();TRK.on=true;cancelAnimationFrame(TRK.raf);TRK.raf=requestAnimationFrame(trackLoop);}
+function trackStop(){TRK.on=false;cancelAnimationFrame(TRK.raf);}
 
 /* =========================================================
    Temporitzador
@@ -1340,6 +1371,7 @@ function startMeter(stream){
     const col=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#0B7A67';
     const hist=new Array(24).fill(0);
     const draw=()=>{an.getByteTimeDomainData(data);let peak=0;for(const v of data)peak=Math.max(peak,Math.abs(v-128));hist.push(peak/128);hist.shift();
+      if(peak/128>0.06)MIC.lastVoice=performance.now();
       g.clearRect(0,0,cv.width,cv.height);g.fillStyle=col;const bw=cv.width/hist.length;
       hist.forEach((v,k)=>{const h=Math.max(3,v*cv.height*1.6);g.globalAlpha=.35+.65*(k/hist.length);g.fillRect(k*bw+2,(cv.height-h)/2,bw-4,Math.min(h,cv.height));});
       MIC.raf=requestAnimationFrame(draw);};
@@ -1438,7 +1470,8 @@ async function startReading(){
   let stream;
   try{stream=await getMic();}catch(e){notice(micError(e.name||String(e)));return;}
   const keep=engine==='scribe'||(CFG.saveAudio&&!isAndroid);
-  if(keep){MIC.stream=stream;startRecorder(stream);startMeter(stream);}else stream.getTracks().forEach(t=>t.stop());
+  /* El micròfon es manté obert per a saber quan l'alumne/a parla (seguiment suau); en Android el reconeixement el necessita en exclusiva. */
+  if(keep||!isAndroid){MIC.stream=stream;if(keep)startRecorder(stream);startMeter(stream);}else stream.getTracks().forEach(t=>t.stop());
   if(engine==='browser'){
     try{startBrowserSR(S.text.lang);}catch(e){releaseMic();notice(micError('nosr'));return;}
     $('live').textContent='Escoltant… Comença a llegir quan vulgues.';
@@ -1446,10 +1479,10 @@ async function startReading(){
     $('live').textContent="Gravant… En acabar, ElevenLabs transcriurà la lectura.";
     if(SR&&!isAndroid){try{startBrowserSR(S.text.lang,true);}catch(e){}}
   }
-  setRunning(true);startTimer();
+  setRunning(true);startTimer();trackStart();
 }
 async function stopReading(){
-  if(!running)return;
+  if(!running)return;trackStop();
   const mode=$('modeSel').value;stopTimer();setRunning(false);
   if(mode==='manual'){
     finish();
@@ -1473,6 +1506,7 @@ async function stopReading(){
   if(metrics().attempted===0)notice("No s'ha reconegut cap paraula del text. Comprova el micròfon amb «Prova el micròfon» (en «Ajustos») o marca la lectura a mà.");
 }
 function abortReading(msg){
+  trackStop();
   REC.on=false;try{REC.r&&REC.r.abort();}catch(e){}
   stopRecorder().then(()=>releaseMic());
   if(timerId){clearInterval(timerId);timerId=null;}
@@ -1717,6 +1751,43 @@ function fillStarts(first,dur){
   return out.map(v=>Math.round(v*100)/100);
 }
 /* Repartix la durada entre les paraules segons la llargària i les pauses de puntuació. */
+/* Inicis de so (després d'un silenci) en una gravació: servixen per a ajustar on comença cada paraula. */
+async function audioOnsets(blob){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;const ctx=new AC();
+    const buf=await ctx.decodeAudioData(await blob.arrayBuffer());try{ctx.close();}catch(e){}
+    const d=buf.getChannelData(0),sr=buf.sampleRate,hop=Math.round(sr*0.01),env=[];
+    for(let i=0;i+hop<=d.length;i+=hop){let q=0;for(let j=i;j<i+hop;j++)q+=d[j]*d[j];env.push(Math.sqrt(q/hop));}
+    const so=[...env].sort((a,b)=>a-b);const noise=so[Math.floor(so.length*0.15)]||0,peak=so[Math.floor(so.length*0.95)]||0;
+    const thr=noise+(peak-noise)*0.22;const on=[];let below=0;
+    for(let k=1;k<env.length;k++){if(env[k]<thr)below++;else{if(below>=5)on.push(k*0.01);below=0;}}
+    return on;
+  }catch(e){return null;}
+}
+function snapStarts(base,onsets){
+  if(!onsets||!onsets.length)return base;
+  const out=[];let k=0;
+  base.forEach((t,i)=>{while(k+1<onsets.length&&Math.abs(onsets[k+1]-t)<=Math.abs(onsets[k]-t))k++;
+    let v=Math.abs(onsets[k]-t)<=0.25?onsets[k]:t;if(i>0&&v<=out[i-1]+0.05)v=out[i-1]+0.05;out.push(Math.round(v*100)/100);});
+  return out;
+}
+/* Sincronitza una lectura model gravada: amb Scribe (precís) si hi ha clau d'ElevenLabs;
+   si no, amb el reconeixement en directe o una estimació, ajustades als inicis de so de la gravació. */
+async function syncRecording(blob,dur,first){
+  if(CFG.elKey){
+    try{
+      const r=await transcribeScribe(blob,S.text.lang);const keep=[];r.tokens.forEach((w,k)=>{if(norm(w))keep.push(k);});
+      const hyp=keep.map(k=>norm(r.tokens[k])),tt=keep.map(k=>r.times[k]);
+      const ops=align(S.norms,hyp);const f=new Array(S.words.length).fill(null);
+      ops.forEach(o=>{if(o.t==='ok'&&tt[o.j])f[o.i]=tt[o.j][0];});
+      const st=fillStarts(f,dur);if(st)return {starts:st,how:'precise'};
+    }catch(e){}
+  }
+  let base=first?fillStarts(first,dur):null;const how=base?'live':'estimate';
+  if(!base)base=ownTimes(S.words,dur);
+  const on=await audioOnsets(blob);
+  return {starts:snapStarts(base,on),how};
+}
 function ownTimes(words,dur){
   const w=words.map(x=>x.length+1+(/[.!?:»]$/.test(x)?8:/[,;]$/.test(x)?4:0));
   const tot=w.reduce((a,b)=>a+b,0)||1;const lead=Math.min(0.4,dur*0.03);const span=Math.max(0.1,dur-lead*2);
@@ -1753,12 +1824,14 @@ $('mvRec').onclick=async()=>{
     r.onerror=()=>{};r.start();MV.sr=r;}catch(e){MV.sr=null;}}
   MV.rec.onstop=async()=>{
     const dur=(performance.now()-MV.t0)/1000;MV.stream.getTracks().forEach(t=>t.stop());
-    if(MV.sr){try{MV.sr.stop();}catch(e){}}const starts=fillStarts(MV.first,dur);
+    if(MV.sr){try{MV.sr.stop();}catch(e){}}
     btn.classList.remove('rec-on');btn.textContent='Torna a gravar';
     const blob=new Blob(MV.chunks,{type:MV.rec.mimeType||'audio/webm'});
     if(dur<1||!blob.size){$('mvState').textContent='La gravació és massa curta. Torna-ho a provar.';return;}
-    await idb.set(myVoiceKey(),{blob,dur,starts,kind:'rec',date:Date.now()});
-    refreshMyVoice();toast(starts?'Gravació guardada i sincronitzada paraula a paraula. Prem «Escolta el model».':'Gravació guardada. Prem «Escolta el model» per a escoltar-la.',4500);
+    $('mvState').textContent='Sincronitzant la gravació paraula a paraula…';
+    const sync=await syncRecording(blob,dur,MV.first);
+    await idb.set(myVoiceKey(),{blob,dur,starts:sync.starts,sync:sync.how,kind:'rec',date:Date.now()});
+    refreshMyVoice();toast(sync.how==='precise'?'Gravació guardada i sincronitzada amb precisió. Prem «Escolta el model».':'Gravació guardada i sincronitzada. Prem «Escolta el model».',4500);
   };
   MV.t0=performance.now();MV.rec.start(1000);btn.classList.add('rec-on');btn.textContent='Atura la gravació';
   $('mvState').textContent='Gravant… Llig el text en veu alta i prem «Atura la gravació» en acabar.';
@@ -1769,8 +1842,10 @@ $('mvFile').onchange=async e=>{
   if(f.size>40*1024*1024){$('mvState').textContent="L'àudio és massa gran (màxim 40 MB).";return;}
   const url=URL.createObjectURL(f);const dur=await realDuration(url);URL.revokeObjectURL(url);
   if(!dur){$('mvState').textContent="No s'ha pogut llegir este àudio. Prova amb un MP3 o M4A.";return;}
-  await idb.set(myVoiceKey(),{blob:f,dur,kind:'file',date:Date.now()});
-  refreshMyVoice();toast("Àudio guardat. Prem «Escolta el model» per a escoltar-lo.",4000);
+  $('mvState').textContent="Sincronitzant l'àudio paraula a paraula…";
+  const sync=await syncRecording(f,dur,null);
+  await idb.set(myVoiceKey(),{blob:f,dur,starts:sync.starts,sync:sync.how,kind:'file',date:Date.now()});
+  refreshMyVoice();toast(sync.how==='precise'?"Àudio guardat i sincronitzat amb precisió. Prem «Escolta el model».":"Àudio guardat. Prem «Escolta el model» per a escoltar-lo. Amb una clau d'ElevenLabs, la sincronització és més precisa.",5000);
 };
 $('mvDel').onclick=async()=>{stopModel();await idb.del(myVoiceKey());refreshMyVoice();toast('Gravació esborrada.');};
 
@@ -1973,9 +2048,11 @@ function renderStudent(){
   $('bPractice').dataset.lang=list[list.length-1].lang;$('bPractice').dataset.key=k;
 }
 function renderProfiles(latest,withCourse){
+  const all=sessions()||[];const nComp=s=>all.filter(x=>skey(x)===skey(s)&&compScoreOf(x)!=null).length;
   const P=[[],[],[],[]];let none=0;
   latest.forEach(s=>{const pi=profileOf(levelOf(s.pcpm,s.acc,s.course),compScoreOf(s));if(pi==null)none++;else P[pi].push(s);});
-  $('profiles').innerHTML=PROFILES.map((pf,k)=>`<div class="prof" style="--c:${pf.col}"><h3>${pf.n} <span>${P[k].length}</span></h3><div class="axis">${pf.axis}</div><div class="who" style="display:flex;flex-wrap:wrap;gap:6px">${P[k].sort((a,b)=>a.course.localeCompare(b.course)||a.student-b.student).map(s=>`<span class="pill">${esc(slabel(s,withCourse))}</span>`).join('')||'<span style="color:var(--muted);font-size:.85rem">Ningú de moment</span>'}</div><p>${esc(pf.tip)}</p></div>`).join('')
+  $('profiles').innerHTML=PROFILES.map((pf,k)=>`<div class="prof" style="--c:${pf.col}"><h3>${pf.n} <span>${P[k].length}</span></h3><div class="axis">${pf.axis}</div><div class="who" style="display:flex;flex-wrap:wrap;gap:6px">${P[k].sort((a,b)=>a.course.localeCompare(b.course)||a.student-b.student).map(s=>`<span class="pill" ${nComp(s)<2?'title="Perfil provisional: només una lectura amb preguntes"':''}>${esc(slabel(s,withCourse))}${nComp(s)<2?' *':''}</span>`).join('')||'<span style="color:var(--muted);font-size:.85rem">Ningú de moment</span>'}</div><p>${esc(pf.tip)}</p></div>`).join('')
+    +'<p class="hint" style="grid-column:1/-1">* Perfil provisional: només hi ha una lectura amb preguntes. Amb tres preguntes per lectura, convé confirmar-lo amb més lectures abans de prendre decisions.</p>'
     +(none?`<p class="hint" style="grid-column:1/-1">${none} ${none===1?'alumne/a no té':'alumnes no tenen'} preguntes contestades en la darrera lectura, i per això no ${none===1?'apareix':'apareixen'} en cap perfil.</p>`:'');
 }
 function renderErrChart(list){
