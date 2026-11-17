@@ -296,6 +296,24 @@ th.num{text-align:right}
 .tip{background:var(--accent-soft);border-radius:var(--r);padding:14px 16px;font-family:var(--f-kid);font-size:1.02rem}
 .tip span{display:block;font-size:1.6rem;line-height:1;margin-bottom:6px}
 .g-cta{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+.w.hint{background:var(--ins-soft);box-shadow:0 0 0 2px var(--ins)}
+.qhelp{margin-top:8px;padding:10px 12px;border-radius:8px;background:var(--ins-soft);font-size:.9rem}
+.qhelp.ok{background:var(--accent-soft)}
+.qhelp.ko{background:var(--om-soft)}
+.qhelp .btn{margin-top:8px}
+.profile{margin-top:10px;padding:10px 12px;border-radius:8px;border-left:4px solid var(--c);background:var(--surface-2);font-size:.88rem}
+.profile b{display:block;font-size:.95rem}
+.profiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+@media (max-width:800px){.profiles{grid-template-columns:1fr}}
+.prof{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.prof h3{margin:0;font-size:1.02rem;display:flex;justify-content:space-between;align-items:baseline}
+.prof h3 span{font-family:var(--f-mono);color:var(--c)}
+.prof .axis{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.prof p{margin:0;font-size:.88rem;color:var(--muted)}
+.prep{margin:0 0 14px;padding:12px 14px;border:1px dashed var(--ins);border-radius:var(--r);background:var(--ins-soft);display:flex;flex-direction:column;gap:8px}
+.prep .pgoal{font-weight:600}
+.prep .vocab{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prep .vocab button{border:1px solid var(--ins);background:var(--surface);border-radius:999px;padding:3px 10px;cursor:pointer;font-family:var(--f-read)}
 .ai{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ins);border-radius:var(--r);padding:18px;margin-top:14px}
 .ai h3{margin:0 0 4px;font-size:1.1rem}
 .ai>p{margin:0 0 12px;color:var(--muted);font-size:.9rem;max-width:75ch}
@@ -378,6 +396,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <button class="btn sm" id="bSmaller" aria-label="Lletra més xicoteta">A−</button>
             <button class="btn sm" id="bBigger" aria-label="Lletra més gran">A+</button>
             <button class="btn sm" id="bRuler" aria-pressed="false">Regle</button>
+            <button class="btn sm" id="bPrep" aria-pressed="false" title="Mostra una meta de lectura i les paraules clau abans de llegir">Prepara la lectura</button>
           </div>
           <div class="myvoice" id="myVoice" hidden>
             <p>Grava una lectura model d'este text o puja'n un àudio. «Escolta el model» la farà sonar en lloc de la veu sintètica. Si graves en Chrome o Edge, Ressò sincronitza la gravació paraula a paraula i el tutor també la fa servir per a pronunciar les paraules i les frases. La gravació es queda només en este navegador; per a passar-la a un altre ordinador, ves a «Ajustos» › «Lectures model gravades».</p>
@@ -386,6 +405,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <button class="btn sm" id="mvDel" disabled>Esborra la gravació</button>
             <span class="st" id="mvState" aria-live="polite"></span>
           </div>
+          <div class="prep" id="prepBox" hidden></div>
           <div class="reading-wrap" id="readingWrap">
             <div id="ruler" hidden></div>
             <div class="reading" id="reading"></div>
@@ -424,6 +444,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <div class="comp" id="mComp"></div>
           </div>
           <div class="level" id="mLevel" hidden></div>
+          <div class="profile" id="mProfile" hidden></div>
           <div class="cheer" id="cheer" hidden></div>
           <p class="hint">Clica una paraula per a corregir-ne la marca: correcta → substituïda → autocorregida → omesa → no arribada. Clica una inserció per a llevar-la.</p>
           <div class="stack">
@@ -490,7 +511,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <li class="step"><div><h4>Prem «Comença a llegir»</h4><p>Quan estigues preparat o preparada, prem el botó i comença a llegir en veu alta.</p></div><div class="mock"><span class="btn primary sm">🎙 Comença a llegir</span></div></li>
             <li class="step"><div><h4>Llig amb calma</h4><p>No cal córrer. Llig clar i respecta els punts i les comes. Si t'equivoques, torna a dir la paraula bé: això compta a favor!</p></div><div class="mock"><span class="w reached">les</span> <span class="w current">orenetes</span> <span class="w">tornen</span></div></li>
             <li class="step"><div><h4>Prem «He acabat»</h4><p>Quan acabes el text, prem el botó roig.</p></div><div class="mock"><span class="btn rec sm">● He acabat</span></div></li>
-            <li class="step"><div><h4>Mira i practica</h4><p>Veuràs les paraules que han costat. Escolta-les i torna-les a dir fins que isquen bé. Després contesta les preguntes.</p></div><div class="mock"><span class="btn sm">🔊 Escolta la paraula</span><span class="btn sm">Practica-la</span></div></li>
+            <li class="step"><div><h4>Mira i practica</h4><p>Veuràs les paraules que han costat. Escolta-les i torna-les a dir fins que isquen bé. Després contesta les preguntes: si t'equivoques, Ressò et dona una pista per a tornar al text i tens un segon intent.</p></div><div class="mock"><span class="btn sm">🔊 Escolta la paraula</span><span class="btn sm">Practica-la</span></div></li>
           </ol>
         </div>
         <div class="g-sec">
@@ -551,6 +572,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <div class="num"><b>Índex de fluïdesa</b> · de 0 a 100<p>Descodificació 40 %, errors 35 %, prosòdia 25 %. És orientatiu i els pesos es poden ajustar.</p></div>
             <div class="num"><b>Pista de ruta</b> · en cada substitució<p>Descodificació (ruta fonològica) o anticipació / paraula diferent (ruta lèxica). Orienta la pràctica; no és un diagnòstic.</p></div>
             <div class="num"><b>Grup de domini</b> · suport, pràctica guiada o autonomia<p>Combina PCPM i precisió segons el curs. L'«Aula» proposa quin tipus d'instrucció necessita cada grup.</p></div>
+            <div class="num"><b>Perfil lector</b> · comprensió × fluïdesa<p>Hàbil, de risc, superficial o lent però segur, com en el mapa lector d'aula. Necessita que l'alumne/a conteste les preguntes. La resposta encertada amb ajuda val mitja.</p></div>
             <div class="num"><b>Dificultat del text</b> · de 0 a 100<p>Calculada amb la llargària de les frases i de les paraules. Ajuda a triar un repte adequat i a comparar sessions.</p></div>
           </div>
         </div>
@@ -560,6 +582,8 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
           <ul>
             <li>Necessites un text a mida? Ves a «Biblioteca › Crea'l amb IA»: Ressò prepara el prompt, tu l'enganxes en la IA i la resposta omple sola la fitxa del text i les preguntes. Revisa-la sempre abans de desar-la.</li>
             <li>Pots compartir els teus textos amb altres docents amb «Comparteix els meus textos», i carregar els que t'envien amb «Carrega textos».</li>
+            <li>Les preguntes no donen la resposta a la primera: ofereixen una ajuda interna (tornar al text, buscar la pista) i un segon intent. Així l'ajuda l'elabora l'alumne/a.</li>
+            <li>«Prepara la lectura» mostra una meta i les paraules clau abans de llegir. Fes-la servir per a treballar la lectura; per a mesurar la fluïdesa, deixa-la desactivada (les lectures preparades queden marcades a l'aula).</li>
             <li>Identifica l'alumnat només amb números i informa les famílies abans d'usar el micròfon.</li>
             <li>Fes la mateixa prova (mateix tipus de text i durada) cada 3-4 setmanes per a veure l'evolució.</li>
             <li>Si el reconeixement de veu falla, passa al marcatge manual: les dades valen igual.</li>
@@ -593,6 +617,14 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
 
     <div class="groups" id="groups"></div>
 
+    <div class="aula-head" style="margin-top:30px">
+      <div>
+        <h2>Perfil lector</h2>
+        <p style="margin:4px 0 0;color:var(--muted);max-width:66ch">Creua la comprensió (preguntes) amb la fluïdesa, com en el mapa lector d'aula. Només hi apareix l'alumnat que ha contestat les preguntes en la darrera lectura.</p>
+      </div>
+    </div>
+    <div class="profiles" id="profiles"></div>
+
     <div class="two">
       <div class="box chart">
         <h3>Evolució de la fluïdesa</h3>
@@ -611,7 +643,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
 
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Data</th><th>Curs</th><th>Alumne/a</th><th>Text</th><th>Llengua</th><th class="num">Temps</th><th class="num">PCPM</th><th class="num">Precisió</th><th class="num">Índex</th><th class="num">Sub.</th><th class="num">Om.</th><th class="num">Ins.</th><th class="num">Prosòdia</th><th class="num">Compr.</th><th>Grup</th><th></th></tr></thead>
+        <thead><tr><th>Data</th><th>Curs</th><th>Alumne/a</th><th>Text</th><th>Llengua</th><th class="num">Temps</th><th class="num">PCPM</th><th class="num">Precisió</th><th class="num">Índex</th><th class="num">Sub.</th><th class="num">Om.</th><th class="num">Ins.</th><th class="num">Prosòdia</th><th class="num">Compr.</th><th>Grup</th><th>Perfil</th><th></th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -667,6 +699,10 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <div class="field"><label for="nfCicle">Nivell</label><select id="nfCicle"></select></div>
       </div>
       <div class="field"><label for="nfBody">Text</label><textarea id="nfBody" required></textarea></div>
+      <div class="row">
+        <div class="field"><label for="nfGoal">Meta de lectura (opcional)</label><input id="nfGoal" class="inp" placeholder="Llig per a saber…"></div>
+        <div class="field"><label for="nfVocab">Paraules clau (opcional, separades per comes)</label><input id="nfVocab" class="inp" placeholder="volcà, erupció, lava"></div>
+      </div>
       <div id="nfQs"></div>
       <div class="row-actions"><button class="btn primary" type="submit">Desa el text</button><button class="btn" type="button" id="bCancelText">Cancel·la</button><span class="hint" id="nfDif" style="margin:0"></span></div>
     </form>
@@ -938,7 +974,7 @@ const isAndroid=/Android/i.test(navigator.userAgent);
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 
 /* configuració */
-const DEF_CFG={tts:'browser',bv:{ca:'',es:''},elKey:'',elVoices:[],elVoice:{ca:'',es:''},elModel:{ca:'eleven_v3',es:'eleven_multilingual_v2'},rate:0.9,asr:'browser',saveAudio:true,w:{dec:40,err:35,pros:25},font:'literata',size:1.28,ruler:false,th:{}};
+const DEF_CFG={tts:'browser',bv:{ca:'',es:''},elKey:'',elVoices:[],elVoice:{ca:'',es:''},elModel:{ca:'eleven_v3',es:'eleven_multilingual_v2'},rate:0.9,asr:'browser',saveAudio:true,w:{dec:40,err:35,pros:25},prep:false,font:'literata',size:1.28,ruler:false,th:{}};
 let CFG=Object.assign({},DEF_CFG,store.get('resso.cfg',{}));
 function saveCfg(){store.set('resso.cfg',CFG);}
 
@@ -1090,10 +1126,27 @@ function loadText(){
   $('tWords').textContent=S.words.length+' paraules'+(t.cicle?' · '+(t.cicle==='ESO'?'ESO':CICLES[t.cicle].split('· ')[1]):'');
   const dfc=textDifficulty(t.body);$('tDif').hidden=dfc==null;if(dfc!=null)$('tDif').textContent='Dificultat '+dfc+' · '+difLabel(dfc);
   $('nextBox').hidden=true;
+  renderPrep();
   $('exBanner').hidden=true;$('live').textContent='';$('timer').textContent='0:00';
   $('after').hidden=true;$('micNotice').hidden=true;$('prosBox').hidden=true;$('cheer').hidden=true;$('bRecPlay').hidden=true;
   ['bSave','bPrint','bPickLast'].forEach(id=>$(id).disabled=true);
   renderReading();renderMetrics();refreshMyVoice();
+}
+/* Preparar la lectura (opcional): meta i paraules clau abans de llegir */
+function prepGoal(t){if(t.goal)return t.goal;const lit=(t.qs||[]).find(q=>/^lit/i.test(q.t))||(t.qs||[])[0];if(!lit)return null;return (t.lang==='es'?'Lee para responder: ':'Llig per a respondre: ')+'«'+lit.q+'»';}
+function prepVocab(){
+  const t=S.text;if(Array.isArray(t.vocab)&&t.vocab.length)return t.vocab.slice(0,8);
+  const seen=new Set(),out=[];
+  S.words.forEach((w,i)=>{const c=cleanWord(w),n=norm(c);if(!n||seen.has(n)||sylCount(c)<3||/^\p{Lu}/u.test(c)&&i>0)return;seen.add(n);out.push({w:c,i,l:n.length});});
+  return out.sort((a,b)=>b.l-a.l).slice(0,5).sort((a,b)=>a.i-b.i).map(x=>x.w);
+}
+function renderPrep(){
+  const box=$('prepBox');$('bPrep').classList.toggle('on',!!CFG.prep);$('bPrep').setAttribute('aria-pressed',String(!!CFG.prep));
+  if(!CFG.prep||S.example||!S.words.length){box.hidden=true;return;}
+  const g=prepGoal(S.text),v=prepVocab(),es=S.text.lang==='es';
+  box.innerHTML=(g?`<div class="pgoal">🎯 ${esc(g)}</div>`:'')+(v.length?`<div class="vocab"><span class="lbl" style="margin:0">${es?'Palabras clave':'Paraules clau'}</span>${v.map(w=>`<button type="button" data-vw="${esc(w)}" title="${es?'Escúchala':'Escolta-la'}">${esc(w)}</button>`).join('')}</div>`:'')
+    +`<div class="hint" style="margin:0">${es?'Lee la meta y escucha las palabras clave antes de empezar.':'Llig la meta i escolta les paraules clau abans de començar.'}</div>`;
+  box.hidden=false;
 }
 function renderReading(){
   const box=$('reading');box.innerHTML='';
@@ -1118,6 +1171,28 @@ function renderReading(){
 function thFor(course){const c=courseById(course);const o=CFG.th[course]||{};return {lo:o.lo??c.lo,hi:o.hi??c.hi};}
 function levelOf(pcpm,acc,course){const t=thFor(course);const a=acc<90?0:acc<95?1:2;const p=pcpm<t.lo?0:pcpm<t.hi?1:2;return Math.min(a,p);}
 const LEVELS=['Suport intensiu','Pràctica guiada','Autonomia'];
+/* Perfil lector del mapa lector d'aula: comprensió (preguntes) × fluïdesa */
+const PROFILES=[
+ {n:'Lector hàbil',axis:'Comprensió mitjana-alta · fluïdesa mitjana-alta',col:'var(--accent)',tip:"Textos més exigents i variats, preguntes crítiques i que van més enllà del text. Més autonomia."},
+ {n:'Lector de risc',axis:'Comprensió baixa · fluïdesa baixa',col:'var(--sub)',tip:"Prioritat a la descodificació i la fluïdesa (lectura repetida, llistes de paraules, model del docent) i comprensió guiada amb microtextos. Si no avança, consulteu-ho amb orientació."},
+ {n:'Lector superficial',axis:'Comprensió baixa · fluïdesa mitjana-alta',col:'var(--om)',tip:"Llig de pressa però no construïx el significat. Llegir amb una meta, preguntes inferencials, ajudes internes i pensament en veu alta. Menys velocitat, més comprensió."},
+ {n:'Lector lent però segur',axis:'Comprensió mitjana-alta · fluïdesa baixa',col:'var(--ins)',tip:"Comprén bé però llig a poc a poc. Lectura repetida, en eco i en parella per a guanyar fluïdesa sense perdre comprensió."}
+];
+function compScoreOf(s){if(s.compScore!=null)return s.compScore;if(!s.comp)return null;const m=String(s.comp).match(/(\d+(?:[.,]\d+)?)\/(\d+)/);return m?parseFloat(m[1].replace(',','.'))/+m[2]:null;}
+function profileOf(flv,cs){if(cs==null)return null;const c=cs>=0.6,f=flv>=1;return c&&f?0:(!c&&!f?1:(!c&&f?2:3));}
+/* Puntuació de comprensió de la lectura actual: 1 a la primera, 0,5 amb ajuda, 0 si no l'encerta */
+function currentComp(){
+  const qs=S.text.qs||[];if(!qs.length)return null;let pts=0,done=0;
+  qs.forEach((q,k)=>{const a=S.answers[k];if(!a||!a.done)return;done++;if(a.first===q.a)pts+=1;else if(a.second===q.a)pts+=0.5;});
+  if(done<qs.length)return null;
+  return {score:pts/qs.length,label:(Math.round(pts*10)/10).toLocaleString('ca')+'/'+qs.length};
+}
+function renderProfile(){
+  const el=$('mProfile');if(!S.done||S.example){el.hidden=true;return;}
+  const c=currentComp();if(!c){el.hidden=false;el.style.setProperty('--c','var(--line)');el.innerHTML='<b>Perfil lector</b>Contesta les preguntes de comprensió per a veure el perfil.';return;}
+  const m=metrics(),pf=PROFILES[profileOf(levelOf(m.pcpm,m.acc,S.course),c.score)];
+  el.hidden=false;el.style.setProperty('--c',pf.col);el.innerHTML=`<b>${pf.n}</b>Comprensió ${c.label} · ${esc(pf.tip)}`;
+}
 const LV_COL=['var(--sub)','var(--om)','var(--accent)'];
 function metrics(){
   const c={ok:0,sub:0,om:0,nr:0,selfc:0};S.states.forEach(s=>{if(c[s]!==undefined)c[s]++;});
@@ -1746,22 +1821,68 @@ function renderAfter(){
   if(items.length>15){const p=document.createElement('div');p.className='empty';const n=items.length-15;p.textContent=`${n===1?'Queda 1 error més':'Queden '+n+' errors més'}. Amb tants errors, el text pot ser massa difícil ara mateix: prova'n un de més curt.`;box.appendChild(p);}
   renderQuiz();
 }
+const QHELP={
+ ca:{lit:"Encara no. La resposta està en el text: torna-hi i busca la frase que en parla. Després tria una altra opció.",
+     inf:"Encara no. El text no ho diu directament: busca les pistes i pensa què saps tu. Prova de completar: «Encara que el text no ho diga, jo entenc… perquè el text diu…».",
+     cri:"Encara no. Pensa en tot el text: què vol explicar o aconseguir? Rellig el principi i el final i torna-ho a provar.",
+     show:"Mostra'm on buscar",good1:"Molt bé!",good2:"Molt bé! Ho has trobat tornant al text.",
+     bad:x=>`La resposta era «${x}». Mira la frase marcada en el text i comprova-ho.`},
+ es:{lit:"Todavía no. La respuesta está en el texto: vuelve a él y busca la frase que habla de ello. Después elige otra opción.",
+     inf:"Todavía no. El texto no lo dice directamente: busca las pistas y piensa qué sabes tú. Prueba a completar: «Aunque el texto no lo diga, yo entiendo… porque el texto dice…».",
+     cri:"Todavía no. Piensa en todo el texto: ¿qué quiere explicar o conseguir? Relee el principio y el final y vuelve a intentarlo.",
+     show:"Muéstrame dónde buscar",good1:"¡Muy bien!",good2:"¡Muy bien! Lo has encontrado volviendo al texto.",
+     bad:x=>`La respuesta era «${x}». Mira la frase marcada en el texto y compruébalo.`}
+};
+/* Frase del text que conté la informació de la pregunta (per a les ajudes) */
+function evidenceRange(q){
+  const key=new Set(tokenize(q.q+' '+q.o[q.a]).map(norm).filter(w=>w.length>3));
+  let best=null,bs=0,a=0;
+  while(a<S.words.length){const r=sentenceRange(a);let sc=0;for(let i=r[0];i<=r[1];i++)if(key.has(S.norms[i]))sc++;if(sc>bs){bs=sc;best=r;}a=r[1]+1;}
+  return bs>0?best:null;
+}
+function highlightRange(r){
+  document.querySelectorAll('#reading .w.hint').forEach(e=>e.classList.remove('hint'));if(!r)return;
+  for(let i=r[0];i<=r[1];i++){const el=document.querySelector(`#reading .w[data-i="${i}"]`);if(el)el.classList.add('hint');}
+  const f=document.querySelector(`#reading .w[data-i="${r[0]}"]`);if(f)f.scrollIntoView({behavior:'smooth',block:'center'});
+}
 function renderQuiz(){
   const q=$('quiz');q.innerHTML='';
-  if(!S.text.qs||!S.text.qs.length){q.innerHTML='<div class="empty">Este text no porta preguntes. Pots fer-les oralment o afegir-les des de la «Biblioteca».</div>';return;}
+  if(!S.text.qs||!S.text.qs.length){q.innerHTML='<div class="empty">Este text no porta preguntes. Pots fer-les oralment o afegir-les des de la «Biblioteca».</div>';renderProfile();return;}
+  const H=QHELP[S.text.lang]||QHELP.ca;
   S.text.qs.forEach((it,k)=>{
+    const st=S.answers[k]&&typeof S.answers[k]==='object'?S.answers[k]:{};
+    const kind=/^lit/i.test(it.t)?'lit':/^inf/i.test(it.t)?'inf':'cri';
     const d=document.createElement('div');d.className='q';
     d.innerHTML=`<div class="tipus">${esc(it.t)}</div><p>${esc(it.q)}</p><div class="opts"></div>`;
     const o=d.querySelector('.opts');
     it.o.forEach((txt,n)=>{const b=document.createElement('button');b.className='opt';b.id=`q${k}o${n}`;b.textContent=txt;
-      if(S.answers[k]!==undefined){if(n===it.a)b.classList.add('right');else if(n===S.answers[k])b.classList.add('wrong');b.disabled=true;}
-      b.onclick=()=>{S.answers[k]=n;renderQuiz();};o.appendChild(b);});
+      const tried=n===st.first||n===st.second;
+      if(st.done&&n===it.a)b.classList.add('right');
+      else if(tried&&n!==it.a)b.classList.add('wrong');
+      b.disabled=!!st.done||tried;
+      b.onclick=()=>{
+        const cur=S.answers[k]&&typeof S.answers[k]==='object'?S.answers[k]:{};
+        if(cur.first===undefined){cur.first=n;if(n===it.a)cur.done=true;}
+        else{cur.second=n;cur.done=true;}
+        S.answers[k]=cur;renderQuiz();
+        if(cur.done&&cur.first!==it.a&&cur.second!==it.a)highlightRange(evidenceRange(it));
+      };o.appendChild(b);});
+    if(st.first!==undefined){
+      const h=document.createElement('div');
+      if(!st.done){h.className='qhelp';h.textContent=H[kind];
+        if(kind!=='cri'){const ev=evidenceRange(it);if(ev){const b=btn(H.show,()=>highlightRange(ev));h.appendChild(document.createElement('br'));h.appendChild(b);}}}
+      else if(st.first===it.a){h.className='qhelp ok';h.textContent=H.good1;}
+      else if(st.second===it.a){h.className='qhelp ok';h.textContent=H.good2;}
+      else{h.className='qhelp ko';h.textContent=H.bad(it.o[it.a]);}
+      d.appendChild(h);
+    }
     q.appendChild(d);
   });
+  renderProfile();
 }
 function renderPros(){
   $('pros').innerHTML=PROS.map(p=>`<div class="pros-row"><span>${esc(p.n)}</span><div class="scale">${[1,2,3,4].map(v=>`<button type="button" data-p="${p.k}" data-v="${v}" title="${esc(p.d[v-1])}" class="${S.pros[p.k]===v?'sel':''}">${v}</button>`).join('')}</div></div>`).join('');
-  const t=prosTotal();const autoNote=S.prosAuto?'Fraseig, continuïtat i ritme són una proposta automàtica feta a partir de les pauses: revisa-la i valora l\'expressió. ':'';$('prosTotal').textContent=autoNote+t?`Total: ${t}/16. ${t>=10?'Progrés adequat.':'Cal treballar la prosòdia.'} (10 o més indica un progrés adequat.)`:'1 = inicial · 4 = consolidat. Passa el ratolí per damunt de cada número per a veure el descriptor.';
+  const t=prosTotal();const autoNote=S.prosAuto?'Fraseig, continuïtat i ritme són una proposta automàtica feta a partir de les pauses: revisa-la i valora l\'expressió. ':'';$('prosTotal').textContent=autoNote+(t?`Total: ${t}/16. ${t>=10?'Progrés adequat.':'Cal treballar la prosòdia.'} (10 o més indica un progrés adequat.)`:'1 = inicial · 4 = consolidat. Passa el ratolí per damunt de cada número per a veure el descriptor.');
 }
 $('pros').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;S.pros[b.dataset.p]=+b.dataset.v;renderPros();renderMetrics();});
 
@@ -1786,13 +1907,13 @@ function seedIfEmpty(){
   add('1E',2,2,'badall',84,90.4,5,2,1,'2/3',9,['badallàvem','hipòtesi','empatia']);
   add('1E',3,3,'columbretes',112,94.1,4,2,1,'2/3',11,['provisions','Columbretes']);
   add('1E',4,2,'badall',126,96.3,2,1,1,'3/3',13,['hipòtesi']);
-  add('1E',5,3,'columbretes',97,91.8,5,2,0,'2/3',10,['automàtica','provisions','desembarcar-hi']);
+  add('1E',5,3,'columbretes',97,91.8,5,2,0,'1/3',10,['automàtica','provisions','desembarcar-hi']);
   add('1E',6,2,'badall',146,98.6,1,0,0,'3/3',15,[]);
   add('3P',1,4,'orenetes',58,92.5,3,2,1,'2/3',9,['travessen','teulades','paciència']);
   add('3P',2,4,'orenetes',94,97.0,1,1,0,'3/3',13,['teulades']);
   add('3P',3,28,'orenetes',41,85.0,6,4,2,'1/3',6,['orenetes','travessen','paciència','insectes']);
   add('3P',3,14,'dientes',50,88.2,5,3,1,'2/3',7,['definitivos','cepillarlos']);
-  add('3P',3,3,'orenetes',62,91.0,4,2,1,'2/3',9,['travessen','paciència']);
+  add('3P',3,3,'orenetes',62,91.0,4,2,1,'1/3',9,['travessen','paciència']);
   add('3P',4,4,'dientes',76,93.3,3,1,1,'3/3',11,['definitivos']);
   saveSessions(list);
 }
@@ -1804,6 +1925,7 @@ function renderAula(){
               'Lectura en parella o en eco. Atenció a la puntuació i al fraseig, i revisió de les paraules substituïdes abans de rellegir.',
               'Lectura expressiva i teatre llegit. Textos més llargs i complexos, amb èmfasi en la comprensió inferencial i crítica.'];
   $('groups').innerHTML=G.map((g,k)=>`<div class="group" style="--c:${LV_COL[k]}"><h3>${LEVELS[k]} <span>${g.length}</span></h3><div class="who">${g.sort((a,b)=>a.course.localeCompare(b.course)||a.student-b.student).map(s=>`<span class="pill">${esc(slabel(s,!f))}</span>`).join('')||'<span style="color:var(--muted);font-size:.85rem">Ningú de moment</span>'}</div><p>${tips[k]}</p></div>`).join('');
+  renderProfiles(Object.values(latest),!f);
   // alumnat per al gràfic
   const keys=[...new Set(list.map(skey))];
   const counts={};list.forEach(s=>counts[skey(s)]=(counts[skey(s)]||0)+1);
@@ -1813,8 +1935,8 @@ function renderAula(){
   if(keys.includes(prevSel))$('aulaStudent').value=prevSel;else if(keys.length)$('aulaStudent').value=keys.reduce((a,b)=>counts[b]>counts[a]?b:a);
   renderStudent();
   const rows=[...list].sort((a,b)=>b.date.localeCompare(a.date));
-  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.idx??'–'}</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
-    :'<tr><td colspan="16" style="color:var(--muted)">Encara no hi ha lectures desades.</td></tr>';
+  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.idx??'–'}</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td>${(()=>{const pi=profileOf(lv,compScoreOf(s));return pi==null?'–':`<span class="chip" style="color:${PROFILES[pi].col}">${PROFILES[pi].n}</span>`;})()}${s.prep?' <span class="chip ex" title="Lectura feta amb preparació (meta i paraules clau)">preparada</span>':''}</td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
+    :'<tr><td colspan="17" style="color:var(--muted)">Encara no hi ha lectures desades.</td></tr>';
 }
 function renderStudent(){
   const k=$('aulaStudent').value;const list=(sessions()||[]).filter(s=>skey(s)===k).sort((a,b)=>a.date.localeCompare(b.date));
@@ -1842,6 +1964,12 @@ function renderStudent(){
   $('bPractice').disabled=!top.length;$('bPractice').dataset.words=top.map(x=>x[0]).join(' ');
   $('bPractice').dataset.lang=list[list.length-1].lang;$('bPractice').dataset.key=k;
 }
+function renderProfiles(latest,withCourse){
+  const P=[[],[],[],[]];let none=0;
+  latest.forEach(s=>{const pi=profileOf(levelOf(s.pcpm,s.acc,s.course),compScoreOf(s));if(pi==null)none++;else P[pi].push(s);});
+  $('profiles').innerHTML=PROFILES.map((pf,k)=>`<div class="prof" style="--c:${pf.col}"><h3>${pf.n} <span>${P[k].length}</span></h3><div class="axis">${pf.axis}</div><div class="who" style="display:flex;flex-wrap:wrap;gap:6px">${P[k].sort((a,b)=>a.course.localeCompare(b.course)||a.student-b.student).map(s=>`<span class="pill">${esc(slabel(s,withCourse))}</span>`).join('')||'<span style="color:var(--muted);font-size:.85rem">Ningú de moment</span>'}</div><p>${esc(pf.tip)}</p></div>`).join('')
+    +(none?`<p class="hint" style="grid-column:1/-1">${none} ${none===1?'alumne/a no té':'alumnes no tenen'} preguntes contestades en la darrera lectura, i per això no ${none===1?'apareix':'apareixen'} en cap perfil.</p>`:'');
+}
 function renderErrChart(list){
   const cats=[{k:'desc',n:'Descodificació',c:'var(--sub)'},{k:'lex',n:'Lèxica / anticipació',c:'var(--ins)'},{k:'sub',n:'Substitució sense classificar',c:'var(--nr)'},{k:'om',n:'Omissió',c:'var(--om)'},{k:'ins',n:'Inserció',c:'color-mix(in srgb,var(--ins) 45%,var(--surface))'}];
   const rows=list.map(s=>{const r=s.routes||null;const desc=r?r.desc:0,lex=r?(r.antic+r.lex):0;return {d:s.date,desc,lex,sub:r?Math.max(0,s.sub-desc-lex):s.sub,om:s.om,ins:s.ins,selfc:s.selfc||0};});
@@ -1865,17 +1993,18 @@ $('bPractice').onclick=()=>{
 $('bSave').onclick=()=>{
   const m=metrics();const n=+$('student').value||0;
   if(!n){toast("Indica el número de l'alumne/a.");return;}
-  const ans=Object.keys(S.answers);const comp=S.text.qs&&S.text.qs.length&&ans.length?ans.filter(k=>S.answers[k]===S.text.qs[k].a).length+'/'+S.text.qs.length:'';
+  const cc=currentComp();const comp=cc?cc.label:'',compScore=cc?cc.score:null;
+  const helped=Object.values(S.answers).filter(a=>a&&a.first!==undefined&&a.second!==undefined).length;
   const errs=[];S.states.forEach((s,i)=>{if(s==='sub'||s==='om')errs.push(cleanWord(S.words[i]));});
   const list=sessions()||[];
   const routes={desc:0,antic:0,lex:0};S.states.forEach((s,i)=>{if(s==='sub'){const r=classifyErr(S.heard[i],cleanWord(S.words[i]));if(r)routes[r.k]++;}});
-  list.push({id:'s'+Date.now(),date:new Date().toISOString(),course:S.course,student:n,textId:S.text.id,title:S.text.title,lang:S.text.lang,secs:Math.round(S.secs),pcpm:m.pcpm,acc:m.acc,sub:m.c.sub,om:m.c.om,ins:m.ins,selfc:m.c.selfc,rep:m.rep,routes,idx:fluencyIndex(m).idx,dif:textDifficulty(S.text.body),comp,pros:prosTotal(),errs,example:false});
+  list.push({id:'s'+Date.now(),date:new Date().toISOString(),course:S.course,student:n,textId:S.text.id,title:S.text.title,lang:S.text.lang,secs:Math.round(S.secs),pcpm:m.pcpm,acc:m.acc,sub:m.c.sub,om:m.c.om,ins:m.ins,selfc:m.c.selfc,rep:m.rep,routes,idx:fluencyIndex(m).idx,dif:textDifficulty(S.text.body),comp,compScore,helped,prep:!!CFG.prep,pros:prosTotal(),errs,example:false});
   saveSessions(list);S.saved=true;$('bSave').disabled=true;toast(`Lectura desada a l'aula (${courseById(S.course).short}, núm. ${n})`);
 };
 function csv(){
-  const list=sessions()||[];const h=['data','curs','alumne','text','llengua','dificultat_text','segons','PCPM','precisio','index_fluidesa','substitucions','omissions','insercions','autocorreccions','prosodia','comprensio','grup','paraules_errades'];
+  const list=sessions()||[];const h=['data','curs','alumne','text','llengua','dificultat_text','preparada','segons','PCPM','precisio','index_fluidesa','substitucions','omissions','insercions','autocorreccions','prosodia','comprensio','grup','perfil_lector','paraules_errades'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  return [h.join(';')].concat(list.map(s=>[s.date.slice(0,10),courseById(s.course).short,s.student,q(s.title),s.lang,s.dif??'',s.secs,s.pcpm,String(s.acc).replace('.',','),s.idx??'',s.sub,s.om,s.ins,s.selfc??'',s.pros||'',s.comp||'',LEVELS[levelOf(s.pcpm,s.acc,s.course)],q((s.errs||[]).join(', '))].join(';'))).join('\r\n');
+  return [h.join(';')].concat(list.map(s=>[s.date.slice(0,10),courseById(s.course).short,s.student,q(s.title),s.lang,s.dif??'',s.prep?'sí':'no',s.secs,s.pcpm,String(s.acc).replace('.',','),s.idx??'',s.sub,s.om,s.ins,s.selfc??'',s.pros||'',s.comp||'',LEVELS[levelOf(s.pcpm,s.acc,s.course)],(()=>{const pi=profileOf(levelOf(s.pcpm,s.acc,s.course),compScoreOf(s));return pi==null?'':PROFILES[pi].n;})(),q((s.errs||[]).join(', '))].join(';'))).join('\r\n');
 }
 $('bCopy').onclick=()=>{const t=csv();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast("CSV copiat: enganxa'l en un full de càlcul"),()=>toast("No s'ha pogut copiar. Fes servir «Descarrega CSV»."));}else toast("No s'ha pogut copiar. Fes servir «Descarrega CSV».");};
 $('bCsv').onclick=()=>{downloadFile('resso-lectures-'+new Date().toISOString().slice(0,10)+'.csv','﻿'+csv(),'text/csv;charset=utf-8');toast('CSV descarregat');};
@@ -1928,8 +2057,12 @@ Escriu un text original en valencià per a llegir en veu alta amb alumnat de ${c
 
 Després, escriu tres preguntes de comprensió d'opció múltiple amb tres opcions cadascuna (només una correcta): una literal, una inferencial i una crítica.
 
+Afig també una meta de lectura (una frase que comence per «Llig per a saber…») i entre 3 i 5 paraules clau del text que convinga conéixer abans de llegir.
+
 Respon NOMÉS amb este format exacte, sense negretes ni cap altre text:
 TÍTOL: ...
+META: Llig per a saber ...
+PARAULES CLAU: ..., ..., ...
 TEXT:
 ...
 PREGUNTA LITERAL: ...
@@ -1960,8 +2093,12 @@ Escribe un texto original en castellano para leer en voz alta con alumnado de ${
 
 Después, escribe tres preguntas de comprensión de opción múltiple con tres opciones cada una (solo una correcta): una literal, una inferencial y una crítica.
 
+Añade también una meta de lectura (una frase que empiece por «Lee para saber…») y entre 3 y 5 palabras clave del texto que convenga conocer antes de leer.
+
 Responde SOLO con este formato exacto, sin negritas ni ningún otro texto:
 TÍTOL: ...
+META: Lee para saber ...
+PARAULES CLAU: ..., ..., ...
 TEXT:
 ...
 PREGUNTA LITERAL: ...
@@ -1984,12 +2121,14 @@ function renderAiPrompt(){aiDefaults();$('aiPrompt').textContent=aiPrompt();}
 /* Interpreta la resposta (accepta etiquetes en valencià o castellà i restes de format markdown). */
 function parseAi(raw){
   const txt=String(raw).replace(/\r/g,'').replace(/\*\*|__|^#+\s*/gm,'');
-  const lines=txt.split('\n');let title='',body=[],qs=[],mode=null,cur=null;
+  const lines=txt.split('\n');let title='',body=[],qs=[],mode=null,cur=null,goal='',vocab=[];
   const qre=/^\s*(?:pregunta\s+)?(literal|inferencial|cr[ií]tica)\s*:\s*(.*)$/i;
   for(const ln of lines){
     const l=ln.trim();
     let m;
     if((m=l.match(/^t[ií]tol(?:o)?\s*:\s*(.*)$/i))){title=m[1].trim();mode=null;continue;}
+    if((m=l.match(/^meta\s*:\s*(.*)$/i))){goal=m[1].trim();mode=null;continue;}
+    if((m=l.match(/^(?:paraules|palabras)\s+clau(?:e)?\s*:\s*(.*)$/i))){vocab=m[1].split(/[,;]/).map(x=>x.trim().replace(/[.]$/,'')).filter(Boolean);mode=null;continue;}
     if((m=l.match(/^text(?:o)?\s*:\s*(.*)$/i))){mode='body';if(m[1])body.push(m[1]);continue;}
     if((m=l.match(qre))){const t=m[1].toLowerCase().startsWith('lit')?'Literal':m[1].toLowerCase().startsWith('inf')?'Inferencial':'Crítica';cur={t,q:m[2].trim(),o:[],a:0};qs.push(cur);mode='q';continue;}
     if(mode==='q'&&cur&&(m=l.match(/^([abc])[\)\.\-:]\s*(.*)$/i))){cur.o.push(m[2].trim());continue;}
@@ -1997,7 +2136,7 @@ function parseAi(raw){
     if(mode==='body')body.push(l);
   }
   const b=body.join(' ').replace(/\s+/g,' ').trim();
-  return {title,body:b,qs:qs.filter(q=>q.q&&q.o.length===3)};
+  return {title,body:b,goal,vocab,qs:qs.filter(q=>q.q&&q.o.length===3)};
 }
 $('bAiText').onclick=()=>{const box=$('aiBox');box.hidden=!box.hidden;if(!box.hidden){if(!$('aiCourse').options.length){$('aiCourse').innerHTML=COURSES.map(c=>`<option value="${c.id}">${esc(c.label)}</option>`).join('');$('aiCourse').value=$('course').value;}renderAiPrompt();box.scrollIntoView({behavior:'smooth',block:'start'});}};
 ['aiLang','aiCourse','aiType','aiTopic','aiFocus'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='aiCourse')$('aiWords').dataset.touched='';renderAiPrompt();}));
@@ -2008,7 +2147,7 @@ $('bAiFill').onclick=()=>{
   const r=parseAi($('aiAnswer').value);
   if(!r.body||tokenize(r.body).length<15){$('aiMsg').textContent="No he trobat el text. Comprova que la resposta comença amb «TÍTOL:» i «TEXT:».";$('aiMsg').style.color='var(--sub)';return;}
   const c=courseById($('aiCourse').value);
-  openTextForm({title:r.title||'Text nou',lang:$('aiLang').value,cicle:c.cicle,body:r.body,qs:r.qs});
+  openTextForm({title:r.title||'Text nou',lang:$('aiLang').value,cicle:c.cicle,body:r.body,qs:r.qs,goal:r.goal,vocab:r.vocab});
   $('aiMsg').textContent=`Fitxa omplida: ${tokenize(r.body).length} paraules i ${r.qs.length} preguntes. Revisa-la i prem «Desa el text».`;$('aiMsg').style.color='var(--accent)';
 };
 
@@ -2027,6 +2166,7 @@ let editingId=null;
 function openTextForm(t){
   const f=$('textForm');f.hidden=false;renderQForm();editingId=t&&t.id||null;
   $('nfTitle').value=t?t.title||'':'';$('nfLang').value=t&&t.lang||'ca';$('nfCicle').value=t&&t.cicle||'ESO';$('nfBody').value=t?t.body||'':'';
+  $('nfGoal').value=t&&t.goal||'';$('nfVocab').value=t&&Array.isArray(t.vocab)?t.vocab.join(', '):'';
   (t&&t.qs||[]).forEach(q=>{const k=['Literal','Inferencial','Crítica'].indexOf(q.t);const kk=k<0?0:k;$('nq'+kk).value=q.q;q.o.forEach((o,n)=>{if(n<3)$('no'+kk+'_'+n).value=o;});const r=$('na'+kk+'_'+(q.a||0));if(r)r.checked=true;});
   updDif();f.scrollIntoView({behavior:'smooth',block:'start'});$('nfTitle').focus();
 }
@@ -2038,7 +2178,8 @@ $('textForm').addEventListener('submit',e=>{
   e.preventDefault();
   const qs=[];['Literal','Inferencial','Crítica'].forEach((t,k)=>{const q=$('nq'+k).value.trim();const o=[0,1,2].map(n=>$('no'+k+'_'+n).value.trim());
     if(q&&o.every(Boolean)){const a=+document.querySelector(`input[name="na${k}"]:checked`).value;qs.push({t,q,o,a});}});
-  const t={id:editingId||'u'+Date.now(),own:true,title:$('nfTitle').value.trim(),lang:$('nfLang').value,cicle:$('nfCicle').value,body:$('nfBody').value.trim().replace(/\s+/g,' '),qs};
+  const t={id:editingId||'u'+Date.now(),own:true,title:$('nfTitle').value.trim(),lang:$('nfLang').value,cicle:$('nfCicle').value,body:$('nfBody').value.trim().replace(/\s+/g,' '),qs,goal:$('nfGoal').value.trim()||undefined,vocab:$('nfVocab').value.split(',').map(x=>x.trim()).filter(Boolean)};
+  if(!t.vocab.length)delete t.vocab;
   const lib=store.get('resso.library',[]);const ix=lib.findIndex(x=>x.id===t.id);if(ix>=0)lib[ix]=t;else lib.push(t);store.set('resso.library',lib);editingId=null;
   $('textForm').hidden=true;$('textForm').reset();fillTextSelect($('textSel').value);renderLibrary();toast('Text desat a la biblioteca');
 });
@@ -2198,6 +2339,8 @@ $('bSmaller').onclick=()=>{CFG.size=Math.max(1,+(CFG.size-0.12).toFixed(2));save
 $('bBigger').onclick=()=>{CFG.size=Math.min(2.4,+(CFG.size+0.12).toFixed(2));saveCfg();applyReadingLook();};
 $('bRuler').onclick=()=>{CFG.ruler=!CFG.ruler;saveCfg();applyReadingLook();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')stopModel();});
+$('bPrep').onclick=()=>{CFG.prep=!CFG.prep;saveCfg();if(S.example&&!running)loadText();else renderPrep();toast(CFG.prep?'Preparació activada: la lectura es desarà com a «preparada».':'Preparació desactivada.');};
+$('prepBox').addEventListener('click',e=>{const b=e.target.closest('[data-vw]');if(!b)return;const w=b.dataset.vw;const i=S.words.findIndex(x=>cleanWord(x)===w);speakWords(i>=0?i:null,i>=0?i:null,w);});
 
 /* =========================================================
    Inici
