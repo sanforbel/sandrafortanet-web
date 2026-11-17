@@ -1465,10 +1465,22 @@ function micError(code){
   };
   return map[code]||`No s'ha pogut fer servir el micròfon (${code}). Prova-ho en Google Chrome.`;
 }
+/* Alguns programes (compartir pantalla, videoconferències) instal·len micròfons virtuals que no capten so.
+   Si el navegador en tria un, Ressò canvia al primer micròfon real que trobe. */
+const VIRTUAL_MIC=/sharing|virtual|stereo mix|mezcla est|cable|voicemeeter|blackhole|soundflower|loopback|obs|nvidia broadcast|teams audio|zoom audio/i;
 async function getMic(){
   if(!window.isSecureContext)throw {name:'insecure'};
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw {name:'nosr'};
-  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  const opts={echoCancellation:true,noiseSuppression:true,autoGainControl:true};
+  let st=await navigator.mediaDevices.getUserMedia({audio:opts});
+  try{
+    const lab=(st.getAudioTracks()[0]||{}).label||'';
+    if(VIRTUAL_MIC.test(lab)){
+      const real=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput'&&d.deviceId!=='default'&&d.deviceId!=='communications'&&!VIRTUAL_MIC.test(d.label));
+      if(real.length){const alt=await navigator.mediaDevices.getUserMedia({audio:Object.assign({deviceId:{exact:real[0].deviceId}},opts)});st.getTracks().forEach(t=>t.stop());st=alt;MIC.switchedFrom=lab;}
+    }
+  }catch(e){}
+  return st;
 }
 let MIC={stream:null,recorder:null,chunks:[],ctx:null,raf:0};
 function startMeter(stream){
@@ -1478,14 +1490,16 @@ function startMeter(stream){
     const col=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#0B7A67';
     const hist=new Array(24).fill(0);
     const draw=()=>{an.getByteTimeDomainData(data);let peak=0;for(const v of data)peak=Math.max(peak,Math.abs(v-128));hist.push(peak/128);hist.shift();
-      if(peak/128>0.06)MIC.lastVoice=performance.now();
+      /* Detecció de veu adaptada al micròfon: es compara amb el soroll de fons (micròfons fluixos també funcionen). */
+      const pk=peak/128;MIC.floor=MIC.floor==null?pk:(pk<MIC.floor?pk:MIC.floor+(pk-MIC.floor)*0.002);
+      if(pk>Math.max(0.015,MIC.floor*2.5+0.01))MIC.lastVoice=performance.now();
       g.clearRect(0,0,cv.width,cv.height);g.fillStyle=col;const bw=cv.width/hist.length;
       hist.forEach((v,k)=>{const h=Math.max(3,v*cv.height*1.6);g.globalAlpha=.35+.65*(k/hist.length);g.fillRect(k*bw+2,(cv.height-h)/2,bw-4,Math.min(h,cv.height));});
       MIC.raf=requestAnimationFrame(draw);};
     draw();
   }catch(e){}
 }
-function stopMeter(){cancelAnimationFrame(MIC.raf);try{MIC.ctx&&MIC.ctx.close();}catch(e){}MIC.ctx=null;$('meter').hidden=true;}
+function stopMeter(){MIC.floor=null;cancelAnimationFrame(MIC.raf);try{MIC.ctx&&MIC.ctx.close();}catch(e){}MIC.ctx=null;$('meter').hidden=true;}
 function startRecorder(stream){
   if(!window.MediaRecorder)return;
   const types=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
@@ -2481,6 +2495,19 @@ $('restoreFile').onchange=async e=>{
 $('bMicTest').onclick=async()=>{
   const out=$('micTestOut');out.style.color='var(--muted)';out.textContent='Demanant permís…';
   let stream;try{stream=await getMic();}catch(e){out.textContent=micError(e.name||String(e));out.style.color='var(--sub)';return;}
+  /* 1. Nivell de so: es mesura 3 segons amb el micròfon que s'ha obert. */
+  const lab=(stream.getAudioTracks()[0]||{}).label||'el micròfon';
+  out.textContent='Parla en veu alta 3 segons… ('+lab+')';
+  let peak=0;
+  try{const ctx=new (window.AudioContext||window.webkitAudioContext)();await ctx.resume();const an=ctx.createAnalyser();ctx.createMediaStreamSource(stream).connect(an);const d=new Uint8Array(an.fftSize);const t0=performance.now();
+    while(performance.now()-t0<3000){await new Promise(r=>setTimeout(r,60));an.getByteTimeDomainData(d);for(const v of d)peak=Math.max(peak,Math.abs(v-128)/128);out.textContent='Parla en veu alta… nivell '+'▮'.repeat(Math.min(10,Math.round(peak*40)))+' ('+lab+')';}
+    ctx.close();}catch(e){}
+  const sw=MIC.switchedFrom;MIC.switchedFrom=null;
+  const fixTip=" Per a canviar-lo: clica la icona de l'esquerra de l'adreça › Configuració del lloc › Micròfon, i tria el micròfon de l'ordinador. Recarrega la pàgina. Revisa també que el micròfon no estiga silenciat (tecla amb un micròfon ratllat) i que el volum d'entrada del sistema no estiga baix.";
+  if(peak<0.02){stream.getTracks().forEach(t=>t.stop());out.style.color='var(--sub)';
+    out.textContent=(sw?`El navegador tenia triat «${sw}», que és un micròfon virtual. Ressò ha provat «${lab}», però tampoc arriba so.`:`No arriba so des de «${lab}».`)+fixTip;return;}
+  if(sw&&SR){stream.getTracks().forEach(t=>t.stop());out.style.color='var(--om)';
+    out.textContent=`El micròfon «${lab}» funciona, però el navegador té triat «${sw}», un micròfon virtual que no capta so, i el reconeixement de veu farà servir eixe.`+fixTip;return;}
   if(!SR){stream.getTracks().forEach(t=>t.stop());out.textContent=CFG.asr==='scribe'?'El micròfon funciona. Amb Scribe, la transcripció es fa en acabar la lectura.':'El micròfon funciona, però este navegador no té reconeixement de veu. Usa Chrome o tria Scribe.';out.style.color=CFG.asr==='scribe'?'var(--accent)':'var(--om)';return;}
   stream.getTracks().forEach(t=>t.stop());
   const r=new SR();r.lang=$('customLang').value==='es'?'es-ES':'ca-ES';r.interimResults=false;
