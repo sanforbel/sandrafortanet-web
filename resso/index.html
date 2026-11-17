@@ -63,6 +63,18 @@ nav.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink)
 
 /* formularis */
 .panel{padding-top:24px}
+.purpose{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px}
+.purpose label{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;background:var(--surface)}
+.purpose label b{font-size:1.05rem}
+.purpose label small{color:var(--muted);font-size:.85rem;line-height:1.35}
+.purpose input{position:absolute;opacity:0;pointer-events:none}
+.purpose label:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.purpose label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+body.prac .aval-only,body.aval .prac-only{display:none}
+.pacrate{display:flex;gap:6px;align-items:center}.pacrate input{width:5.5em;text-align:center}
+.field label.chk{display:flex;gap:8px;align-items:center;font-size:.92rem;cursor:pointer;min-height:38px;text-transform:none;letter-spacing:normal;font-weight:500;color:var(--ink)}
+.pracres{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--surface-2);line-height:1.5}
+.pracres .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .setup{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:4px;min-width:0}
 .field label,.lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
@@ -356,18 +368,29 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
 
   <!-- ============ LECTURA ============ -->
   <section class="panel" id="p-llig">
+    <div class="purpose" role="radiogroup" aria-label="Què vols fer?">
+      <label><input type="radio" name="purpose" value="prac"><b>Practicar</b><small>El verd marca el ritme i l'alumne/a el seguix. Funciona en qualsevol navegador.</small></label>
+      <label><input type="radio" name="purpose" value="aval"><b>Avaluar</b><small>L'alumne/a llig sense ajuda i Ressò analitza la lectura en acabar.</small></label>
+    </div>
     <div class="setup">
       <div class="field"><label for="student">Alumne/a núm.</label><input id="student" type="number" min="1" max="99" value="7"></div>
       <div class="field"><label for="course">Curs</label><select id="course"></select></div>
       <div class="field" style="flex:1 1 260px"><label for="textSel">Text</label><select id="textSel"></select></div>
-      <div class="field"><label for="modeSel">Mode</label>
+      <div class="field prac-only"><label for="pacSel">Com avança el verd</label>
+        <select id="pacSel"><option value="auto">Sol, al ritme triat</option><option value="key">Quan l'alumne/a toca (o prem espai)</option></select>
+      </div>
+      <div class="field prac-only" id="pacRateF"><label for="pacRate">Ritme (paraules/minut)</label>
+        <div class="pacrate"><button type="button" class="btn sm" id="pacMinus" aria-label="Més a poc a poc">−</button><input id="pacRate" type="number" min="20" max="220" step="5" value="70"><button type="button" class="btn sm" id="pacPlus" aria-label="Més ràpid">+</button></div>
+      </div>
+      <div class="field prac-only" id="pacWaitF"><label class="chk"><input type="checkbox" id="pacWait"> Espera si l'alumne/a para de llegir</label><span class="hint" style="margin:0">Usa el micròfon només per a saber si parla.</span></div>
+      <div class="field aval-only"><label for="modeSel">Mode</label>
         <select id="modeSel">
           <option value="mic">Micròfon</option>
           <option value="manual">Marcatge manual del docent</option>
           <option value="sim">Simulació de demostració</option>
         </select>
       </div>
-      <div class="field"><label for="durSel">Durada</label>
+      <div class="field aval-only"><label for="durSel">Durada</label>
         <select id="durSel"><option value="all">Text sencer</option><option value="60">1 minut</option></select>
       </div>
     </div>
@@ -411,6 +434,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <div class="reading" id="reading"></div>
           </div>
           <div class="live" id="live"></div>
+          <div class="pracres" id="pracRes" hidden aria-live="polite"></div>
           <div class="controls">
             <button class="btn primary" id="bStart"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"/></svg><span>Comença a llegir</span></button>
             <button class="btn rec" id="bStop" hidden><span class="dot" aria-hidden="true"></span><span>He acabat</span></button>
@@ -543,7 +567,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
           <p class="lead">El mateix ordre per a cada alumne/a.</p>
           <ol class="steps">
             <li class="step"><div><h4>Prepara la lectura</h4><p>Posa el número de l'alumne/a (mai el nom), el curs i el text. La dificultat del text apareix al costat del títol.</p></div><div class="mock"><span class="btn sm">Alumne/a núm. 7</span><span class="btn sm">3r de Primària</span><span class="chip dif">Dificultat 32 · intermèdia</span></div></li>
-            <li class="step"><div><h4>Tria el mode</h4><p><b>Micròfon</b>: l'app escolta i marca sola. <b>Marcatge manual</b>: escoltes tu i cliques les paraules errònies. <b>1 minut</b>: la prova estàndard de fluïdesa.</p></div><div class="mock"><span class="btn sm">Micròfon</span><span class="btn sm">Manual</span><span class="btn sm">1 minut</span></div></li>
+            <li class="step"><div><h4>Practicar o avaluar</h4><p><b>Practicar</b>: el verd avança al ritme que tries (o amb un toc) i l'alumne/a el seguix. No necessita reconeixement de veu, així que funciona en qualsevol navegador. Puja el ritme de 10 en 10 a mesura que millora. <b>Avaluar</b>: l'alumne/a llig sense ajuda i, en acabar, Ressò marca la lectura. Tria <b>Micròfon</b> (Chrome o Edge, o Scribe en qualsevol navegador) o <b>Marcatge manual</b>, i <b>1 minut</b> per a la prova estàndard de fluïdesa.</p></div><div class="mock"><span class="btn sm">Practicar</span><span class="btn sm">Avaluar</span><span class="btn sm">1 minut</span></div></li>
             <li class="step"><div><h4>Lectura model (opcional)</h4><p>«Escolta el model» llig el text amb les paraules ressaltades. Si graves la teua lectura amb «Veu gravada», sonarà eixa.</p></div><div class="mock"><span class="btn sm">🔊 Escolta el model</span><span class="btn sm">🎙 Veu gravada</span></div></li>
             <li class="step"><div><h4>Revisa el resultat</h4><p>Corregix qualsevol marca clicant la paraula. Valora la prosòdia (1-4) per a completar l'índex de fluïdesa.</p></div><div class="mock"><span class="w sub">mar</span><span class="w selfc">quilòmetres</span><span class="w om">de</span></div></li>
             <li class="step"><div><h4>Desa i decidix</h4><p>«Desa a l'aula» guarda la sessió. «Què faig ara?» proposa el pas següent i l'«Aula» agrupa l'alumnat.</p></div><div class="mock"><span class="btn primary sm">Desa a l'aula</span><span class="btn sm">Què faig ara?</span></div></li>
@@ -860,6 +884,8 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
         <li>Oakhill (2020): el vocabulari com a suport de la comprensió.</li>
         <li>Castejón i Menéndez (2025): l'avaluació i el reforç de la competència lectora a l'aula.</li>
       </ul>
+
+      <p>Practicar i avaluar van per separat. La pràctica guiada (el verd marca el ritme, amb pauses a les comes i als punts) s'inspira en la lectura repetida (Samuels, 1979) i en la lectura amb ritme marcat (Breznitz, 2006). L'avaluació es fa sense cap marca que avance, perquè el color podria condicionar el ritme de l'alumne/a i falsejar la mesura.</p>
 
       <h3>Límits i validesa</h3>
       <p>Ressò és una ferramenta de pràctica i de seguiment formatiu fonamentada en la ciència de la lectura. No és una prova estandarditzada ni diagnòstica: per a això hi ha instruments validats (per exemple, PROLEC-R o TECLE) i l'orientació del centre.</p>
@@ -1299,7 +1325,7 @@ function liveHighlight(text){
   if(livePos>=0&&cur>livePos+12)cur=livePos+12;
   livePos=cur;
   const now=performance.now();TRK.hist.push({t:now,p:cur});while(TRK.hist.length>2&&now-TRK.hist[0].t>6000)TRK.hist.shift();
-  if(!TRK.on)paintTrack(cur);
+  if(!TRK.on&&PURPOSE!=='aval')paintTrack(cur);
 }
 /* Seguiment suau: el reconeixement arriba amb un poc de retard i a salts.
    Entre resultat i resultat, el color avança al ritme de lectura de l'alumne/a (calculat amb els últims segons),
@@ -1329,14 +1355,95 @@ function trackStart(){TRK.hist=[];TRK.disp=-1;TRK.shown=-2;TRK.last=performance.
 function trackStop(){TRK.on=false;cancelAnimationFrame(TRK.raf);}
 
 /* =========================================================
+   Practicar: lectura guiada amb marcapassos
+   El verd avança a un ritme fix que tria el docent (o amb un toc), sense reconeixement de veu.
+   Cada paraula dura segons les seues síl·labes i hi ha una pausa curta a les comes i més llarga als punts,
+   perquè el model de ritme respecte el fraseig. Si es tria «Espera si para», el micròfon només detecta si hi ha veu.
+   ========================================================= */
+let PURPOSE='aval';
+try{PURPOSE=localStorage.getItem('resso.purpose')||'aval';}catch(e){}
+function setPurpose(v){
+  PURPOSE=v==='prac'?'prac':'aval';try{localStorage.setItem('resso.purpose',PURPOSE);}catch(e){}
+  document.body.classList.toggle('prac',PURPOSE==='prac');document.body.classList.toggle('aval',PURPOSE==='aval');
+  document.querySelectorAll('input[name=purpose]').forEach(r=>r.checked=r.value===PURPOSE);
+  const st=$('bStart').querySelector('span');if(st)st.textContent=PURPOSE==='prac'?'Comença a practicar':'Comença a llegir';
+  $('pracRes').hidden=true;$('micNotice').hidden=true;
+  try{if(S&&S.example&&PURPOSE==='prac'&&!running){loadText();}else if(S&&S.words&&!running&&!S.done){S.states=S.words.map(()=>'ok');renderReading();}}catch(e){}
+  pacUI();
+}
+function pacUI(){$('pacRateF').hidden=$('pacSel').value==='key';$('pacWaitF').hidden=$('pacSel').value==='key';}
+function sylCount(w){const m=norm(w).match(/[aeiouàèéíòóúïü]+/g);return Math.max(1,m?m.length:1);}
+const PAC={durs:[],on:false,i:-1,tm:0,t0:0,wait:false,heard:false,mode:'auto',rate:70,holdFrom:0,held:0};
+/* Durada de cada paraula: segons les síl·labes, amb pausa a les comes i als punts.
+   Tot es reescala perquè el text sencer dure exactament el que marca el ritme triat (paraules/minut). */
+function pacPlan(){
+  const n=S.words.length,syl=S.words.reduce((a,w)=>a+sylCount(w),0)/Math.max(1,n);
+  const raw=S.words.map(w=>(0.55+0.45*sylCount(w)/syl)+(/[.!?…]["»”)]*$/.test(w)?0.9:/[,;:]["»”)]*$/.test(w)?0.45:0));
+  const k=(n*60000/PAC.rate)/raw.reduce((a,b)=>a+b,0);
+  PAC.durs=raw.map(r=>r*k);
+}
+function pacWordMs(i){return PAC.durs[i]||60000/PAC.rate;}
+function pacStep(){
+  if(!PAC.on)return;
+  if(PAC.wait&&MIC.ctx){
+    const now=performance.now(),quiet=now-(MIC.lastVoice||0);
+    if(!PAC.heard){if(quiet<200){PAC.heard=true;$('live').textContent='';}else{$('live').textContent="Comença a llegir: el verd t'esperarà.";PAC.tm=setTimeout(pacStep,80);return;}}
+    if(quiet>1100){if(!PAC.holdFrom)PAC.holdFrom=now;$('live').textContent="El verd t'espera… Continua quan vulgues.";PAC.tm=setTimeout(pacStep,80);return;}
+    if(PAC.holdFrom){PAC.held+=now-PAC.holdFrom;PAC.holdFrom=0;$('live').textContent='';}
+  }
+  pacAdvance(1);
+  if(PAC.on&&PAC.i<S.words.length-1)PAC.tm=setTimeout(pacStep,pacWordMs(PAC.i));
+  else if(PAC.on)PAC.tm=setTimeout(()=>stopPractice(true),pacWordMs(PAC.i));
+}
+function pacAdvance(d){
+  if(!PAC.on)return;
+  PAC.i=Math.max(0,Math.min(S.words.length-1,PAC.i+d));paintTrack(PAC.i);
+  if(PAC.mode==='key'&&PAC.i===S.words.length-1&&d>0)$('live').textContent="Última paraula. Prem «He acabat» o toca una vegada més.";
+}
+async function startPractice(){
+  PAC.mode=$('pacSel').value;PAC.rate=Math.max(20,Math.min(220,+$('pacRate').value||70));
+  PAC.wait=PAC.mode==='auto'&&$('pacWait').checked;PAC.i=-1;pacPlan();PAC.heard=false;PAC.holdFrom=0;PAC.held=0;
+  $('pracRes').hidden=true;S.states=S.words.map(()=>'ok');renderReading();
+  if(PAC.wait){
+    try{const st=await getMic();MIC.stream=st;startMeter(st);}
+    catch(e){PAC.wait=false;toast("No s'ha pogut obrir el micròfon: el verd avançarà sense esperar.",4000);}
+  }
+  PAC.on=true;setRunning(true);startTimer();PAC.t0=performance.now();
+  if(PAC.mode==='key'){$('live').textContent="Toca el text (o prem la barra d'espai) per a avançar cada paraula. La fletxa ← torna arrere.";pacAdvance(1);}
+  else if(PAC.wait)pacStep();
+  else{$('live').textContent='Prepara\'t…';PAC.tm=setTimeout(()=>{$('live').textContent='';pacStep();},1200);}
+}
+function stopPractice(done){
+  if(!PAC.on)return;PAC.on=false;clearTimeout(PAC.tm);
+  if(timerId){clearInterval(timerId);timerId=null;}
+  setRunning(false);releaseMic();
+  const reached=PAC.i+1,secs=Math.max(1,(performance.now()-PAC.t0)/1000),total=S.words.length;
+  const end=done||reached>=total;
+  if(end)paintTrack(total);
+  $('timer').textContent=fmtTime(secs);$('live').textContent='';
+  const ppm=Math.round(reached/(secs/60));
+  const es=S.text&&S.text.lang==='es';
+  let msg;
+  if(PAC.mode==='key')msg=`<b>${end?'Text acabat!':'Pràctica aturada.'}</b> ${reached} paraules en ${fmtTime(secs)} (unes ${ppm} paraules/minut, guiant-te tu mateix/a).`;
+  else msg=`<b>${end?'Molt bé, has arribat al final!':'Pràctica aturada.'}</b> Ritme del verd: ${PAC.rate} paraules/minut.`+(PAC.held>1500?` El verd t'ha esperat ${Math.round(PAC.held/1000)} s en total.`:'');
+  const acts=[];
+  if(PAC.mode==='auto'&&end)acts.push(`<button class="btn sm primary" data-pac="up">Una altra vegada a ${PAC.rate+10} p/m</button>`);
+  acts.push(`<button class="btn sm" data-pac="again">Repeteix</button>`);
+  if(PAC.mode==='auto'&&PAC.rate>30)acts.push(`<button class="btn sm" data-pac="down">Més a poc a poc (${PAC.rate-10} p/m)</button>`);
+  acts.push(`<button class="btn sm" data-pac="aval">Ara, avalua la lectura</button>`);
+  $('pracRes').innerHTML=msg+`<div class="hint" style="margin:6px 0 0">La pràctica no es guarda en «Aula»: serveix per a guanyar fluïdesa. Quan l'alumne/a estiga preparat/da, passa a «Avaluar».</div><div class="acts">${acts.join('')}</div>`;
+  $('pracRes').hidden=false;
+}
+
+/* =========================================================
    Temporitzador
    ========================================================= */
 function startTimer(){
   t0=performance.now();
-  timerId=setInterval(()=>{const s=(performance.now()-t0)/1000;$('timer').textContent=fmtTime(s);if($('durSel').value==='60'&&s>=60)stopReading();},200);
+  timerId=setInterval(()=>{const s=(performance.now()-t0)/1000;$('timer').textContent=fmtTime(s);if(PURPOSE!=='prac'&&$('durSel').value==='60'&&s>=60)stopReading();},200);
 }
 function stopTimer(){if(!timerId)return;clearInterval(timerId);timerId=null;S.secs=Math.min((performance.now()-t0)/1000,$('durSel').value==='60'?60:Infinity);$('timer').textContent=fmtTime(S.secs);}
-function setRunning(on){running=on;$('bStart').hidden=on;$('bStop').hidden=!on;['textSel','modeSel','durSel','course'].forEach(id=>$(id).disabled=on);}
+function setRunning(on){running=on;$('bStart').hidden=on;$('bStop').hidden=!on;['textSel','modeSel','durSel','course','pacSel','pacRate','pacWait','pacMinus','pacPlus'].forEach(id=>$(id).disabled=on);document.querySelectorAll('input[name=purpose]').forEach(r=>r.disabled=on);}
 function notice(msg,ok){const n=$('micNotice');n.hidden=false;n.className='notice'+(ok?' ok':'');n.textContent=msg;}
 
 /* =========================================================
@@ -1458,6 +1565,7 @@ async function transcribeScribe(blob,lang){
 async function startReading(){
   loadText();
   if(!S.words.length){notice('Enganxa primer un text per a llegir.');return;}
+  if(PURPOSE==='prac'){startPractice();return;}
   const mode=$('modeSel').value;
   if(mode==='sim'){runSimulation(false);return;}
   if(mode==='manual'){
@@ -1479,9 +1587,11 @@ async function startReading(){
     $('live').textContent="Gravant… En acabar, ElevenLabs transcriurà la lectura.";
     if(SR&&!isAndroid){try{startBrowserSR(S.text.lang,true);}catch(e){}}
   }
-  setRunning(true);startTimer();trackStart();
+  /* En avaluar, l'alumne/a llig sense ajuda: el text no s'acoloreix fins al final (la marca en directe podria marcar-li el ritme). */
+  setRunning(true);startTimer();
 }
 async function stopReading(){
+  if(PAC.on){stopPractice(false);return;}
   if(!running)return;trackStop();
   const mode=$('modeSel').value;stopTimer();setRunning(false);
   if(mode==='manual'){
@@ -2410,7 +2520,7 @@ document.querySelectorAll('.g-switch button').forEach(b=>b.onclick=()=>{document
 if(!store.get('resso.seenGuide',false)){store.set('resso.seenGuide',true);setTimeout(()=>toast("Primera vegada? Mira la pestanya «Guia».",5000),1200);}
 $('bStart').onclick=startReading;
 $('bStop').onclick=stopReading;
-$('bReset').onclick=()=>{if(running){if(REC.on){REC.on=false;try{REC.r.abort();}catch(e){}}stopRecorder().then(releaseMic);if(timerId){clearInterval(timerId);timerId=null;}setRunning(false);}loadText();};
+$('bReset').onclick=()=>{if(PAC.on){PAC.on=false;clearTimeout(PAC.tm);}$('pracRes').hidden=true;if(running){if(REC.on){REC.on=false;try{REC.r.abort();}catch(e){}}stopRecorder().then(releaseMic);if(timerId){clearInterval(timerId);timerId=null;}setRunning(false);}loadText();};
 $('bModel').onclick=playModel;
 $('bRecPlay').onclick=()=>{if(!S.recUrl)return;if(!player.paused&&player.src===S.recUrl){player.pause();return;}playSegment(S.recUrl,0,null,1);};
 $('bPickLast').onclick=()=>{S.pickLast=!S.pickLast;$('bPickLast').classList.toggle('on',S.pickLast);$('live').textContent=S.pickLast?"Clica l'última paraula que ha llegit l'alumne/a.":'';};
@@ -2424,6 +2534,24 @@ $('bSmaller').onclick=()=>{CFG.size=Math.max(1,+(CFG.size-0.12).toFixed(2));save
 $('bBigger').onclick=()=>{CFG.size=Math.min(2.4,+(CFG.size+0.12).toFixed(2));saveCfg();applyReadingLook();};
 $('bRuler').onclick=()=>{CFG.ruler=!CFG.ruler;saveCfg();applyReadingLook();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')stopModel();});
+document.addEventListener('keydown',e=>{
+  if(!PAC.on||PAC.mode!=='key'||/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||'')))return;
+  if(e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();if(PAC.i>=S.words.length-1)stopPractice(true);else pacAdvance(1);}
+  else if(e.key==='ArrowLeft'){e.preventDefault();pacAdvance(-1);}
+});
+$('reading').addEventListener('click',e=>{if(!PAC.on||PAC.mode!=='key')return;if(PAC.i>=S.words.length-1)stopPractice(true);else pacAdvance(1);},true);
+document.querySelectorAll('input[name=purpose]').forEach(r=>r.onchange=()=>{if(!running)setPurpose(r.value);});
+$('pacSel').onchange=pacUI;
+const pacStepBtn=d=>{$('pacRate').value=Math.max(20,Math.min(220,(+$('pacRate').value||70)+d));pacSave();};
+const pacSave=()=>{try{localStorage.setItem('resso.pac',JSON.stringify({rate:+$('pacRate').value,mode:$('pacSel').value,wait:$('pacWait').checked}));}catch(e){}};
+$('pacMinus').onclick=()=>pacStepBtn(-5);$('pacPlus').onclick=()=>pacStepBtn(5);
+['pacRate','pacSel','pacWait'].forEach(id=>$(id).addEventListener('change',pacSave));
+try{const pj=JSON.parse(localStorage.getItem('resso.pac')||'null');if(pj){if(pj.rate)$('pacRate').value=pj.rate;if(pj.mode)$('pacSel').value=pj.mode;$('pacWait').checked=!!pj.wait;}else $('pacRate').value=Math.round(thFor($('course').value).lo/5)*5||70;}catch(e){}
+$('pracRes').addEventListener('click',e=>{const b=e.target.closest('[data-pac]');if(!b)return;const a=b.dataset.pac;
+  if(a==='up')pacStepBtn(10);if(a==='down')pacStepBtn(-10);
+  if(a==='aval'){setPurpose('aval');S.states=S.words.map(()=>'ok');renderReading();$('reading').scrollIntoView({block:'center',behavior:'smooth'});return;}
+  startPractice();});
+setPurpose(PURPOSE);
 $('bPrep').onclick=()=>{CFG.prep=!CFG.prep;saveCfg();if(S.example&&!running)loadText();else renderPrep();toast(CFG.prep?'Preparació activada: la lectura es desarà com a «preparada».':'Preparació desactivada.');};
 $('prepBox').addEventListener('click',e=>{const b=e.target.closest('[data-vw]');if(!b)return;const w=b.dataset.vw;const i=S.words.findIndex(x=>cleanWord(x)===w);speakWords(i>=0?i:null,i>=0?i:null,w);});
 
@@ -2438,7 +2566,7 @@ if(!SR&&CFG.asr==='browser')$('modeSel').value='manual';
 seedIfEmpty();
 applyReadingLook();
 loadText();
-runSimulation(true);
+if(PURPOSE==='aval')runSimulation(true);
 if('speechSynthesis' in window){fillBrowserVoices();speechSynthesis.onvoiceschanged=fillBrowserVoices;}
 renderDiag();
 let installEvt=null;
