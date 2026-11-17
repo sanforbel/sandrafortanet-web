@@ -396,7 +396,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <button class="btn sm" id="bSmaller" aria-label="Lletra més xicoteta">A−</button>
             <button class="btn sm" id="bBigger" aria-label="Lletra més gran">A+</button>
             <button class="btn sm" id="bRuler" aria-pressed="false">Regle</button>
-            <button class="btn sm" id="bPrep" aria-pressed="false" title="Mostra una meta de lectura i les paraules clau abans de llegir">Prepara la lectura</button>
+            <button class="btn sm" id="bPrep" aria-pressed="false" title="Mostra un propòsit de lectura i les paraules clau abans de llegir">Prepara la lectura</button>
           </div>
           <div class="myvoice" id="myVoice" hidden>
             <p>Grava una lectura model d'este text o puja'n un àudio. «Escolta el model» la farà sonar en lloc de la veu sintètica. Si graves en Chrome o Edge, Ressò sincronitza la gravació paraula a paraula i el tutor també la fa servir per a pronunciar les paraules i les frases. La gravació es queda només en este navegador; per a passar-la a un altre ordinador, ves a «Ajustos» › «Lectures model gravades».</p>
@@ -572,7 +572,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
             <div class="num"><b>Índex de fluïdesa</b> · de 0 a 100<p>Descodificació 40 %, errors 35 %, prosòdia 25 %. És orientatiu i els pesos es poden ajustar.</p></div>
             <div class="num"><b>Pista de ruta</b> · en cada substitució<p>Descodificació (ruta fonològica) o anticipació / paraula diferent (ruta lèxica). Orienta la pràctica; no és un diagnòstic.</p></div>
             <div class="num"><b>Grup de domini</b> · suport, pràctica guiada o autonomia<p>Combina PCPM i precisió segons el curs. L'«Aula» proposa quin tipus d'instrucció necessita cada grup.</p></div>
-            <div class="num"><b>Perfil lector</b> · comprensió × fluïdesa<p>Hàbil, de risc, superficial o lent però segur, com en el mapa lector d'aula. Necessita que l'alumne/a conteste les preguntes. La resposta encertada amb ajuda val mitja.</p></div>
+            <div class="num"><b>Perfil lector</b> · comprensió × fluïdesa<p>Lectura consolidada, necessita suport global, llig ràpid però comprén poc, o comprén bé però llig a poc a poc. Necessita que l'alumne/a conteste les preguntes; la resposta encertada amb una pista val mitja.</p></div>
             <div class="num"><b>Dificultat del text</b> · de 0 a 100<p>Calculada amb la llargària de les frases i de les paraules. Ajuda a triar un repte adequat i a comparar sessions.</p></div>
           </div>
         </div>
@@ -582,8 +582,8 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
           <ul>
             <li>Necessites un text a mida? Ves a «Biblioteca › Crea'l amb IA»: Ressò prepara el prompt, tu l'enganxes en la IA i la resposta omple sola la fitxa del text i les preguntes. Revisa-la sempre abans de desar-la.</li>
             <li>Pots compartir els teus textos amb altres docents amb «Comparteix els meus textos», i carregar els que t'envien amb «Carrega textos».</li>
-            <li>Les preguntes no donen la resposta a la primera: ofereixen una ajuda interna (tornar al text, buscar la pista) i un segon intent. Així l'ajuda l'elabora l'alumne/a.</li>
-            <li>«Prepara la lectura» mostra una meta i les paraules clau abans de llegir. Fes-la servir per a treballar la lectura; per a mesurar la fluïdesa, deixa-la desactivada (les lectures preparades queden marcades a l'aula).</li>
+            <li>Les preguntes no donen la resposta a la primera: donen una pista perquè l'alumne/a torne al text i ho busque, i un segon intent. Així és ell o ella qui troba la resposta.</li>
+            <li>«Prepara la lectura» mostra un propòsit i les paraules clau abans de llegir. Fes-la servir per a treballar la lectura; per a mesurar la fluïdesa, deixa-la desactivada (les lectures preparades queden marcades a l'aula).</li>
             <li>Identifica l'alumnat només amb números i informa les famílies abans d'usar el micròfon.</li>
             <li>Fes la mateixa prova (mateix tipus de text i durada) cada 3-4 setmanes per a veure l'evolució.</li>
             <li>Si el reconeixement de veu falla, passa al marcatge manual: les dades valen igual.</li>
@@ -620,7 +620,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
     <div class="aula-head" style="margin-top:30px">
       <div>
         <h2>Perfil lector</h2>
-        <p style="margin:4px 0 0;color:var(--muted);max-width:66ch">Creua la comprensió (preguntes) amb la fluïdesa, com en el mapa lector d'aula. Només hi apareix l'alumnat que ha contestat les preguntes en la darrera lectura.</p>
+        <p style="margin:4px 0 0;color:var(--muted);max-width:66ch">Creua la comprensió (preguntes) amb la fluïdesa: llegir ràpid no vol dir entendre, i entendre bé no sempre va amb un bon ritme. Només hi apareix l'alumnat que ha contestat les preguntes en la darrera lectura.</p>
       </div>
     </div>
     <div class="profiles" id="profiles"></div>
@@ -700,7 +700,7 @@ footer.credit-line{margin-top:40px;padding-top:16px;border-top:1px solid var(--l
       </div>
       <div class="field"><label for="nfBody">Text</label><textarea id="nfBody" required></textarea></div>
       <div class="row">
-        <div class="field"><label for="nfGoal">Meta de lectura (opcional)</label><input id="nfGoal" class="inp" placeholder="Llig per a saber…"></div>
+        <div class="field"><label for="nfGoal">Propòsit de lectura (opcional)</label><input id="nfGoal" class="inp" placeholder="Per exemple: Descobrix per què…"></div>
         <div class="field"><label for="nfVocab">Paraules clau (opcional, separades per comes)</label><input id="nfVocab" class="inp" placeholder="volcà, erupció, lava"></div>
       </div>
       <div id="nfQs"></div>
@@ -1133,7 +1133,7 @@ function loadText(){
   renderReading();renderMetrics();refreshMyVoice();
 }
 /* Preparar la lectura (opcional): meta i paraules clau abans de llegir */
-function prepGoal(t){if(t.goal)return t.goal;const lit=(t.qs||[]).find(q=>/^lit/i.test(q.t))||(t.qs||[])[0];if(!lit)return null;return (t.lang==='es'?'Lee para responder: ':'Llig per a respondre: ')+'«'+lit.q+'»';}
+function prepGoal(t){if(t.goal)return t.goal;const lit=(t.qs||[]).find(q=>/^lit/i.test(q.t))||(t.qs||[])[0];if(!lit)return null;return (t.lang==='es'?'Mientras lees, busca: ':'Mentre llegeixes, busca: ')+'«'+lit.q+'»';}
 function prepVocab(){
   const t=S.text;if(Array.isArray(t.vocab)&&t.vocab.length)return t.vocab.slice(0,8);
   const seen=new Set(),out=[];
@@ -1145,7 +1145,7 @@ function renderPrep(){
   if(!CFG.prep||S.example||!S.words.length){box.hidden=true;return;}
   const g=prepGoal(S.text),v=prepVocab(),es=S.text.lang==='es';
   box.innerHTML=(g?`<div class="pgoal">🎯 ${esc(g)}</div>`:'')+(v.length?`<div class="vocab"><span class="lbl" style="margin:0">${es?'Palabras clave':'Paraules clau'}</span>${v.map(w=>`<button type="button" data-vw="${esc(w)}" title="${es?'Escúchala':'Escolta-la'}">${esc(w)}</button>`).join('')}</div>`:'')
-    +`<div class="hint" style="margin:0">${es?'Lee la meta y escucha las palabras clave antes de empezar.':'Llig la meta i escolta les paraules clau abans de començar.'}</div>`;
+    +`<div class="hint" style="margin:0">${es?'Lee el propósito y escucha las palabras clave antes de empezar.':'Llig el propòsit i escolta les paraules clau abans de començar.'}</div>`;
   box.hidden=false;
 }
 function renderReading(){
@@ -1171,12 +1171,12 @@ function renderReading(){
 function thFor(course){const c=courseById(course);const o=CFG.th[course]||{};return {lo:o.lo??c.lo,hi:o.hi??c.hi};}
 function levelOf(pcpm,acc,course){const t=thFor(course);const a=acc<90?0:acc<95?1:2;const p=pcpm<t.lo?0:pcpm<t.hi?1:2;return Math.min(a,p);}
 const LEVELS=['Suport intensiu','Pràctica guiada','Autonomia'];
-/* Perfil lector del mapa lector d'aula: comprensió (preguntes) × fluïdesa */
+/* Perfil lector: comprensió (preguntes) × fluïdesa */
 const PROFILES=[
- {n:'Lector hàbil',axis:'Comprensió mitjana-alta · fluïdesa mitjana-alta',col:'var(--accent)',tip:"Textos més exigents i variats, preguntes crítiques i que van més enllà del text. Més autonomia."},
- {n:'Lector de risc',axis:'Comprensió baixa · fluïdesa baixa',col:'var(--sub)',tip:"Prioritat a la descodificació i la fluïdesa (lectura repetida, llistes de paraules, model del docent) i comprensió guiada amb microtextos. Si no avança, consulteu-ho amb orientació."},
- {n:'Lector superficial',axis:'Comprensió baixa · fluïdesa mitjana-alta',col:'var(--om)',tip:"Llig de pressa però no construïx el significat. Llegir amb una meta, preguntes inferencials, ajudes internes i pensament en veu alta. Menys velocitat, més comprensió."},
- {n:'Lector lent però segur',axis:'Comprensió mitjana-alta · fluïdesa baixa',col:'var(--ins)',tip:"Comprén bé però llig a poc a poc. Lectura repetida, en eco i en parella per a guanyar fluïdesa sense perdre comprensió."}
+ {n:'Lectura consolidada',axis:'Comprensió mitjana-alta · fluïdesa mitjana-alta',col:'var(--accent)',tip:"Textos més exigents i variats, preguntes crítiques i que van més enllà del text. Més autonomia."},
+ {n:'Necessita suport global',axis:'Comprensió baixa · fluïdesa baixa',col:'var(--sub)',tip:"Prioritat a la descodificació i la fluïdesa (lectura repetida, llistes de paraules, model del docent) i comprensió guiada amb textos curts. Si no avança, consulteu-ho amb orientació."},
+ {n:'Llig ràpid, comprén poc',axis:'Comprensió baixa · fluïdesa mitjana-alta',col:'var(--om)',tip:"La velocitat no va acompanyada de comprensió. Propòsit clar abans de llegir, preguntes que obliguen a relacionar idees, pistes que facen tornar al text i lectura comentada en veu alta. Primer entendre, després córrer."},
+ {n:'Comprén bé, llig a poc a poc',axis:'Comprensió mitjana-alta · fluïdesa baixa',col:'var(--ins)',tip:"Entén el que llig, però li costa agafar ritme. Lectura repetida, en eco i en parella per a guanyar fluïdesa sense perdre comprensió."}
 ];
 function compScoreOf(s){if(s.compScore!=null)return s.compScore;if(!s.comp)return null;const m=String(s.comp).match(/(\d+(?:[.,]\d+)?)\/(\d+)/);return m?parseFloat(m[1].replace(',','.'))/+m[2]:null;}
 function profileOf(flv,cs){if(cs==null)return null;const c=cs>=0.6,f=flv>=1;return c&&f?0:(!c&&!f?1:(!c&&f?2:3));}
@@ -1823,12 +1823,12 @@ function renderAfter(){
 }
 const QHELP={
  ca:{lit:"Encara no. La resposta està en el text: torna-hi i busca la frase que en parla. Després tria una altra opció.",
-     inf:"Encara no. El text no ho diu directament: busca les pistes i pensa què saps tu. Prova de completar: «Encara que el text no ho diga, jo entenc… perquè el text diu…».",
+     inf:"Encara no. El text no ho diu directament. Busca pistes en el text i ajunta-les amb el que ja saps: què en pots deduir?",
      cri:"Encara no. Pensa en tot el text: què vol explicar o aconseguir? Rellig el principi i el final i torna-ho a provar.",
      show:"Mostra'm on buscar",good1:"Molt bé!",good2:"Molt bé! Ho has trobat tornant al text.",
      bad:x=>`La resposta era «${x}». Mira la frase marcada en el text i comprova-ho.`},
  es:{lit:"Todavía no. La respuesta está en el texto: vuelve a él y busca la frase que habla de ello. Después elige otra opción.",
-     inf:"Todavía no. El texto no lo dice directamente: busca las pistas y piensa qué sabes tú. Prueba a completar: «Aunque el texto no lo diga, yo entiendo… porque el texto dice…».",
+     inf:"Todavía no. El texto no lo dice directamente. Busca pistas en el texto y júntalas con lo que ya sabes: ¿qué puedes deducir?",
      cri:"Todavía no. Piensa en todo el texto: ¿qué quiere explicar o conseguir? Relee el principio y el final y vuelve a intentarlo.",
      show:"Muéstrame dónde buscar",good1:"¡Muy bien!",good2:"¡Muy bien! Lo has encontrado volviendo al texto.",
      bad:x=>`La respuesta era «${x}». Mira la frase marcada en el texto y compruébalo.`}
@@ -1935,7 +1935,7 @@ function renderAula(){
   if(keys.includes(prevSel))$('aulaStudent').value=prevSel;else if(keys.length)$('aulaStudent').value=keys.reduce((a,b)=>counts[b]>counts[a]?b:a);
   renderStudent();
   const rows=[...list].sort((a,b)=>b.date.localeCompare(a.date));
-  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.idx??'–'}</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td>${(()=>{const pi=profileOf(lv,compScoreOf(s));return pi==null?'–':`<span class="chip" style="color:${PROFILES[pi].col}">${PROFILES[pi].n}</span>`;})()}${s.prep?' <span class="chip ex" title="Lectura feta amb preparació (meta i paraules clau)">preparada</span>':''}</td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
+  $('rows').innerHTML=rows.length?rows.map(s=>{const lv=levelOf(s.pcpm,s.acc,s.course);return `<tr><td>${new Date(s.date).toLocaleDateString('ca-ES')}${s.example?' <span class="chip ex">exemple</span>':''}</td><td>${esc(courseById(s.course).short)}</td><td>núm. ${s.student}</td><td>${esc(s.title)}</td><td>${s.lang==='ca'?'Valencià':'Castellà'}</td><td class="num">${fmtTime(s.secs)}</td><td class="num">${s.pcpm}</td><td class="num">${Number(s.acc).toLocaleString('ca')} %</td><td class="num">${s.idx??'–'}</td><td class="num">${s.sub}</td><td class="num">${s.om}</td><td class="num">${s.ins}</td><td class="num">${s.pros?s.pros+'/16':'–'}</td><td class="num">${s.comp||'–'}</td><td><span class="chip" style="color:${LV_COL[lv]}">${LEVELS[lv]}</span></td><td>${(()=>{const pi=profileOf(lv,compScoreOf(s));return pi==null?'–':`<span class="chip" style="color:${PROFILES[pi].col}">${PROFILES[pi].n}</span>`;})()}${s.prep?' <span class="chip ex" title="Lectura feta amb preparació (propòsit i paraules clau)">preparada</span>':''}</td><td><button class="btn sm" data-del="${s.id}">Esborra</button></td></tr>`;}).join('')
     :'<tr><td colspan="17" style="color:var(--muted)">Encara no hi ha lectures desades.</td></tr>';
 }
 function renderStudent(){
@@ -2057,11 +2057,11 @@ Escriu un text original en valencià per a llegir en veu alta amb alumnat de ${c
 
 Després, escriu tres preguntes de comprensió d'opció múltiple amb tres opcions cadascuna (només una correcta): una literal, una inferencial i una crítica.
 
-Afig també una meta de lectura (una frase que comence per «Llig per a saber…») i entre 3 i 5 paraules clau del text que convinga conéixer abans de llegir.
+Afig també un propòsit de lectura (una frase breu que diga què ha de descobrir l'alumnat mentre llig, per exemple «Descobrix per què…») i entre 3 i 5 paraules clau del text que convinga conéixer abans de llegir.
 
 Respon NOMÉS amb este format exacte, sense negretes ni cap altre text:
 TÍTOL: ...
-META: Llig per a saber ...
+META: Descobrix ...
 PARAULES CLAU: ..., ..., ...
 TEXT:
 ...
@@ -2093,11 +2093,11 @@ Escribe un texto original en castellano para leer en voz alta con alumnado de ${
 
 Después, escribe tres preguntas de comprensión de opción múltiple con tres opciones cada una (solo una correcta): una literal, una inferencial y una crítica.
 
-Añade también una meta de lectura (una frase que empiece por «Lee para saber…») y entre 3 y 5 palabras clave del texto que convenga conocer antes de leer.
+Añade también un propósito de lectura (una frase breve que diga qué debe descubrir el alumnado mientras lee, por ejemplo «Descubre por qué…») y entre 3 y 5 palabras clave del texto que convenga conocer antes de leer.
 
 Responde SOLO con este formato exacto, sin negritas ni ningún otro texto:
 TÍTOL: ...
-META: Lee para saber ...
+META: Descubre ...
 PARAULES CLAU: ..., ..., ...
 TEXT:
 ...
@@ -2127,7 +2127,7 @@ function parseAi(raw){
     const l=ln.trim();
     let m;
     if((m=l.match(/^t[ií]tol(?:o)?\s*:\s*(.*)$/i))){title=m[1].trim();mode=null;continue;}
-    if((m=l.match(/^meta\s*:\s*(.*)$/i))){goal=m[1].trim();mode=null;continue;}
+    if((m=l.match(/^(?:meta|prop[òo]sit[o]?)\s*:\s*(.*)$/i))){goal=m[1].trim();mode=null;continue;}
     if((m=l.match(/^(?:paraules|palabras)\s+clau(?:e)?\s*:\s*(.*)$/i))){vocab=m[1].split(/[,;]/).map(x=>x.trim().replace(/[.]$/,'')).filter(Boolean);mode=null;continue;}
     if((m=l.match(/^text(?:o)?\s*:\s*(.*)$/i))){mode='body';if(m[1])body.push(m[1]);continue;}
     if((m=l.match(qre))){const t=m[1].toLowerCase().startsWith('lit')?'Literal':m[1].toLowerCase().startsWith('inf')?'Inferencial':'Crítica';cur={t,q:m[2].trim(),o:[],a:0};qs.push(cur);mode='q';continue;}
