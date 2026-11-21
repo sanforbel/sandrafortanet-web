@@ -1,9 +1,9 @@
-/* Dades de La Brúixola IA — revisades l'1 de novembre de 2026.
+/* Dades de La Brúixola IA — revisades el 21 de novembre de 2026.
    Cada ferramenta: id de categoria, nom, adreça, descripció i, si cal, un avís.
    Els avisos són el que fa útil el directori: diuen què ha canviat i què cal
    saber abans de recomanar-la a l'aula. */
 window.BRUIXOLA = {
-  revisio: "2026-11-01",
+  revisio: "2026-11-21",
   categories: [
     {id:"estrella", ca:"Ferramenta estrella", es:"Herramienta estrella", en:"Standout tool", fr:"Outil vedette"},
     {id:"debat",    ca:"Debat i oratòria", es:"Debate y oratoria", en:"Debate & public speaking", fr:"Débat et art oratoire"},
@@ -37,7 +37,7 @@ window.BRUIXOLA = {
 
     {c:"debat", n:"Debate Devil", u:"https://www.debate-devil.com/en",
      d:"Entrena l'oratòria i el pensament crític amb una IA que et porta la contrària de forma mordaç.",
-     avis:"L'1 de novembre de 2026 el lloc no responia, i l'arxiu web no en té cap còpia des del 28 d'agost de 2026. Comprova que funcione abans de comptar amb ella en classe."},
+     avis:"El lloc no responia ni l'1 ni el 21 de novembre de 2026, i l'arxiu web no en té cap còpia des del 28 d'agost de 2026. Comprova que funcione abans de comptar amb ella en classe."},
     {c:"debat", n:"Kialo Edu", alies:"Kialo AI", u:"https://www.kialo-edu.com",
      d:"Plataforma per a estructurar debats complexos i visualitzar la jerarquia d'arguments.",
      avis:"El nom correcte és Kialo Edu: la plataforma és gratuïta però no anuncia funcions d'IA."},
@@ -57,14 +57,16 @@ window.BRUIXOLA = {
      avis:"L'empresa Grammarly es va rebatejar com a Superhuman l'octubre de 2025; el corrector continua igual."},
 
     {c:"models", n:"ChatGPT", u:"https://chatgpt.com",
-     d:"El model d'OpenAI pioner en conversació, redacció i anàlisi de dades."},
+     d:"El model d'OpenAI pioner en conversació, redacció i anàlisi de dades.",
+     avis:"Des de l'agost de 2026 el pla gratuït té xat de text il·limitat, però només amb el model més lleuger (GPT-5.6 Luna), i pot mostrar anuncis."},
     {c:"models", n:"Claude", u:"https://claude.ai",
      d:"La IA d'Anthropic, referent en ètica i seguretat amb la seua IA constitucional."},
     {c:"models", n:"Gemini", u:"https://gemini.google.com",
      d:"L'aposta multimodal de Google integrada amb tot el seu ecosistema.",
      avis:"Des del 9 d'octubre de 2026 els comptes gratuïts responen sobretot amb Gemini Flash-Lite; per a Flash i Pro ja cal un pla de pagament."},
     {c:"models", n:"Microsoft Copilot", u:"https://copilot.microsoft.com/",
-     d:"L'assistent de Microsoft integrat en Windows i Office."},
+     d:"L'assistent de Microsoft integrat en Windows i Office.",
+     avis:"Microsoft ha unificat el Copilot de consum i el de Microsoft 365 en una sola aplicació. Xatejar, crear imatges i pujar fitxers continua sent gratuït, amb límits, però s'han retirat funcions com Podcasts, Deep Research o el xat de grup. Al mòbil cal descarregar la versió nova de l'aplicació."},
     {c:"models", n:"DeepSeek", u:"https://www.deepseek.com/",
      d:"Model d'alt rendiment amb capacitats sorprenents en raonament i codi.",
      avis:"Bloquejat en moltes universitats i administracions per motius de privacitat i transferència de dades."},
@@ -74,7 +76,7 @@ window.BRUIXOLA = {
      avis:"«Red Panda» era el nom en clau de Recraft V3 durant unes proves anònimes; l'eina real és Recraft."},
     {c:"imatges", n:"ChatGPT Images", u:"https://chatgpt.com",
      d:"Generador d'imatges d'OpenAI amb una comprensió excepcional del llenguatge.",
-     avis:"DALL·E 3 es va retirar de ChatGPT el 30 d'agost de 2026. El generador actual és ChatGPT Images 2.5, des del 8 de setembre de 2026."},
+     avis:"DALL·E 3 es va retirar de ChatGPT el 30 d'agost de 2026. El generador actual és ChatGPT Images 2.6, des del 4 de novembre de 2026: és més ràpid i ja crea GIF animats."},
     {c:"imatges", n:"Midjourney", u:"https://www.midjourney.com/",
      d:"El referent absolut en qualitat artística i realisme visual.",
      avis:"No té pla gratuït: des de 10 $ al mes. Pensa-t'ho abans de recomanar-la a l'alumnat."},
@@ -105,7 +107,7 @@ window.BRUIXOLA = {
 
     {c:"musica", n:"Suno AI", u:"https://suno.com",
      d:"Crea cançons completes amb lletra i música de qualsevol estil.",
-     avis:"El pla gratuït queda limitat a ús no comercial i ja no dona la propietat de la cançó, sinó una llicència d'ús. Des del 3 de setembre de 2026, a més, no permet cap descàrrega: la cançó només s'escolta dins la plataforma."},
+     avis:"El pla gratuït queda limitat a ús no comercial i ja no dona la propietat de la cançó, sinó una llicència d'ús. Des del 3 de setembre de 2026, a més, ja no inclou descàrregues: els comptes creats abans d'eixa data en tenen 7 per a tota la vida, només per a ús personal, i els comptes nous, cap. La resta de cançons només s'escolten dins la plataforma."},
     {c:"musica", n:"Udio", u:"https://www.udio.com",
      d:"Generació musical d'alta fidelitat amb qualitat professional.",
      avis:"Després de l'acord amb Universal Music ja no es pot descarregar l'àudio: només s'escolta dins la plataforma."},
@@ -192,7 +194,7 @@ window.BRUIXOLA = {
      avis:"El pla gratuït dona 500 crèdits d'IA a l'any, que es renoven cada any i no cada mes. La generació d'imatges i les locucions són de pagament."},
     {c:"agents", n:"Manus", u:"https://manus.im/",
      d:"Agent d'IA autònom per a tasques complexes.",
-     avis:"La compra per part de Meta es va desfer després que el regulador xinés la bloquejara. Des de l'11 d'agost de 2026 Manus torna a operar pel seu compte, i la separació va comportar l'esborrament de dades d'una part dels usuaris."},
+     avis:"La compra per part de Meta es va desfer després que el regulador xinés la bloquejara. Manus torna a operar pel seu compte des de l'1 de setembre de 2026, i la separació va comportar l'esborrament de dades d'una part dels usuaris."},
     {c:"agents", n:"Nomic Atlas", alies:"Atlas", u:"https://atlas.nomic.ai/",
      d:"Plataforma per a connectar dades i agents d'IA.",
      avis:"És l'Atlas de Nomic, que no té res a veure amb el navegador ChatGPT Atlas ni amb Atlas VPN."}
